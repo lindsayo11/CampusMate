@@ -1,0 +1,198 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "query": {
+      "maxLength": 6000,
+      "minLength": 1,
+      "title": "Query",
+      "type": "string"
+    },
+    "conversation_id": {
+      "anyOf": [
+        {
+          "maxLength": 36,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Conversation Id"
+    },
+    "intent": {
+      "default": "auto",
+      "enum": [
+        "auto",
+        "profile",
+        "paths",
+        "search",
+        "eligibility",
+        "plan",
+        "tasks",
+        "review",
+        "startup",
+        "startup_document",
+        "update_task",
+        "reminder",
+        "knowledge",
+        "materials"
+      ],
+      "title": "Intent",
+      "type": "string"
+    },
+    "keyword": {
+      "default": "",
+      "maxLength": 100,
+      "title": "Keyword",
+      "type": "string"
+    },
+    "path_code": {
+      "anyOf": [
+        {
+          "maxLength": 80,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Path Code"
+    },
+    "region": {
+      "anyOf": [
+        {
+          "maxLength": 80,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Region"
+    },
+    "publication_id": {
+      "anyOf": [
+        {
+          "maxLength": 36,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Publication Id"
+    },
+    "item_id": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Item Id"
+    },
+    "opportunity_id": {
+      "anyOf": [
+        {
+          "maxLength": 40,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Opportunity Id"
+    },
+    "plan_id": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Plan Id"
+    },
+    "startup_project_id": {
+      "anyOf": [
+        {
+          "maxLength": 36,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Startup Project Id"
+    },
+    "document_kind": {
+      "anyOf": [
+        {
+          "enum": [
+            "business_model",
+            "architecture",
+            "equity",
+            "bp",
+            "user_agreement",
+            "privacy",
+            "exit",
+            "ipo",
+            "compliance",
+            "ip",
+            "finance",
+            "fundraising",
+            "organization",
+            "validation"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Document Kind"
+    },
+    "status": {
+      "default": "doing",
+      "enum": [
+        "todo",
+        "doing",
+        "done"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "due_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Due At"
+    }
+  },
+  "required": [
+    "query"
+  ],
+  "title": "Request",
+  "type": "object"
+}

@@ -1,0 +1,9 @@
+import {ReminderList} from '@/components/reminder-list';
+import {privateApi} from '@/lib/session-api';
+import {TaskAlertList} from '@/components/task-alert-list';
+import {NotificationList} from '@/components/notification-list';
+import {DataAlerts} from '@/components/data-follow';
+import {PlanReminderPanel} from '@/components/plan-reminders';
+import {PageHeading,TopicBar,Icon} from '@/components/ui';
+import Link from 'next/link';
+export default async function Notifications(){const [rows,tasks,reminders,data]=await Promise.all([privateApi('/v1/notifications'),privateApi('/v1/task-alerts'),privateApi('/v1/reminders'),privateApi('/v1/data/subscriptions')]);return <div className="shell"><PageHeading eyebrow="YOUR INBOX" title="通知中心" description="你的截止提醒、来源变化和团队任务，都在这里。当前支持站内通知。"><Link className="button secondary" href="/tracker"><Icon name="check" size={15}/>返回我的计划</Link></PageHeading><nav className="tabs" aria-label="通知分类"><a href="#personal">个人计划</a><a href="#sources">关注事项</a><a href="#team">团队任务</a><a href="#opportunity">校园机会</a></nav><div className="notice-grid"><section className="topic-section" id="personal"><TopicBar title="个人准备" color="#6e9981"/><div className="notification-section"><PlanReminderPanel/></div></section><section className="topic-section" id="sources"><TopicBar title="来源与事项"/><div className="notification-section"><DataAlerts initial={data}/></div></section><section className="topic-section" id="team"><TopicBar title="团队协作" color="#9a84b7"/><div className="notification-section"><TaskAlertList initial={tasks}/></div></section><section className="topic-section" id="opportunity"><TopicBar title="校园机会" color="#bc945d"/><div className="notification-section"><ReminderList initial={reminders}/><h2>机会截止提醒</h2><NotificationList initial={rows}/></div></section></div></div>}

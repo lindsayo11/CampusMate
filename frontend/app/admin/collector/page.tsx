@@ -1,0 +1,25 @@
+"use client";
+import {useEffect,useState} from "react";
+import Link from "next/link";
+import {apiBase} from "@/lib/api";
+type Source={id:string;url:string;label:string;format:string;enabled:boolean};
+type Run={id:string;source_id:string|null;status:string;attempts:number;error:string|null;document_id:string|null};
+const formats=[['html','HTML 网页'],['pdf','文本型 PDF'],['xlsx','Excel XLSX'],['text','UTF-8 文本']];
+export default function Collector(){
+ const [sources,setSources]=useState<Source[]>([]),[runs,setRuns]=useState<Run[]>([]),[busy,setBusy]=useState(false),[message,setMessage]=useState('');
+ const [doc,setDoc]=useState<{id:string;raw_text:string;source_url:string}|null>(null),[payload,setPayload]=useState('');
+ async function call(path:string,method='GET',body?:unknown){const r=await fetch(apiBase+path,{method,cache:'no-store',headers:{'Content-Type':'application/json'},...(body===undefined?{}:{body:JSON.stringify(body)})});const d=await r.json();if(!r.ok)throw Error(typeof d.detail==='string'?d.detail:'字段无效，请检查来源、时间及必填项');return d}
+ async function refresh(){const [a,b]=await Promise.all([call('/v1/admin/collector/sources'),call('/v1/admin/collector/runs')]);setSources(a);setRuns(b)}
+ async function action(fn:()=>Promise<void>){if(busy)return;setBusy(true);setMessage('');try{await fn();await refresh()}catch(e){setMessage((e as Error).message)}finally{setBusy(false)}}
+ useEffect(()=>{void refresh().catch(e=>setMessage(e.message))},[]);
+ async function view(id:string){const data=await call('/v1/admin/sources/'+id);setDoc(data);setPayload(JSON.stringify({type:'contest',title:'',organization:'',summary:'',location:'',deadline:'',source_url:data.source_url,source_label:'',fetched_at:new Date().toISOString(),tags:[],rules:[]},null,2))}
+ return <div className="shell page"><h1>内容采集与附件导入</h1><p>采集后先核对原文，再填写结构化字段并提交审核。采集成功不代表已经发布。</p><Link href="/admin/review">审核队列</Link> · <Link href="/admin/sources">原文归档</Link>
+ <h2>新增定时来源</h2><form className="form-card" onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);void action(async()=>{await call('/v1/admin/collector/sources','POST',{url:f.get('url'),label:f.get('label'),format:f.get('format'),interval_minutes:Number(f.get('interval')),permission_note:f.get('permission')});setMessage('来源已添加，Worker 将按计划采集')})}}>
+ <label>来源地址<input name="url" type="url" required/></label><label>来源名称<input name="label" required maxLength={100}/></label><label>格式<select name="format">{formats.map(([v,t])=><option key={v} value={v}>{t}</option>)}</select></label><label>采集间隔（分钟）<input name="interval" type="number" defaultValue={360} min={60} max={43200} required/></label><label>使用授权或公开采集依据<textarea name="permission" required minLength={5} maxLength={500}/></label><button disabled={busy}>添加来源</button></form>
+ <h2>导入已取得的文件</h2><form className="form-card" onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);void action(async()=>{const file=f.get('file') as File;if(!file.size||file.size>4*1024*1024)throw Error('请选择不超过 4 MiB 的文件');const bytes=new Uint8Array(await file.arrayBuffer());let text='';for(let i=0;i<bytes.length;i+=8192)text+=String.fromCharCode(...bytes.subarray(i,i+8192));const result=await call('/v1/admin/collector/files','POST',{source_url:f.get('url'),format:f.get('format'),content_base64:btoa(text)});await view(result.document_id);setMessage('文件已解析，请核对原文后填写字段')})}}>
+ <label>文件原始公开来源<input name="url" type="url" required/></label><label>文件格式<select name="format">{formats.map(([v,t])=><option key={v} value={v}>{t}</option>)}</select></label><label>待解析文件<input name="file" type="file" accept=".html,.htm,.pdf,.xlsx,.txt" required/></label><button disabled={busy}>解析并归档</button></form>
+ <h2>来源与运行记录</h2><button disabled={busy} onClick={()=>void action(refresh)}>刷新状态</button>{sources.map(s=><article className="card" key={s.id}><h3>{s.label}</h3><a href={s.url} rel="noreferrer" target="_blank">查看来源</a><p>{s.enabled?'启用':'停用'} · {s.format}</p><button disabled={busy||!s.enabled} onClick={()=>void action(async()=>{await call(`/v1/admin/collector/sources/${s.id}/run`,'POST',{});setMessage('已排队，请稍后刷新')})}>立即采集/重跑</button><button disabled={busy} onClick={()=>void action(async()=>{await call(`/v1/admin/collector/sources/${s.id}`,'PATCH',{enabled:!s.enabled})})}>{s.enabled?'停用':'启用'}</button></article>)}
+ {runs.map(r=><article className="card" key={r.id}><p>状态：{r.status} · 尝试 {r.attempts} 次</p>{r.error&&<p>{r.error}</p>}{r.document_id&&<button disabled={busy} onClick={()=>void action(()=>view(r.document_id!))}>核对原文并整理字段</button>}</article>)}
+ {doc&&<section><h2>待整理原文</h2><pre style={{whiteSpace:'pre-wrap',overflowWrap:'anywhere'}}>{doc.raw_text}</pre><form onSubmit={e=>{e.preventDefault();void action(async()=>{const r=await call(`/v1/admin/collector/documents/${doc.id}/review`,'POST',JSON.parse(payload));setMessage(`已提交审核，编号 ${r.review_id}`)})}}><label>核对后的结构化字段<textarea rows={16} value={payload} onChange={e=>setPayload(e.target.value)} required/></label><p>deadline 必须填写原文中的截止时间（含时区）；未找到明确截止时间时不要提交。规则 evidence 必须是原文片段。</p><button disabled={busy}>提交人工审核</button></form></section>}
+ <p role="status">{message}</p></div>;
+}

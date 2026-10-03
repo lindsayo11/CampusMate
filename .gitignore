@@ -1,0 +1,37 @@
+# 环境与密钥
+.env
+.env*.local
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Node / Next.js
+node_modules/
+.next/
+dist/
+*.tsbuildinfo
+
+# 数据库
+# 运行时数据库不入库；公开演示快照（已脱敏）是唯一例外
+*.db
+!demo-data/release-preview.db
+
+# 本地运行数据与测试产物
+local-data/
+.test-runtime/
+test-results/
+playwright-report/
+artifacts/
+*_probe.json
+
+# 编辑器与系统文件
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,27 @@
+{
+  "name": "campusmate-web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "node ../scripts/start-web.cjs",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "next": "^16.3.6",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "typescript": "^5.7.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@sparticuz/chromium": "^153.0.0",
+    "tsx": "^4.23.15"
+  }
+}

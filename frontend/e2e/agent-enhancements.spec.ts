@@ -1,0 +1,31 @@
+import {test,expect} from '@playwright/test';
+
+test('助手准备清单与复盘：确认前无写入，保存后可查看',async({page,request})=>{
+ const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/agent?intent=plan&path=domestic_postgraduate_exam');
+ const query='请帮我制定考研准备计划 '+Date.now();
+ await page.getByLabel('给校伴的消息').fill(query);
+ await page.getByRole('button',{name:'发送',exact:true}).click();
+ await expect(page.getByText('等待你确认')).toBeVisible();
+ await expect(page.getByText('记录目标与选择理由',{exact:true})).toBeVisible();
+ const before=await(await request.get('/api/backend/v1/plans')).json();
+ await page.getByRole('button',{name:'确认保存',exact:true}).click();
+ await expect(page.getByText(/已保存 \d+ 项计划/)).toBeVisible();
+ const after=await(await request.get('/api/backend/v1/plans')).json();
+ const added=after.filter((p:{id:number})=>!before.some((old:{id:number})=>old.id===p.id));
+ expect(added.length).toBeGreaterThan(0);
+ const steps=await(await request.get('/api/backend/v1/plans/'+added[0].id+'/steps')).json();
+ expect(steps).toHaveLength(2);
+ await page.getByLabel('助手功能').selectOption('review');
+ await page.getByLabel('给校伴的消息').fill('复盘我的进度');
+ await page.getByLabel('给校伴的消息').press('Control+Enter');
+ await expect(page.getByRole('heading',{name:/个人执行进度/})).toBeVisible();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+ await page.reload();
+ await page.locator('.session-button').filter({hasText:query}).click();
+ await expect(page.getByRole('heading',{name:/个人执行进度/})).toBeVisible();
+ await page.getByRole('button',{name:'新会话',exact:true}).click();
+ await expect(page.getByLabel('助手发展路径')).toHaveValue('');
+ await expect(page.getByLabel('给校伴的消息')).toHaveValue('');
+ expect(errors).toEqual([]);
+});

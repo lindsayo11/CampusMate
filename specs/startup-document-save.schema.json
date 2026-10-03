@@ -1,0 +1,60 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "enum": [
+        "business_model",
+        "architecture",
+        "equity",
+        "bp",
+        "user_agreement",
+        "privacy",
+        "exit",
+        "ipo",
+        "compliance",
+        "ip",
+        "finance",
+        "fundraising",
+        "organization",
+        "validation"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "instruction": {
+      "default": "",
+      "maxLength": 2000,
+      "title": "Instruction",
+      "type": "string"
+    },
+    "model_assist": {
+      "default": false,
+      "title": "Model Assist",
+      "type": "boolean"
+    },
+    "expected_revision": {
+      "minimum": 1,
+      "title": "Expected Revision",
+      "type": "integer"
+    },
+    "markdown": {
+      "maxLength": 80000,
+      "minLength": 1,
+      "title": "Markdown",
+      "type": "string"
+    },
+    "expected_document_version": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Expected Document Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "kind",
+    "expected_revision",
+    "markdown"
+  ],
+  "title": "ArtifactIn",
+  "type": "object"
+}

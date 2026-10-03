@@ -1,0 +1,65 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: campusmate
+      POSTGRES_USER: campusmate
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes: ["campusmate_pg:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U campusmate -d campusmate"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+  migrate:
+    build: ./backend
+    command: ["alembic", "upgrade", "head"]
+    environment: &backend_env
+      DATABASE_URL: postgresql+psycopg://campusmate:${POSTGRES_PASSWORD}@db:5432/campusmate
+      DEMO_MODE: ${DEMO_MODE:-false}
+      SUPABASE_URL: ${SUPABASE_URL:-}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY:-}
+      DIFY_API_BASE: ${DIFY_API_BASE:-}
+      COLLECTOR_ENABLED: ${COLLECTOR_ENABLED:-false}
+      PUBLIC_NOTICE_WATCH_ENABLED: ${PUBLIC_NOTICE_WATCH_ENABLED:-false}
+      COLLECTOR_ALLOWED_HOSTS: ${COLLECTOR_ALLOWED_HOSTS:-}
+      DIFY_APP_KEY: ${DIFY_APP_KEY:-}
+      DEVELOPMENT_DIFY_API_BASE: ${DEVELOPMENT_DIFY_API_BASE:-}
+      DEVELOPMENT_DIFY_APP_KEY: ${DEVELOPMENT_DIFY_APP_KEY:-}
+      ADMIN_USER_IDS: ${ADMIN_USER_IDS:-}
+    depends_on:
+      db: {condition: service_healthy}
+  api:
+    build: ./backend
+    environment: *backend_env
+    ports: ["127.0.0.1:8000:8000"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+  worker:
+    build: ./backend
+    command: ["python", "-m", "app.worker"]
+    environment: *backend_env
+    depends_on:
+      api: {condition: service_healthy}
+    restart: unless-stopped
+  web:
+    build: ./frontend
+    environment:
+      ENABLE_AGENT_UI: ${ENABLE_AGENT_UI:-false}
+      ENABLE_COLLECTOR_UI: ${ENABLE_COLLECTOR_UI:-false}
+      API_INTERNAL_URL: http://api:8000
+      APP_ORIGIN: ${APP_ORIGIN:-}
+      SUPABASE_URL: ${SUPABASE_URL:-}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY:-}
+    ports: ["127.0.0.1:3000:3000"]
+    depends_on:
+      api: {condition: service_healthy}
+    restart: unless-stopped
+volumes:
+  campusmate_pg:

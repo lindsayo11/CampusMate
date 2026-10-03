@@ -1,0 +1,5 @@
+import {notFound} from "next/navigation";
+import Link from "next/link";
+import { type Opportunity } from "@/lib/api";
+import { ActionPanel } from "@/components/action-panel";
+export default async function Detail({params}:{params:Promise<{id:string}>}) { const {id}=await params; const r=await fetch((process.env.API_INTERNAL_URL||"http://127.0.0.1:8000")+"/v1/opportunities/"+encodeURIComponent(id),{cache:"no-store"});if(r.status===404)notFound();if(!r.ok)throw new Error("机会加载失败");const x:Opportunity=await r.json(); return <div className="shell detail"><Link href="/opportunities" className="back">← 返回机会中心</Link><div className="detail-grid"><article><span className="type">{x.type}</span><h1>{x.title}</h1><p className="org">{x.organization} · {x.location}</p><div className="tagrow">{x.tags.map(t=><span key={t}>{t}</span>)}</div><h2>机会说明</h2><p className="summary">{x.summary}</p><h2>信息来源</h2><p>本条信息来自 <a href={x.source_url}>{x.source_label}</a>，可信度 {Math.round(x.trust_score*100)}%，采集于 {new Date(x.fetched_at).toLocaleDateString("zh-CN")}。</p></article><ActionPanel opportunityId={x.id} deadline={x.deadline}/></div></div>; }
