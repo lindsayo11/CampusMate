@@ -42,6 +42,14 @@
 - 队伍任务分工、进度看板、任务到期提醒
 - 房间与私信，含内容举报与拉黑
 
+### 个人设置 `/settings`
+
+个人资料、通知偏好与权限设置。
+
+### 创业起步引导 `/entrepreneurship`
+
+从需求、市场、产品等驱动方式出发，逐步产出用户需求研究、问题地图、STP 分析与市场规模测算，作为创业前的探索工具。
+
 ### 创业工作台 `/startup`
 
 五个工作区、十个创业环节、14 类可编辑文稿，另有财务与股权测算：
@@ -73,7 +81,7 @@
 
 ### 账号与安全
 
-- 支持 Supabase 邮箱注册 / 登录 / 密码找回（可选）
+- 支持 Supabase 邮箱注册（6 位验证码确认）/ 登录 / 密码找回，以及谷歌登录（OAuth PKCE），均为可选
 - 本地演示模式使用 `x-user-id` 模拟身份，**严禁用于公开部署**
 - 个人画像、计划、会话、文稿按账号隔离；密钥只从服务端环境变量读取
 
@@ -86,7 +94,7 @@
 | 后端 | Python 3.12 · FastAPI · SQLAlchemy 2 · Alembic · Pydantic Settings |
 | 数据库 | SQLite（默认，本地演示）· PostgreSQL 16（Docker / 生产） |
 | 前端 | Next.js 16（App Router）· React 19 · TypeScript 5.7，无 UI 框架依赖 |
-| 鉴权 | Supabase Auth（可选）· 演示模式本地身份 |
+| 鉴权 | Supabase Auth（邮箱 / 谷歌 OAuth，可选）· 演示模式本地身份 |
 | 助手 | Dify Workflow（可选）· 默认规则检索 |
 | 采集 | httpx · BeautifulSoup · pypdf · openpyxl，自带 robots 与白名单治理 |
 | 测试 | pytest · node:test · Playwright |
@@ -249,6 +257,7 @@ docker compose up --build
 | [原文依据检索](docs/KNOWLEDGE.md) | 检索接口与引用规则 |
 | [任务到期通知](docs/TASK_ALERTS.md) | 提醒生成与投递规则 |
 | [密码找回](docs/PASSWORD_RECOVERY.md) | Supabase 邮件找回的部署与验收 |
+| [邮箱注册验证](docs/EMAIL_SIGNUP_OTP.md) | Supabase 邮箱注册 OTP 模板与 SMTP 配置 |
 | [环境补充](ENVIRONMENT.md) | 运行环境、代理与常见问题 |
 
 ---
