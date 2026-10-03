@@ -16,7 +16,7 @@ def setup(monkeypatch):
     eid,sid=str(uuid4()),str(uuid4())
     base='https://watch.example.edu/'
     with SessionLocal.begin() as db:
-        db.add(Source(id=sid,source_code='WATCH-'+sid,name='自动采集测试大学',publisher='测试大学',
+        db.add(Source(id=sid,source_code='WATCH-'+sid[:24],name='自动采集测试大学',publisher='测试大学',
             authority_level='A',source_class='university',official=True,jurisdiction_level='school',
             base_url=base,active=True,verified_at=datetime.now(UTC)))
         db.add(SourceEndpoint(id=eid,source_id=sid,name='watch',endpoint_type='html',url=base+'list',

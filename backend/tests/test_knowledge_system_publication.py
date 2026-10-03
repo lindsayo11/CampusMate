@@ -39,7 +39,7 @@ def make_system_document():
     marker = "kbmark" + suffix.replace("-", "")[:10]
     text = TEMPLATE.format(marker=marker)
     source = Source(
-        id=str(uuid4()), source_code="TEST-KB-" + suffix, name="知识链测试源",
+        id=str(uuid4()), source_code="TEST-KB-" + suffix[:24], name="知识链测试源",
         publisher="测试发布者", authority_level="A", source_class="government", official=True,
         jurisdiction_level="national", supported_paths="[]", supported_item_types="[]",
         base_url="https://example.edu/", active=True, verified_at=datetime.now(UTC))

@@ -65,7 +65,7 @@ def test_public_watch_collects_employment_with_evidence_and_no_qualification_rul
     title = '某大学2027届毕业生实习招聘申请通知'
     with TestClient(app):
         with SessionLocal.begin() as db:
-            db.add(Source(id=sid, source_code='PUBLIC-'+sid, name='实习招聘测试来源', publisher='测试大学',
+            db.add(Source(id=sid, source_code='PUBLIC-'+sid[:24], name='实习招聘测试来源', publisher='测试大学',
                 authority_level='A', source_class='university', official=True, jurisdiction_level='school',
                 base_url=base, active=True, verified_at=datetime.now(UTC)))
             db.add(SourceEndpoint(id=eid, source_id=sid, name='public_notices', endpoint_type='html',
