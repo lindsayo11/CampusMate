@@ -44,6 +44,8 @@ REGISTRY = Path(__file__).resolve().parents[1] / "app" / "source_registry.yaml"
 
 def declared_parser_types() -> set[str]:
     body = yaml.safe_load(REGISTRY.read_text(encoding="utf-8"))
+    from app.public_source_catalog import registry_sources
+    body['sources'].extend(registry_sources())
     declared = set()
     for source in body["sources"]:
         for endpoint in source.get("endpoints", []):

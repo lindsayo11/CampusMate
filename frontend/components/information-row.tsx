@@ -14,7 +14,7 @@ export function InformationRow({item}:{item:CatalogItem}) {
       <div className="feed-meta"><span className="source-avatar"><Icon name="file" size={14}/></span><b>{item.source.name}</b><span className={`source-label ${item.document.import_mode === 'demo' ? 'demo-label' : ''}`}>{sourceLabel}</span></div>
       <h3><Link href={'/data/' + item.publication_id}>{item.title}</Link></h3>
       <p className="information-excerpt">{item.description.length > 220 ? item.description.slice(0,220) + '…' : item.description || '查看详情，核对通知内容和来源。'}</p>
-      <div className="information-bottom"><div className="tagrow">
+      {(item.duplicate_count||1)>1&&<details><summary>同文 {item.duplicate_count} 份，已合并展示</summary>{item.alternate_sources?.map((s,i)=><p key={s.publication_id+String(i)}><a href={s.url} target="_blank" rel="noreferrer">{s.source.name} · 官方出处</a></p>)}</details>}<div className="information-bottom"><div className="tagrow">
         {item.content_kind&&<span>{({application_notice:'招生与申请通知',reference:'参考资料',news_report:'新闻报道'} as Record<string,string>)[item.content_kind]}</span>}{item.availability&&!['reference','report'].includes(item.availability)&&<span className={item.availability==='expired'?'is-expired':''}>{({open:'报名窗口内',upcoming:'尚未开始',expired:'已截止',needs_confirmation:'时间待核对',reference:'参考资料',report:'活动报道'} as Record<string,string>)[item.availability]}</span>}
         {item.paths.map(p => <span key={p.code}>{pathName(p.code, p.name)}</span>)}
         {location && <span>{location}</span>}

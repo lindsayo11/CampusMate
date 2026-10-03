@@ -480,3 +480,8 @@ app.include_router(development_agent_router)
 
 from .startup import router as startup_router
 app.include_router(startup_router)
+
+from .collection_page import router as collection_page_router
+app.include_router(collection_page_router)
+from .collection_exchange import router as collection_exchange_router
+app.include_router(collection_exchange_router)

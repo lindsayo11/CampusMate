@@ -158,11 +158,12 @@ sources:
     authority_level: A
     source_class: platform
     jurisdiction_level: national
+    region_code: CN
     supported_paths: [employment]
-    supported_item_types: [job, organization]
+    supported_item_types: [job, organization, public_notice]
     base_url: https://www.ncss.cn/
     endpoints:
-      - {name: public_discovery, type: query, url: https://www.ncss.cn/, access_tags: [DIRECT, QUERY], format: html, parser_type: PublicJobDiscoveryAdapter, automation_level: AUTO-3, agent_mode: DISCOVERY, fetch_interval: 12h, license_note: 不假设存在可直接使用的公开职位拉取 API}
+      - {name: public_discovery, type: query, url: https://www.ncss.cn/, access_tags: [DIRECT, QUERY], format: html, parser_type: PublicJobDiscoveryAdapter, automation_level: AUTO-3, agent_mode: DISCOVERY, fetch_interval: 12h, license_note: 公开资讯可使用经验证的 JSON 栏目和 HTML 原文；不假设存在可直接使用的公开职位拉取 API}
   - code: CM-JOB-002
     name: 中国公共招聘网
     publisher: 人力资源和社会保障部相关体系

@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 from ..parsers import MAX_BYTES, ParseError
 from .base import ParsedDocument, RawArtifact, SourceAdapter, ValidationResult
-from .notice_text import article_parts, notice_title, published_date, registration_dates
+from .notice_text import article_parts, notice_title, published_date, registration_dates, document_base, definition_fields
 
 PROGRAM_ALIASES = {
     "institution_code": ("院校代码", "招生单位代码"),
@@ -55,6 +55,8 @@ def reject_login_page(soup: BeautifulSoup):
     text = soup.get_text(" ", strip=True).lower()
     if soup.select_one('input[type="password"]') or "验证码" in text or "captcha" in text:
         raise ParseError("检测到登录或验证码页面，不得作为后台采集来源")
+    if '您没有访问当前栏目的权限' in text:
+        raise ParseError('检测到访问权限限制页面，不得作为后台采集来源')
 
 
 # 正文容器候选，按优先级排列。真实政府站点结构不统一：
@@ -331,6 +333,11 @@ class YZChsiAdapter(SourceAdapter):
 
 
 class UniversityNoticeAdapter(SourceAdapter):
+    def __init__(self, topic='postgraduate', article_selector=None, title_selector=None, title_context='', date_timezone=None):
+        self.topic = topic
+        self.title_context = title_context
+        self.date_timezone = date_timezone
+        self.article_selector, self.title_selector = article_selector, title_selector
     source_code = "CM-GR-004"
 
     def parse(self, raw: RawArtifact) -> ParsedDocument:
@@ -338,9 +345,16 @@ class UniversityNoticeAdapter(SourceAdapter):
             raise ParseError("HTML 文件为空或超过限制")
         if raw.content.startswith(b'%PDF'):
             return self.parse_pdf(raw)
+        if raw.content.startswith((b'\x89PNG\r\n\x1a\n',b'\xff\xd8\xff')) or raw.content[:4]==b'RIFF' and raw.content[8:12]==b'WEBP':
+            return self.parse_pdf(raw,format='image')
         soup = BeautifulSoup(raw.content, "html.parser")
         reject_login_page(soup)
-        values, evidence = {"title": notice_title(soup)}, []
+        values, evidence = {"title": notice_title(soup, self.topic, self.title_selector, self.title_context)}, []
+        if isinstance(self.title_selector,dict):
+            nodes=soup.select(self.title_selector['join'])[:self.title_selector.get('limit',2)]
+            if clean(''.join(node.get_text('',strip=True) for node in nodes))==values['title']:
+                evidence.extend({'record_key':'notice','field':'title','evidence_location':'dom='+selector_for(node),
+                    'quote_or_normalized_fact':node.get_text('',strip=True),'extractor':'parser'} for node in nodes)
         for row_index, row in enumerate(soup.select("table tr"), start=1):
             cells = row.select("th, td")
             if len(cells) < 2:
@@ -354,14 +368,17 @@ class UniversityNoticeAdapter(SourceAdapter):
                                      "evidence_location": f"dom=table tr:nth-of-type({row_index}) td:nth-of-type(2)",
                                      "quote_or_normalized_fact": f"{label}={value}", "extractor": "parser"})
                     break
-        article = article_parts(soup)
+        article = article_parts(soup, self.article_selector)
         paragraph_nodes = article.select('p, li')
         values["body"] = '\n'.join(node.get_text('',strip=True) for node in paragraph_nodes) if paragraph_nodes else article.get_text('\n',strip=True)
         publish_time = published_date(soup)
+        pairs, dates = definition_fields(article,self.date_timezone)
+        if 'publish_time' in dates:
+            publish_time = dates['publish_time']['value']
         year = int(publish_time[:4]) if publish_time else year_from_url(raw.canonical_url)
         # Read paragraphs when a real notice has no key/value table. Never invent
         # numeric eligibility thresholds or dates from a target admission year.
-        if not evidence:
+        if not any(proof.get('field')!='title' for proof in evidence):
             paragraphs = article.select('p, li') or [article]
             for node in paragraphs:
                 quote = clean(node.get_text(' ', strip=True))
@@ -377,6 +394,13 @@ class UniversityNoticeAdapter(SourceAdapter):
                     evidence.append({'record_key':'notice','field':field,
                         'evidence_location':'dom='+selector_for(article),
                         'quote_or_normalized_fact':clean(values['body']), 'extractor':'parser'})
+        # A key/value table must not suppress explicit registration dates elsewhere.
+        start, finish = registration_dates(clean(values['body']),year)
+        for field,value in (('open_at',start),('deadline_at',finish)):
+            if value and not values.get(field):
+                values[field]=value
+                evidence.append({'record_key':'notice','field':field,'evidence_location':'dom='+selector_for(article),
+                    'quote_or_normalized_fact':clean(values['body']),'extractor':'parser'})
         values['material_quotes'] = []
         collecting = False
         for line in values['body'].splitlines():
@@ -388,33 +412,60 @@ class UniversityNoticeAdapter(SourceAdapter):
                 values['material_quotes'].append(line)
         values['attachments'] = []
         from urllib.parse import urljoin, urlsplit
+        link_base = document_base(soup, raw.canonical_url)
         for link in article.select('a[href]'):
-            url = urljoin(raw.canonical_url, link['href'])
+            url = urljoin(link_base, link['href'].strip())
             if re.search(r'\.(?:pdf|docx?|xlsx?)(?:\?|$)', url, re.I) and urlsplit(url).scheme in {'https','http'}:
                 values['attachments'].append({'title':clean(link.get_text(' ',strip=True)) or '原文附件','url':url})
         if not evidence or len(values['body']) < 30:
             raise ParseError('通知正文不足，需人工核对')
+        if pairs:
+            values['body'] = '\n'.join(p['quote'] for p in pairs) + '\n' + values['body']
+            evidence.extend({'record_key':'notice','field':'body','evidence_location':'dom='+selector_for(p['node']),
+                'quote_or_normalized_fact':p['quote'],'extractor':'parser'} for p in pairs)
+        for field, fact in dates.items():
+            if field in {'open_at','deadline_at'}:
+                values[field]=fact['value']
+                evidence.append({'record_key':'notice','field':field,'evidence_location':'dom='+selector_for(fact['node']),
+                    'quote_or_normalized_fact':fact['quote'],'extractor':'parser'})
         return ParsedDocument(records=[values], evidence=evidence,
                               metadata={"canonical_url": raw.canonical_url, "publish_time": publish_time})
 
-    def parse_pdf(self, raw):
+    def parse_pdf(self, raw, format='pdf'):
         from ..parsers import extract_isolated
         from .notice_text import DATE, iso_date
-        text = extract_isolated(raw.content, 'pdf').text
+        extraction = extract_isolated(raw.content, format)
+        text = extraction.text
         pages = re.split(r'\[第 (\d+) 页\]\n', text)
         first = pages[2] if len(pages) > 2 else text
         lines = [line.strip() for line in first.splitlines() if line.strip() and not re.fullmatch(r'\d+(?:\s*/\s*\d+)?',line.strip())]
         title_lines = []
         for line in lines[:6]:
             title_lines.append(line)
-            if re.search(r'办法|章程|通知|简章|细则', line):
+            if re.search(r'办法|章程|通知|简章|细则|公告|notice|announcement|guidelines', line,re.I):
                 break
         title = clean(''.join(title_lines))
-        if not re.search(r'研究生|推免|推荐免试', title):
-            raise ParseError('PDF 首页未找到明确的研究生招生标题')
+        from .notice_text import matches_topic
+        for index,line in enumerate(lines[:16]):
+            if re.match(r'^(?:关于|20\d{2}|第[一二三四五六七八九十0-9]+届)',line):
+                for length in range(1,4):
+                    candidate=clean(''.join(lines[index:index+length]))
+                    if len(candidate)<=200 and matches_topic(candidate,self.topic) and re.search(r'通知|公告|办法|章程|简章|细则|指南|notice|announcement|guidelines',candidate,re.I):
+                        title=candidate;break
+                else:continue
+                break
+        if not 8<=len(title)<=200 or not matches_topic(title, self.topic):
+            raise ParseError('PDF 首页未找到明确的主题标题')
         evidence = [{'record_key':'notice','field':'body','evidence_location':f'page={pages[i]}',
                      'quote_or_normalized_fact':pages[i+1].strip(), 'extractor':'parser',
                      'evidence_type':'pdf'} for i in range(1,len(pages),2)]
+        ocr_pages={p['page'] for p in extraction.evidence}
+        for proof in evidence:
+            if int(proof['evidence_location'].split('=')[1]) in ocr_pages:
+                proof.update(extractor='ocr',evidence_type='ocr')
+        evidence.extend({'record_key':'notice','field':'body',
+            'evidence_location':f"page={p['page']};line={p['line']};box={','.join(map(str,p['box']))};confidence={p['confidence']}",
+            'quote_or_normalized_fact':p['text'],'extractor':'ocr','evidence_type':'ocr'} for p in extraction.evidence)
         # A dated filename is a useful year anchor, never a claimed publication date.
         url_year = re.search(r'(20\d{2})\d{4}', raw.canonical_url)
         year = int(url_year.group(1)) if url_year else None
@@ -423,10 +474,13 @@ class UniversityNoticeAdapter(SourceAdapter):
             date = DATE.fullmatch(line.strip())
             if date:
                 publish_time = iso_date(*date.groups())
+        if ocr_pages:publish_time=None
         if publish_time:
             year = int(publish_time[:4])
-        start, finish = registration_dates(clean(text), year)
+        # OCR dates remain uncertain until a person checks the image; never infer a window.
+        start, finish = (None,None) if ocr_pages else registration_dates(clean(text), year)
         values = {'title':title,'body':text,'attachments':[],'material_quotes':[]}
+        if ocr_pages:values['body']='[OCR 自动识别，需对照官方原图核对]\n'+text
         for field,value in (('open_at',start),('deadline_at',finish)):
             if value:
                 values[field] = value
@@ -449,3 +503,12 @@ class UniversityNoticeAdapter(SourceAdapter):
 
     def validate(self, record) -> ValidationResult:
         return ValidationResult(valid=bool(record.get("title")))
+
+
+class PublicNoticeAdapter(UniversityNoticeAdapter):
+    """Public text and dates across topics, without deriving eligibility rules."""
+    def __init__(self, topic='employment', article_selector=None, title_selector=None, title_context='', date_timezone=None):
+        super().__init__(topic, article_selector, title_selector, title_context, date_timezone)
+
+    def extract_rules(self, parsed: ParsedDocument):
+        return []

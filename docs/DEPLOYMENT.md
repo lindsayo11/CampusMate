@@ -82,3 +82,6 @@ Chromium 当前执行器启动 SIGTRAP，即使提供独立二进制和标准无
 
 ## 当前新增功能
 采集的 COLLECTOR_ALLOWED_HOSTS 同时配置 API/Worker，默认空值禁止自动抓取；见 COLLECTION.md。原文公开检索必须单独授权，见 KNOWLEDGE.md。队伍任务通知由同一 Worker 运行，见 TASK_ALERTS.md。
+
+
+采集专用部署、OCR、同步与告警的开发记录见 [采集运维历史](COLLECTION_OPERATIONS_HISTORY.md)，当前整合状态见 [数据接入进度](DATA_COLLECTION_PROGRESS.md)。

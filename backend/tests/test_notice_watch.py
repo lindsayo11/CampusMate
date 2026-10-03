@@ -118,6 +118,29 @@ def test_literal_onclick_and_no_script_execution():
         {'url':'https://watch.example.edu/article/2','title':'某大学2028年接收推免研究生办法'}]
 
 
+def test_targeted_collection_respects_pauses_and_leaves_other_sources_queued(monkeypatch):
+    with TestClient(app):
+        first, base = setup(monkeypatch)
+        second, _ = setup(monkeypatch)
+        calls = []
+        def fetch(url, *args, **kwargs):
+            calls.append(url)
+            return response(url, '<a href="a">测试大学2027年硕士招生报名通知</a>'.encode())
+        monkeypatch.setattr(watch, 'collect_bytes_conditional', fetch)
+        with SessionLocal.begin() as db:
+            db.get(SourceEndpoint, second).scheduled = False
+        assert watch.process_once(endpoint_ids=[second]) is None and not calls
+        assert watch.process_once(endpoint_ids=[]) is None
+        with SessionLocal.begin() as db:
+            db.get(SourceEndpoint, second).scheduled = True
+        assert watch.process_once(endpoint_ids=[second])['kind'] == 'index'
+        with SessionLocal.begin() as db:
+            untouched = db.scalar(select(NoticeResource).where(NoticeResource.endpoint_id == first))
+            assert untouched.checked_at is None and untouched.lease_token is None
+            db.get(SourceEndpoint, first).scheduled = False
+            db.get(SourceEndpoint, second).scheduled = False
+
+
 def test_title_and_discovery_cover_embedded_pdf_and_joint_programme():
     from app.adapters.notice_text import notice_title
     from bs4 import BeautifulSoup

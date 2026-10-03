@@ -1,8 +1,17 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field, field_validator
 
 
 class Settings(BaseSettings):
+    collection_alert_webhook: str = Field(default='',repr=False)
+    collection_alert_channel: str = 'generic'
+    collection_alert_chat_id: str = Field(default='',repr=False)
+    collection_exchange_token: str = Field(default='',repr=False)
+    collection_peer_url: str = ''
+    collection_sync_interval_minutes: int = Field(default=5,ge=1,le=1440)
+    collection_sync_batch_size: int = Field(default=12,ge=1,le=32)
     public_notice_watch_enabled: bool = False
+    public_notice_watch_batch_size: int = Field(default=8, ge=1, le=32)
     collector_enabled: bool = False
     collector_allowed_hosts: str = ""
     collector_skip_robots: bool = False
@@ -15,6 +24,12 @@ class Settings(BaseSettings):
     supabase_anon_key: str = ""
     admin_user_ids: str = ""
     database_url: str = "sqlite:///./campusmate.db"
+    @field_validator('database_url')
+    @classmethod
+    def postgres_driver(cls,value):
+        if value.startswith(('postgres://','postgresql://')):
+            return 'postgresql+psycopg://'+value.split('://',1)[1]
+        return value
     cors_origins: str = "http://localhost:3000"
 
     # ---------------------------------------------------------------------
