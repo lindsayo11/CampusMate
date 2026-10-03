@@ -1,0 +1,67 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> campusmate-web@0.23.0-preview.1 test:e2e
+> playwright test --max-failures=1
+
+
+Running 22 tests using 1 worker
+
+(node:51) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   1 [desktop] › e2e/collaboration.spec.ts:12:5 › 双账号浏览器：邀请接受、任务、聊天、举报处理 (2ms)
+Testing stopped early after 1 maximum allowed failures.
+
+
+  1) [desktop] › e2e/collaboration.spec.ts:12:5 › 双账号浏览器：邀请接受、任务、聊天、举报处理 ───────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> <PROJECT>/.test-runtime/chromium/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --no-sandbox --disable-dev-shm-usage --disable-gpu --user-data-dir=<PROJECT>/.test-runtime/playwright_chromiumdev_profile-og3s0k --remote-debugging-pipe --no-startup-window
+    <launched> pid=63
+    Call log:
+      - <launching> <PROJECT>/.test-runtime/chromium/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --no-sandbox --disable-dev-shm-usage --disable-gpu --user-data-dir=<PROJECT>/.test-runtime/playwright_chromiumdev_profile-og3s0k --remote-debugging-pipe --no-startup-window
+      - <launched> pid=63
+      - [pid=63] <gracefully close start>
+      - [pid=63] <kill>
+      - [pid=63] <will force kill>
+      - [pid=63] <process did exit: exitCode=null, signal=SIGTRAP>
+      - [pid=63] starting temporary directories cleanup
+      - [pid=63] finished temporary directories cleanup
+      - [pid=63] <gracefully close end>
+
+
+    Error Context: test-results/collaboration-双账号浏览器：邀请接受、任务、聊天、举报处理-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/collaboration-双账号浏览器：邀请接受、任务、聊天、举报处理-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/collaboration-双账号浏览器：邀请接受、任务、聊天、举报处理-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [desktop] › e2e/collaboration.spec.ts:12:5 › 双账号浏览器：邀请接受、任务、聊天、举报处理 ────────────────────────────
+  21 did not run
+  1 error was not a part of any test, see above for details
+INFO:     Started server process [8]
+INFO:     Waiting for application startup.
+WARNING:  
+========================================================================
+DEMO_MODE=true: 演示身份可通过 x-user-id 切换，包含管理员。仅供隔离环境测试，严禁公网部署！
+========================================================================
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+{"trace_id": "a61143fd-e891-4f52-b95a-44256947c653", "method": "GET", "route": "/health/ready", "status": 200, "latency_ms": 21.8}
+INFO:     127.0.0.1:33792 - "GET /health/ready HTTP/1.1" 200 OK
+▲ Next.js 16.3.6
+- Local:         http://127.0.0.1:3000
+- Network:       http://127.0.0.1:3000
+✓ Ready in 0ms
+✓ Running next.config took 2ms
+{"trace_id": "9bb38ac7-7ac8-452d-97a7-d96cb097b9cc", "method": "GET", "route": "/health", "status": 200, "latency_ms": 0.9}
+INFO:     127.0.0.1:33794 - "GET /health HTTP/1.1" 200 OK
+{"trace_id": "ce3439fd-0434-49f7-aadc-135dffb0aa4f", "method": "GET", "route": "/v1/account", "status": 200, "latency_ms": 0.9}
+INFO:     127.0.0.1:33794 - "GET /v1/account HTTP/1.1" 200 OK
+

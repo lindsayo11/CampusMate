@@ -1,0 +1,11 @@
+
+> campusmate-web@0.34.0-notice-watch.1 dev
+> next dev
+
+▲ Next.js 16.3.6 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://100.119.217.11:3001
+- Environments: .env.local
+✓ Ready in 998ms
+✓ Running next.config.ts took 65ms
+[?25h
