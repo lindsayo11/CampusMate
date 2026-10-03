@@ -83,8 +83,8 @@ def test_public_watch_collects_employment_with_evidence_and_no_qualification_rul
         monkeypatch.setattr(watch, 'collect_bytes_conditional', fetch)
         with SessionLocal.begin() as db:
             watch.add_resource(db,eid,base+'list','index',datetime.now(UTC))
-        assert watch.process_once()['kind'] == 'index'
-        assert watch.process_once()['status'] == 'updated'
+        assert watch.process_once(endpoint_ids=[eid])['kind'] == 'index'
+        assert watch.process_once(endpoint_ids=[eid])['status'] == 'updated'
         with SessionLocal.begin() as db:
             doc = db.scalar(select(DocumentVersion).where(DocumentVersion.source_endpoint_id == eid))
             item = db.scalar(select(DevelopmentItem).where(DevelopmentItem.source_document_id == doc.id))

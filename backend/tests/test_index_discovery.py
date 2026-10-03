@@ -131,10 +131,10 @@ def test_scheduler_rotates_to_unchecked_source_before_drain_of_busy_source(monke
             b'<a href="article">'+ '2027年硕士招生报名通知'.encode()+b'</a>'))
         watch.process_once(endpoint_ids=[busy,fresh])
         with SessionLocal() as db:
-            assert not db.scalar(select(NoticeResource).where(NoticeResource.endpoint_id==fresh)).checked_at
+            assert not db.scalar(select(NoticeResource).where(NoticeResource.endpoint_id==fresh,NoticeResource.kind=='index')).checked_at
         watch.process_once(endpoint_ids=[busy,fresh])
         with SessionLocal.begin() as db:
-            assert db.scalar(select(NoticeResource).where(NoticeResource.endpoint_id==fresh)).checked_at
+            assert db.scalar(select(NoticeResource).where(NoticeResource.endpoint_id==fresh,NoticeResource.kind=='index')).checked_at
             assert len(db.scalars(select(NoticeResource).where(NoticeResource.endpoint_id==busy,
                 NoticeResource.checked_at.is_(None))).all())>=2
             db.get(SourceEndpoint,busy).scheduled=False

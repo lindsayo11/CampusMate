@@ -159,7 +159,7 @@ def test_retry_after_then_manual_takeover(monkeypatch):
             assert run.attempts == attempt
             if attempt < 3:
                 assert run.status == "retry" and run.http_status == 429
-                assert run.ready_at >= datetime.now(UTC).replace(tzinfo=None) + timedelta(seconds=100)
+                assert run.ready_at.replace(tzinfo=UTC) >= datetime.now(UTC) + timedelta(seconds=100)
                 run.ready_at = datetime.now(UTC) - timedelta(seconds=1)
             else:
                 assert run.status == "failed"
