@@ -1,0 +1,16 @@
+'use client';
+import {useState,type FormEvent} from 'react';
+import Link from 'next/link';
+import {apiBase} from '@/lib/api';
+type Correction={id:number;publication_id:string;category:string;message:string;status:string;review_note:string};
+const statusNames:Record<string,string>={pending:'待核对',resolved:'已处理',dismissed:'暂不采纳'};
+export function DataCorrection({publicationId}:{publicationId:string}){
+ const [busy,setBusy]=useState(false),[message,setMessage]=useState(''),[error,setError]=useState('');
+ async function submit(e:FormEvent<HTMLFormElement>){e.preventDefault();if(busy)return;const form=e.currentTarget,f=new FormData(form);setBusy(true);setError('');try{const r=await fetch(apiBase+'/v1/data/corrections',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({publication_id:publicationId,category:f.get('category'),message:f.get('message')})});const d=await r.json();if(!r.ok)throw Error(typeof d.detail==='string'?d.detail:'提交失败，请重试');setMessage('反馈已保存（编号 '+d.id+'），管理员会核对当前版本。');form.reset()}catch(e){setError((e as Error).message)}finally{setBusy(false)}}
+ return <details className="card"><summary>发现日期或内容有误？</summary><form onSubmit={submit} className="correction-form"><p>指出具体问题，并附上官方页面或原文位置。反馈仅对你和管理员可见。</p><label>问题类型<select name="category"><option value="date">日期与截止时间</option><option value="content">内容或申请材料</option><option value="source">来源或链接</option><option value="other">其他问题</option></select></label><label>问题说明<textarea name="message" required minLength={5} maxLength={2000} placeholder="例如：原文第三段的日期与展示信息不一致…"/></label><button disabled={busy} className="primary">{busy?'提交中…':'提交反馈'}</button>{message&&<p role="status">{message}</p>}{error&&<p role="alert">{error}</p>}</form></details>
+}
+export function CorrectionQueue({initial}:{initial:Correction[]}){
+ const [rows,setRows]=useState(initial),[busy,setBusy]=useState(false),[error,setError]=useState('');
+ async function review(e:FormEvent<HTMLFormElement>,id:number){e.preventDefault();if(busy)return;const f=new FormData(e.currentTarget);setBusy(true);setError('');try{const r=await fetch(apiBase+'/v1/admin/data/corrections/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:f.get('status'),note:f.get('note')})});const data=await r.json();if(!r.ok)throw Error(typeof data.detail==='string'?data.detail:'保存失败');setRows(xs=>xs.map(x=>x.id===id?{...x,status:data.status,review_note:String(f.get('note'))}:x))}catch(e){setError((e as Error).message)}finally{setBusy(false)}}
+ return <section className="card"><h2>信息纠错 · {rows.filter(x=>x.status==='pending').length} 项待核对</h2><p>核对原文后，通过重新导入或撤回更正内容，再填写处理结果。更改反馈状态不会自动改写原文。</p>{!rows.length&&<p>暂未收到反馈。</p>}{rows.map(row=><article key={row.id}><h3>反馈 #{row.id} · {statusNames[row.status]}</h3><p style={{whiteSpace:'pre-wrap'}}>{row.message}</p><Link href={'/data/'+row.publication_id}>查看被反馈的版本 →</Link>{row.status==='pending'?<form className="correction-form" onSubmit={e=>void review(e,row.id)}><label>处理结果<select name="status"><option value="resolved">已处理</option><option value="dismissed">暂不采纳</option></select></label><label>核对与处理说明<textarea name="note" minLength={3} maxLength={2000} required/></label><button disabled={busy}>保存处理结果</button></form>:<p>{row.review_note}</p>}</article>)}{error&&<p role="alert">{error}</p>}</section>
+}

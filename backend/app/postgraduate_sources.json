@@ -1,0 +1,66 @@
+{
+  "verified_at": "2026-10-01",
+  "sources": [
+    {
+      "code": "CM-GR-004-PKU",
+      "name": "北京大学",
+      "index_urls": [
+        "https://admission.pku.edu.cn/zsxx/sszs/tjms/index.htm",
+        "https://admission.pku.edu.cn/zsxx/sszs/index.htm"
+      ]
+    },
+    {
+      "code": "CM-GR-004-THU",
+      "name": "清华大学",
+      "index_urls": [
+        "https://yz.tsinghua.edu.cn/zsxx/sszs/tjms.htm",
+        "https://yz.tsinghua.edu.cn/zsxx/sszs/jzml.htm"
+      ]
+    },
+    {
+      "code": "CM-GR-004-FDU",
+      "name": "复旦大学",
+      "index_urls": [
+        "https://gsao.fudan.edu.cn/"
+      ]
+    },
+    {
+      "code": "CM-GR-004-SJTU",
+      "name": "上海交通大学",
+      "index_urls": [
+        "https://yzb.sjtu.edu.cn/zkxx/sszs?page=1",
+        "https://yzb.sjtu.edu.cn/zsjz/sszs"
+      ]
+    },
+    {
+      "code": "CM-GR-004-XJTU",
+      "name": "西安交通大学",
+      "index_urls": [
+        "https://yz.xjtu.edu.cn/index/tms.htm",
+        "https://yz.xjtu.edu.cn/index/sszs.htm"
+      ]
+    },
+    {
+      "code": "CM-GR-004-UESTC",
+      "name": "电子科技大学",
+      "index_urls": [
+        "https://yz.uestc.edu.cn/sszs/zsjz.htm",
+        "https://yz.uestc.edu.cn/sszs/tzgg.htm"
+      ]
+    },
+    {
+      "code": "CM-GR-004-ZJU",
+      "name": "浙江大学材料科学与工程学院",
+      "index_urls": [
+        "https://mse.zju.edu.cn/yjszs/list.psp"
+      ]
+    },
+    {
+      "code": "CM-GR-004-USTC",
+      "name": "中国科学技术大学",
+      "index_urls": [
+        "https://yz.ustc.edu.cn/column/176?num=1"
+      ]
+    }
+  ]
+}

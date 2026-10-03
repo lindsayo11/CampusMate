@@ -1,0 +1,585 @@
+sources:
+  - code: CM-BASE-MOE
+    name: 教育部
+    publisher: 中华人民共和国教育部
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: national
+    supported_paths: [domestic_study, overseas_study, employment, entrepreneurship]
+    supported_item_types: [policy, institution]
+    base_url: http://www.moe.gov.cn/
+    endpoints:
+      # 2026-09-29 实测校准：原 URL 为站点首页（h1=0/article=0/main=0），
+      # MoEPolicyAdapter 会"静默假成功"（body 为空、证据 0 条）。已换成
+      # 教育部政策文献真实栏目页，实测返回 200 / 静态 HTML。
+      # 注意：该站位于腾讯 EdgeOne 之后，https:// 一律 302 降级到 http://，
+      # 因此必须走明文 HTTP（已列入 COLLECTOR_ALLOW_PLAINTEXT_HOSTS）。
+      - {name: public_policy, type: html, url: http://www.moe.gov.cn/jyb_sjzl/, access_tags: [DIRECT, FILE], format: html, parser_type: MoEPolicyAdapter, automation_level: AUTO-1, agent_mode: REVIEW, fetch_interval: 12h}
+  - code: CM-BASE-UNIVERSITIES
+    name: 教育部全国高等学校名单
+    publisher: 中华人民共和国教育部
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: national
+    supported_paths: [domestic_study, employment, entrepreneurship]
+    supported_item_types: [institution]
+    base_url: http://www.moe.gov.cn/
+    endpoints:
+      # 仍缺"全国高等学校名单"的实际 xlsx 下载入口；首页不是文件端点。
+      # 保持 homepage 会让 UniversityListAdapter 拿到 HTML，因此继续 open blocker。
+      - {name: annual_list, type: file, url: http://www.moe.gov.cn/, access_tags: [DIRECT, FILE], format: xlsx, parser_type: UniversityListAdapter, automation_level: AUTO-1, agent_mode: DISCOVERY, fetch_interval: annual}
+  - code: CM-BASE-REGION
+    name: 国家地名信息库行政区划
+    publisher: 民政体系国家地名服务
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: national
+    supported_paths: [all]
+    supported_item_types: [region]
+    base_url: https://dmfw.mca.gov.cn/
+    endpoints:
+      - {name: region_query, type: query, url: https://dmfw.mca.gov.cn/interface.html, access_tags: [QUERY], format: html, parser_type: RegionAdapter, automation_level: AUTO-2, agent_mode: "NO", fetch_interval: 30d, license_note: 正式上线前复核接口条款与字段}
+  - code: CM-BASE-NBS
+    name: 国家统计局
+    publisher: 国家统计局
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: national
+    supported_paths: [employment, entrepreneurship]
+    supported_item_types: [statistics, industry]
+    base_url: https://www.stats.gov.cn/
+    endpoints:
+      - {name: public_data, type: file, url: https://www.stats.gov.cn/, access_tags: [DIRECT, FILE], format: xlsx, parser_type: StatisticsAdapter, automation_level: AUTO-1, agent_mode: REVIEW, fetch_interval: 30d}
+  - code: CM-BASE-OCCUPATION
+    name: 中华人民共和国职业分类大典
+    publisher: 人力资源和社会保障部等
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: national
+    supported_paths: [employment, public_service]
+    supported_item_types: [occupation]
+    base_url: https://www.mohrss.gov.cn/
+    endpoints:
+      - {name: classification, type: file, url: https://www.mohrss.gov.cn/, access_tags: [DIRECT, FILE], format: pdf, parser_type: OccupationAdapter, automation_level: AUTO-1, agent_mode: REVIEW, fetch_interval: version_event}
+  - code: CM-GR-001
+    name: 教育部研究生招生政策
+    publisher: 中华人民共和国教育部
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: national
+    supported_paths: [domestic_postgraduate_exam]
+    supported_item_types: [policy, timeline, eligibility_rule]
+    base_url: http://www.moe.gov.cn/
+    endpoints:
+      # 2026-09-29 实测校准：2027 年研考管理规定的真实政策页面，正文容器为
+      # div.moe-detail-box（适配器已支持）。该站 https 会 302 降级到 http。
+      - {name: graduate_policy, type: html, url: http://www.moe.gov.cn/jyb_sjzl/, access_tags: [DIRECT, FILE], format: html, parser_type: MoEPolicyAdapter, automation_level: AUTO-1, agent_mode: REVIEW, fetch_interval: 12h}
+      - {name: graduate_policy_detail, type: html, url: http://www.moe.gov.cn/srcsite/A15/moe_778/s3261/202609/t20260923_1451734.html, access_tags: [DIRECT, FILE], format: html, parser_type: MoEPolicyAdapter, automation_level: AUTO-1, agent_mode: REVIEW, fetch_interval: 12h}
+  - code: CM-GR-002
+    name: 中国研究生招生信息网
+    publisher: 教育部相关业务体系
+    authority_level: A+
+    source_class: platform
+    jurisdiction_level: national
+    supported_paths: [domestic_postgraduate_exam, recommendation_exemption]
+    supported_item_types: [program, application_cycle, policy]
+    base_url: https://yz.chsi.com.cn/
+    endpoints:
+      - {name: public_admission_information, type: query, url: https://yz.chsi.com.cn/, access_tags: [DIRECT, QUERY], format: html, parser_type: YZChsiAdapter, automation_level: AUTO-2, agent_mode: EXTRACT, fetch_interval: 12h_in_season}
+      - {name: user_application_system, type: login, url: https://yz.chsi.com.cn/, access_tags: [LOGIN-USER], auth_type: login, format: html, parser_type: '', automation_level: AUTO-4, agent_mode: USER_ACTION, fetch_interval: manual, license_note: 不得作为服务端采集通道；禁止绕过验证码}
+  - code: CM-GR-003-JS
+    name: 江苏省教育考试院
+    publisher: 江苏省教育考试院
+    authority_level: A
+    source_class: government
+    jurisdiction_level: province
+    region_code: '320000'
+    supported_paths: [domestic_postgraduate_exam, domestic_study]
+    supported_item_types: [policy, application_cycle]
+    base_url: https://www.jseea.cn/
+    endpoints:
+      # 2026-09-29 实测：省级考试院中少数仍是静态 HTML 的站点。招考信息列表页
+      # 直接给出详情链接 /webfile/index/index_zkxx/YYYY-MM-DD/<id>.html，详情页
+      # 正文在 <article>（含 <div id="content">），MoEPolicyAdapter 可直接解析。
+      # 该站的报名通知常省略年份（「报名时间：9月21日-10月21日」），年份从 URL 取。
+      - {name: notice_list, type: html, url: https://www.jseea.cn/webfile/index/index_zkxx/, access_tags: [DIRECT], format: html, parser_type: MoEPolicyAdapter, automation_level: AUTO-2, agent_mode: EXTRACT, fetch_interval: 12h}
+  - code: CM-ENT-008
+    name: 挑战杯全国大学生系列科技学术竞赛
+    publisher: 共青团中央等主办单位
+    authority_level: A
+    source_class: government
+    jurisdiction_level: national
+    supported_paths: [entrepreneurship]
+    supported_item_types: [policy, application_cycle]
+    base_url: https://www.tiaozhanbei.net/
+    endpoints:
+      # 2026-09-29 实测：静态 HTML，列表页 /tzb 的 a[href*="/article/"] 直接给出详情，
+      # 详情页正文在 <article>、标题在 <h1>，MoEPolicyAdapter 可直接解析。
+      # 注意：站上 58 篇文章的日期均为历史（2004–2026-07），没有未来截止，
+      # 因此条目进信息中心与创新创业频道，但不会出现在校园机会。
+      - {name: news_list, type: html, url: https://www.tiaozhanbei.net/tzb, access_tags: [DIRECT], format: html, parser_type: MoEPolicyAdapter, automation_level: AUTO-2, agent_mode: EXTRACT, fetch_interval: 7d}
+  - code: CM-TM-001
+    name: 全国推免服务系统
+    publisher: 教育部相关业务体系
+    authority_level: A+
+    source_class: platform
+    jurisdiction_level: national
+    supported_paths: [recommendation_exemption]
+    supported_item_types: [policy, timeline]
+    base_url: https://yz.chsi.com.cn/tm/
+    endpoints:
+      - {name: public_information, type: html, url: https://yz.chsi.com.cn/tm/, access_tags: [DIRECT], format: html, parser_type: YZChsiAdapter, automation_level: AUTO-2, agent_mode: EXTRACT, fetch_interval: 12h_in_season}
+  - code: CM-CS-001
+    name: 国家公务员年度招考专题
+    publisher: 中央公务员主管部门
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: national
+    supported_paths: [civil_service]
+    supported_item_types: [recruitment_cycle, position, eligibility_rule]
+    base_url: https://bm.scs.gov.cn/
+    endpoints:
+      - {name: annual_position_workbook, type: file, url: https://bm.scs.gov.cn/, access_tags: [DIRECT, FILE], format: xlsx, parser_type: CivilServiceWorkbookAdapter, automation_level: AUTO-1, agent_mode: EXTRACT, fetch_interval: 6h_in_season}
+  - code: CM-PI-001
+    name: 中央和国家机关事业单位公开招聘服务平台
+    publisher: 人力资源和社会保障部
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: national
+    supported_paths: [public_institution]
+    supported_item_types: [recruitment_cycle, position]
+    base_url: https://www.mohrss.gov.cn/
+    endpoints:
+      - {name: public_recruitment, type: html, url: https://www.mohrss.gov.cn/SYrlzyhshbzb/fwyd/SYkaoshizhaopin/zyhgjjgsydwgkzp/, access_tags: [DIRECT, FILE], format: html, parser_type: InstitutionRecruitmentAdapter, automation_level: AUTO-2, agent_mode: EXTRACT, fetch_interval: 12h}
+      - {name: regional_platform_directory, type: html, url: https://www.mohrss.gov.cn/SYrlzyhshbzb/fwyd/SYkaoshizhaopin/zyhgjjgsydwgkzp/, access_tags: [DIRECT], format: html, parser_type: RegionalRecruitmentDirectoryAdapter, automation_level: AUTO-2, agent_mode: DISCOVERY, fetch_interval: 7d}
+  - code: CM-JOB-001
+    name: 国家大学生就业服务平台
+    publisher: 教育部学生服务与素质发展中心相关体系
+    authority_level: A
+    source_class: platform
+    jurisdiction_level: national
+    supported_paths: [employment]
+    supported_item_types: [job, organization]
+    base_url: https://www.ncss.cn/
+    endpoints:
+      - {name: public_discovery, type: query, url: https://www.ncss.cn/, access_tags: [DIRECT, QUERY], format: html, parser_type: PublicJobDiscoveryAdapter, automation_level: AUTO-3, agent_mode: DISCOVERY, fetch_interval: 12h, license_note: 不假设存在可直接使用的公开职位拉取 API}
+  - code: CM-JOB-002
+    name: 中国公共招聘网
+    publisher: 人力资源和社会保障部相关体系
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: national
+    supported_paths: [employment]
+    supported_item_types: [job]
+    base_url: https://job.mohrss.gov.cn/
+    endpoints:
+      - {name: public_jobs, type: query, url: https://job.mohrss.gov.cn/cjobs/jobinfolist/listJobinfolist, access_tags: [DIRECT, QUERY], format: html, parser_type: MohrssPublicJobAdapter, automation_level: AUTO-2, agent_mode: EXTRACT, fetch_interval: 12h}
+  - code: CM-OS-001
+    name: 教育部留学服务中心
+    publisher: 教育部留学服务中心
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: national
+    supported_paths: [overseas_study]
+    supported_item_types: [institution, policy]
+    base_url: https://www.cscse.edu.cn/
+    endpoints:
+      - {name: public_registry, type: query, url: https://www.cscse.edu.cn/, access_tags: [DIRECT, QUERY], format: html, parser_type: OverseasRegistryAdapter, automation_level: AUTO-2, agent_mode: REVIEW, fetch_interval: 7d, license_status: unknown, scheduled: false, paused_reason: 精确公开栏目、robots 与使用条款尚待合法可访问环境人工核验}
+      - {name: personal_credential_service, type: login, url: https://zwfw.cscse.edu.cn/, access_tags: [LOGIN-USER], auth_type: login, format: html, parser_type: '', automation_level: AUTO-4, agent_mode: USER_ACTION, fetch_interval: manual, license_status: not_applicable, manual_takeover: true, paused_reason: 个人学历认证需要用户登录和材料，不进入后台采集}
+    blockers:
+      - {endpoint: public_registry, type: live_access_unverified, detail: 当前执行环境无法完成留服中心公开栏目、robots 和条款的线上校准，不宣称实时同步。, required_action: 在合法可访问环境人工确认精确 URL、允许用途和字段后再启用。}
+      - {endpoint: personal_credential_service, type: login_required, detail: 个人学历学位认证需要用户账号并可能包含个人材料，禁止后台采集。, required_action: 仅允许用户自行登录官方平台办理。}
+  - code: CM-OS-002
+    name: 教育涉外监管信息网
+    publisher: 中华人民共和国教育部国际合作与交流司
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: national
+    supported_paths: [overseas_study]
+    supported_item_types: [institution, policy, public_status]
+    base_url: https://jsj.moe.gov.cn/
+    endpoints:
+      # 2026-09-29 实测：静态 HTML。列表页 /api/index/sortlist/<栏目>，详情页
+      # /n2/<栏目>/<子栏>/<id>.shtml，正文容器为 .list-right（已加入 CONTENT_SELECTORS
+      # 且置末以避免误命中其他站点）。仅低频获取匿名公开政策页，不把内部 AJAX 当 API。
+      - {name: policy_documents, type: html, url: https://jsj.moe.gov.cn/api/index/sortlist/1, access_tags: [DIRECT, QUERY], format: html, parser_type: MoEPolicyAdapter, automation_level: AUTO-2, agent_mode: EXTRACT, fetch_interval: 7d, license_status: unknown, license_note: 内部 AJAX 不视为官方公共 API；仅使用匿名公开页面并低频获取, scheduled: false}
+    blockers:
+      - {endpoint: policy_documents, type: terms_review_needed, detail: 已实测页面可匿名读取；正式生产上线前仍应复核 robots、服务条款和允许用途。, required_action: 复核条款后由管理员启用定时采集。}
+  - code: CM-OS-007
+    name: Discover Uni 官方课程数据
+    publisher: Office for Students 等英国高等教育机构
+    authority_level: A
+    source_class: government
+    jurisdiction_level: foreign
+    region_code: GB
+    supported_paths: [overseas_study]
+    supported_item_types: [institution, program, public_status]
+    base_url: https://discoveruni.gov.uk/
+    endpoints:
+      - {name: public_dataset_fixture, type: file, url: https://discoveruni.gov.uk/, access_tags: [FILE], format: html, parser_type: OverseasRegistryAdapter, automation_level: AUTO-2, agent_mode: "NO", fetch_interval: 30d, license_status: open, scheduled: false, paused_reason: PoC 仅通过版本化 Fixture 验证解析器；上线前需核对当期数据文件和许可}
+    blockers:
+      - {endpoint: public_dataset_fixture, type: live_access_unverified, detail: 当前执行环境未完成官方数据文件的实时下载和条款复核，PoC 不宣称实时同步。, required_action: 人工核验当期数据下载地址、许可和字段后启用调度。}
+  - code: CM-OS-008
+    name: 澳大利亚 CRICOS
+    publisher: Australian Government Department of Education
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: foreign
+    region_code: AU
+    supported_paths: [overseas_study]
+    supported_item_types: [institution, program, public_status]
+    base_url: https://cricos.education.gov.au/
+    endpoints:
+      - {name: public_register, type: query, url: https://cricos.education.gov.au/, access_tags: [QUERY, FILE], format: html, parser_type: OverseasRegistryAdapter, automation_level: AUTO-2, agent_mode: "NO", fetch_interval: 30d, license_status: unknown, scheduled: false, paused_reason: 上线前核验周期性导出、robots 和许可}
+    blockers:
+      - {endpoint: public_register, type: live_access_unverified, detail: 尚未完成 CRICOS 当期导出入口、字段、robots 和许可证人工核验。, required_action: 在合法可访问环境核验后再启用，Registry 结果仍不得推导申请要求。}
+  - code: CM-OS-009
+    name: Study in Japan 官方学校搜索
+    publisher: Japan Student Services Organization
+    authority_level: A
+    source_class: government
+    jurisdiction_level: foreign
+    region_code: JP
+    supported_paths: [overseas_study]
+    supported_item_types: [institution, program, public_status]
+    base_url: https://www.studyinjapan.go.jp/
+    endpoints:
+      - {name: school_search_download, type: query, url: "https://www.studyinjapan.go.jp/en/search-for-schools/school_search.php?lang=en", access_tags: [QUERY, FILE], format: html, parser_type: OverseasRegistryAdapter, automation_level: AUTO-2, agent_mode: DISCOVERY, fetch_interval: 30d, license_status: unknown, scheduled: false, paused_reason: 上线前核验下载格式、覆盖范围和许可}
+    blockers:
+      - {endpoint: school_search_download, type: live_access_unverified, detail: 尚未完成 Study in Japan 当期下载格式、覆盖范围、robots 和许可证人工核验。, required_action: 在合法可访问环境确认精确下载 URL 和允许用途后再启用。}
+  - code: CM-OS-010
+    name: Hochschulkompass
+    publisher: German Rectors Conference
+    authority_level: A-
+    source_class: platform
+    jurisdiction_level: foreign
+    region_code: DE
+    supported_paths: [overseas_study]
+    supported_item_types: [institution, program, public_status]
+    base_url: https://www.hochschulkompass.de/
+    endpoints:
+      - {name: institution_download, type: file, url: https://www.hochschulkompass.de/, access_tags: [FILE, LICENSE], auth_type: commercial, format: text, parser_type: OverseasRegistryAdapter, automation_level: AUTO-4, agent_mode: REVIEW, fetch_interval: manual, license_status: restricted, license_note: 免费下载仅限个人使用；商业或生产使用须取得许可, manual_takeover: true, paused_reason: 商业使用许可未取得，不导入生产数据}
+    blockers:
+      - {endpoint: institution_download, type: commercial_license, detail: 高校列表下载的免费使用范围不覆盖 CampusMate 生产或商业使用。, required_action: 项目所有者取得书面商业许可，或改用开放授权的官方替代源。}
+  - code: CM-OS-003-OXF
+    name: 牛津大学研究生招生
+    publisher: University of Oxford
+    authority_level: A+
+    source_class: university
+    jurisdiction_level: foreign
+    region_code: GB-ENG
+    school_id: oxford:ukprn-10007774
+    supported_paths: [overseas_masters, overseas_doctorate]
+    supported_item_types: [program, application_cycle, eligibility_rule]
+    base_url: https://www.ox.ac.uk/
+    endpoints:
+      - {name: graduate_program_page, type: html, url: https://www.ox.ac.uk/admissions/graduate/courses/msc-advanced-computer-science, access_tags: [DIRECT], format: html, parser_type: OverseasUniversityProgramAdapter, automation_level: AUTO-2, agent_mode: REVIEW, fetch_interval: 12h_in_season, license_status: unknown, scheduled: false, paused_reason: PoC 使用固定 Fixture；正式启用前需复核页面结构和抓取条款}
+    blockers:
+      - {endpoint: graduate_program_page, type: live_access_unverified, detail: Oxford 项目当前仅使用保存 Fixture，尚未完成当期页面条款与结构校准。, required_action: 人工核对当期第一方项目页、robots、条款和字段后再启用。}
+  - code: CM-OS-003-CAM
+    name: 剑桥大学研究生招生
+    publisher: University of Cambridge
+    authority_level: A+
+    source_class: university
+    jurisdiction_level: foreign
+    region_code: GB-ENG
+    school_id: cambridge:ukprn-10007788
+    supported_paths: [overseas_masters, overseas_doctorate]
+    supported_item_types: [program, application_cycle, eligibility_rule]
+    base_url: https://www.postgraduate.study.cam.ac.uk/
+    endpoints:
+      - {name: postgraduate_course_page, type: html, url: https://www.postgraduate.study.cam.ac.uk/courses, access_tags: [DIRECT], format: html, parser_type: OverseasUniversityProgramAdapter, automation_level: AUTO-3, agent_mode: REVIEW, fetch_interval: manual, license_status: unknown, scheduled: false, paused_reason: 尚未选定并校准具体项目页}
+    blockers:
+      - {endpoint: postgraduate_course_page, type: exact_url_pending, detail: 只登记大学第一方课程目录，未把目录页当成当年申请要求。, required_action: 选定目标项目并核验当期第一方页面、robots、条款和字段。}
+  - code: CM-OS-003-ICL
+    name: 帝国理工学院研究生招生
+    publisher: Imperial College London
+    authority_level: A+
+    source_class: university
+    jurisdiction_level: foreign
+    region_code: GB-ENG
+    school_id: imperial:ukprn-10003270
+    supported_paths: [overseas_masters, overseas_doctorate]
+    supported_item_types: [program, application_cycle, eligibility_rule]
+    base_url: https://www.imperial.ac.uk/
+    endpoints:
+      - {name: postgraduate_course_page, type: html, url: https://www.imperial.ac.uk/study/courses/postgraduate-taught/, access_tags: [DIRECT], format: html, parser_type: OverseasUniversityProgramAdapter, automation_level: AUTO-3, agent_mode: REVIEW, fetch_interval: manual, license_status: unknown, scheduled: false, paused_reason: 尚未选定并校准具体项目页}
+    blockers:
+      - {endpoint: postgraduate_course_page, type: exact_url_pending, detail: 只登记大学第一方课程目录，未把目录页当成当年申请要求。, required_action: 选定目标项目并核验当期第一方页面、robots、条款和字段。}
+  - code: CM-ENT-001
+    name: 国务院政策文件库
+    publisher: 国务院
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: national
+    supported_paths: [entrepreneurship]
+    supported_item_types: [policy]
+    base_url: https://www.gov.cn/zhengce/zhengcewenjianku/
+    endpoints:
+      - {name: policy_library, type: html, url: https://www.gov.cn/zhengce/zhengcewenjianku/, access_tags: [DIRECT], format: html, parser_type: GovernmentPolicyAdapter, automation_level: AUTO-1, agent_mode: REVIEW, fetch_interval: 12h}
+  - code: CM-ENT-004
+    name: 国家税务总局创业税费政策
+    publisher: 国家税务总局
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: national
+    supported_paths: [entrepreneurship]
+    supported_item_types: [policy, eligibility_rule]
+    base_url: https://www.chinatax.gov.cn/
+    endpoints:
+      - {name: tax_policy, type: html, url: https://www.chinatax.gov.cn/, access_tags: [DIRECT, FILE], format: html, parser_type: GovernmentPolicyAdapter, automation_level: AUTO-1, agent_mode: REVIEW, fetch_interval: 12h}
+  - code: CM-ENT-005
+    name: 财政部普惠金融政策
+    publisher: 中华人民共和国财政部
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: national
+    region_code: CN
+    supported_paths: [entrepreneurship, startup_policy]
+    supported_item_types: [policy, development_item, eligibility_rule]
+    base_url: https://mof.gov.cn/
+    endpoints:
+      - {name: inclusive_finance_policy_fixture, type: html, url: https://fgk.mof.gov.cn/guizhangzhidu/202310/t20231012_3910625.htm, access_tags: [DIRECT], format: html, parser_type: GovernmentPolicyAdapter, automation_level: AUTO-2, agent_mode: REVIEW, fetch_interval: manual, license_status: unknown, scheduled: false, paused_reason: PoC 仅使用固定 Fixture；启用前需复核精确 URL、robots 和使用条款}
+  - code: CM-ENT-101-GD
+    name: 广东省创业政策
+    publisher: 广东省人民政府
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: province
+    region_code: CN-GD
+    supported_paths: [entrepreneurship, startup_policy]
+    supported_item_types: [policy, development_item, eligibility_rule]
+    base_url: https://www.gd.gov.cn/
+    endpoints:
+      - {name: entrepreneurship_policy_fixture, type: html, url: https://www.gd.gov.cn/, access_tags: [DIRECT], format: html, parser_type: GovernmentPolicyAdapter, automation_level: AUTO-3, agent_mode: REVIEW, fetch_interval: manual, license_status: unknown, scheduled: false, paused_reason: 等待确认具体政策栏目、robots 与条款}
+    blockers:
+      - {endpoint: entrepreneurship_policy_fixture, type: exact_url_pending, detail: 省级 PoC 仅建来源层级，尚未把未经复核的栏目声明为实时同步。, required_action: 人工确认具体政策 URL、文号、robots 和使用条款后再启用。}
+  - code: CM-ENT-102-SZ
+    name: 深圳市创业政策
+    publisher: 深圳市人力资源和社会保障局
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: city
+    region_code: CN-GD-SZ
+    supported_paths: [entrepreneurship, startup_policy]
+    supported_item_types: [policy, development_item, eligibility_rule]
+    base_url: https://hrss.sz.gov.cn/
+    endpoints:
+      - {name: entrepreneurship_policy_fixture, type: html, url: https://hrss.sz.gov.cn/, access_tags: [DIRECT], format: html, parser_type: GovernmentPolicyAdapter, automation_level: AUTO-3, agent_mode: REVIEW, fetch_interval: manual, license_status: unknown, scheduled: false, paused_reason: 等待确认具体政策栏目、robots 与条款}
+    blockers:
+      - {endpoint: entrepreneurship_policy_fixture, type: exact_url_pending, detail: 市级 PoC 仅建来源层级，尚未把未经复核的栏目声明为实时同步。, required_action: 人工确认具体政策 URL、文号、robots 和使用条款后再启用。}
+  - code: CM-ENT-103-NS
+    name: 深圳市南山区创业政策
+    publisher: 深圳市南山区人民政府
+    authority_level: A+
+    source_class: government
+    jurisdiction_level: county
+    region_code: CN-GD-SZ-NS
+    supported_paths: [entrepreneurship, startup_policy]
+    supported_item_types: [policy, development_item, eligibility_rule]
+    base_url: https://www.szns.gov.cn/
+    endpoints:
+      - {name: entrepreneurship_policy_fixture, type: html, url: https://www.szns.gov.cn/, access_tags: [DIRECT], format: html, parser_type: GovernmentPolicyAdapter, automation_level: AUTO-3, agent_mode: REVIEW, fetch_interval: manual, license_status: unknown, scheduled: false, paused_reason: 等待确认具体政策栏目、robots 与条款}
+    blockers:
+      - {endpoint: entrepreneurship_policy_fixture, type: exact_url_pending, detail: 区级 PoC 仅建来源层级，尚未把未经复核的栏目声明为实时同步。, required_action: 人工确认具体政策 URL、文号、robots 和使用条款后再启用。}
+  - code: CM-ENT-104-SZU
+    name: 深圳大学创新创业教育
+    publisher: 深圳大学
+    authority_level: A
+    source_class: university
+    jurisdiction_level: school
+    region_code: CN-GD-SZ-NS
+    school_id: SZU-10590
+    supported_paths: [entrepreneurship, university_innovation]
+    supported_item_types: [policy, development_item, eligibility_rule]
+    base_url: https://www.szu.edu.cn/
+    endpoints:
+      - {name: university_entrepreneurship_fixture, type: html, url: https://www.szu.edu.cn/, access_tags: [DIRECT], format: html, parser_type: GovernmentPolicyAdapter, automation_level: AUTO-3, agent_mode: REVIEW, fetch_interval: manual, license_status: unknown, scheduled: false, paused_reason: 等待确认校级创新创业中心具体公告入口}
+    blockers:
+      - {endpoint: university_entrepreneurship_fixture, type: exact_url_pending, detail: 学校层仅登记官方域名，未把检索到的二级页面冒充当期申请通知。, required_action: 学校确认创新创业中心第一方栏目和当期通知后再导入。}
+  - code: CM-ENT-201-BJOD
+    name: 北京市公共数据开放平台创业数据
+    publisher: 北京市政务服务和数据管理局
+    authority_level: A
+    source_class: open_data
+    jurisdiction_level: province
+    region_code: CN-BJ
+    supported_paths: [entrepreneurship]
+    supported_item_types: [open_data_resource]
+    base_url: https://data.beijing.gov.cn/
+    endpoints:
+      - {name: open_api_catalog, type: api, url: https://data.beijing.gov.cn/, access_tags: [API-AUTH], auth_type: api_key, secret_ref: BEIJING_OPEN_DATA_USER_KEY, format: json, parser_type: OpenDataPlatformAdapter, automation_level: AUTO-4, agent_mode: USER_ACTION, fetch_interval: manual, license_status: unknown, scheduled: false, manual_takeover: true, paused_reason: 需要用户自行取得 userKey 且许可证状态未确认}
+    blockers:
+      - {endpoint: open_api_catalog, type: api_key_required, detail: 平台 API 需要 userKey；项目没有也不会生成或猜测凭据。, required_action: 数据所有者确认许可证允许生产使用并通过密钥管理配置 userKey。}
+  - code: CM-GR-004-PKU
+    name: 北京大学研究生招生网
+    publisher: 北京大学研究生院
+    authority_level: A
+    source_class: university
+    jurisdiction_level: school
+    school_id: PKU-10001
+    supported_paths: [domestic_postgraduate_exam, recommendation_exemption]
+    supported_item_types: [program, application_cycle, university_notice]
+    base_url: https://admission.pku.edu.cn/
+    endpoints:
+      - {name: graduate_admission_notices, type: html, url: https://admission.pku.edu.cn/xxgk/index2.htm, access_tags: [DIRECT, FILE], format: html, parser_type: UniversityNoticeAdapter, automation_level: AUTO-2, agent_mode: EXTRACT, fetch_interval: 12h_in_season}
+  - code: CM-GR-004-THU
+    name: 清华大学研究生招生网
+    publisher: 清华大学研究生招生办公室
+    authority_level: A
+    source_class: university
+    jurisdiction_level: school
+    school_id: THU-10003
+    supported_paths: [domestic_postgraduate_exam, recommendation_exemption]
+    supported_item_types: [program, application_cycle, university_notice]
+    base_url: https://yz.tsinghua.edu.cn/
+    endpoints:
+      - {name: graduate_admission_notices, type: html, url: https://yz.tsinghua.edu.cn/zxgg.htm, access_tags: [DIRECT, FILE], format: html, parser_type: UniversityNoticeAdapter, automation_level: AUTO-2, agent_mode: EXTRACT, fetch_interval: 12h_in_season}
+  - code: CM-GR-004-SJTU
+    name: 上海交通大学研究生招生网
+    publisher: 上海交通大学研究生院
+    authority_level: A
+    source_class: university
+    jurisdiction_level: school
+    school_id: SJTU-10248
+    supported_paths: [domestic_postgraduate_exam, recommendation_exemption]
+    supported_item_types: [program, application_cycle, university_notice]
+    base_url: https://yzb.sjtu.edu.cn/
+    endpoints:
+      - {name: graduate_admission_notices, type: html, url: https://yzb.sjtu.edu.cn/zkxx/sszs, access_tags: [DIRECT, FILE], format: html, parser_type: UniversityNoticeAdapter, automation_level: AUTO-2, agent_mode: EXTRACT, fetch_interval: 12h_in_season}
+  - code: CM-GR-004-FDU
+    name: 复旦大学研究生招生网
+    publisher: 复旦大学研究生院
+    authority_level: A
+    source_class: university
+    jurisdiction_level: school
+    school_id: FDU-10246
+    supported_paths: [domestic_postgraduate_exam, recommendation_exemption]
+    supported_item_types: [program, application_cycle, university_notice]
+    base_url: https://gsao.fudan.edu.cn/
+    endpoints:
+      - {name: graduate_admission_notices, type: html, url: https://gsao.fudan.edu.cn/main.htm, access_tags: [DIRECT, FILE], format: html, parser_type: UniversityNoticeAdapter, automation_level: AUTO-2, agent_mode: EXTRACT, fetch_interval: 12h_in_season}
+  - code: CM-GR-004-XJTU
+    name: 西安交通大学招生通知
+    publisher: 西安交通大学
+    authority_level: A
+    source_class: university
+    jurisdiction_level: school
+    region_code: CN-SN
+    supported_paths:
+    - domestic_postgraduate_exam
+    - recommendation_exemption
+    supported_item_types:
+    - university_notice
+    base_url: https://yz.xjtu.edu.cn/
+    verified_at: '2026-10-01'
+    endpoints:
+    - name: graduate_admission_notices
+      type: html
+      url: https://yz.xjtu.edu.cn/index/tms.htm
+      access_tags:
+      - DIRECT
+      - FILE
+      format: html
+      parser_type: UniversityNoticeAdapter
+      automation_level: AUTO-2
+      agent_mode: EXTRACT
+      fetch_interval: manual
+      license_status: unknown
+      scheduled: false
+      paused_reason: 已确认公开入口；自动采集条款与校准待核验
+      adapter_config:
+        notice_scope: university
+  - code: CM-GR-004-UESTC
+    name: 电子科技大学招生通知
+    publisher: 电子科技大学
+    authority_level: A
+    source_class: university
+    jurisdiction_level: school
+    region_code: CN-SC
+    supported_paths:
+    - domestic_postgraduate_exam
+    - recommendation_exemption
+    supported_item_types:
+    - university_notice
+    base_url: https://yz.uestc.edu.cn/
+    verified_at: '2026-10-01'
+    endpoints:
+    - name: graduate_admission_notices
+      type: html
+      url: https://yz.uestc.edu.cn/info/1082/5936.htm
+      access_tags:
+      - DIRECT
+      - FILE
+      format: html
+      parser_type: UniversityNoticeAdapter
+      automation_level: AUTO-2
+      agent_mode: EXTRACT
+      fetch_interval: manual
+      license_status: unknown
+      scheduled: false
+      paused_reason: 已确认公开入口；自动采集条款与校准待核验
+      adapter_config:
+        notice_scope: university
+  - code: CM-GR-004-ZJU
+    name: 浙江大学材料科学与工程学院招生通知
+    publisher: 浙江大学材料科学与工程学院
+    authority_level: A
+    source_class: university
+    jurisdiction_level: school
+    region_code: CN-ZJ
+    supported_paths:
+    - domestic_postgraduate_exam
+    - recommendation_exemption
+    supported_item_types:
+    - university_notice
+    base_url: https://mse.zju.edu.cn/
+    verified_at: '2026-10-01'
+    endpoints:
+    - name: graduate_admission_notices
+      type: html
+      url: https://mse.zju.edu.cn/2026/0805/c51673a3193571/page.htm
+      access_tags:
+      - DIRECT
+      - FILE
+      format: html
+      parser_type: UniversityNoticeAdapter
+      automation_level: AUTO-2
+      agent_mode: EXTRACT
+      fetch_interval: manual
+      license_status: unknown
+      scheduled: false
+      paused_reason: 已确认公开入口；自动采集条款与校准待核验
+      adapter_config:
+        notice_scope: university
+  - code: CM-GR-004-USTC
+    name: 中国科学技术大学招生通知
+    publisher: 中国科学技术大学
+    authority_level: A
+    source_class: university
+    jurisdiction_level: school
+    region_code: CN-AH
+    supported_paths:
+    - domestic_postgraduate_exam
+    - recommendation_exemption
+    supported_item_types:
+    - university_notice
+    base_url: https://yz.ustc.edu.cn/
+    verified_at: '2026-10-01'
+    endpoints:
+    - name: graduate_admission_notices
+      type: html
+      url: https://yz.ustc.edu.cn/column/176?num=1
+      access_tags:
+      - DIRECT
+      - FILE
+      format: html
+      parser_type: UniversityNoticeAdapter
+      automation_level: AUTO-2
+      agent_mode: EXTRACT
+      fetch_interval: manual
+      license_status: unknown
+      scheduled: false
+      paused_reason: 已确认公开入口；自动采集条款与校准待核验
+      adapter_config:
+        notice_scope: university

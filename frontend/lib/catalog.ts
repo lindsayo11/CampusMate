@@ -1,0 +1,3 @@
+export type CatalogItem={id:string;title:string;description:string;deadline:string|null;start_time:string|null;location:string;publication_id:string;content_kind?:string;availability?:string;admission_year?:number|null;source:{name:string;publisher?:string;region_code?:string};document:{import_mode?:string;test_batch?:string;version_no?:number;fetched_at?:string;publish_time?:string|null};paths:{name:string;code:string}[]};
+export type CatalogPage={total:number;items:CatalogItem[]};
+export type PathRecord={id:number;code:string|null;parent_id:number|null;name:string;description:string;target_group:string;duration:string};

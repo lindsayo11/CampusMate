@@ -1,0 +1,1 @@
+export default function Loading(){return <div className="shell" role="status" aria-label="正在加载页面"><div className="loading-skeleton" style={{width:'40%',height:32}}/><div className="loading-skeleton" style={{height:105}}/><div className="loading-skeleton" style={{height:220}}/><span className="sr-only">正在读取页面内容…</span></div>}

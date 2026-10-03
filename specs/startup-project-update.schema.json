@@ -1,0 +1,424 @@
+{
+  "$defs": {
+    "Finance": {
+      "additionalProperties": false,
+      "properties": {
+        "price": {
+          "anyOf": [
+            {
+              "maximum": 1000000000.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,25}0*$)\\d{0,18}\\.\\d{0,6}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price"
+        },
+        "monthly_units": {
+          "anyOf": [
+            {
+              "maximum": 1000000000.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,25}0*$)\\d{0,18}\\.\\d{0,6}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Monthly Units"
+        },
+        "variable_cost": {
+          "anyOf": [
+            {
+              "maximum": 1000000000.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,25}0*$)\\d{0,18}\\.\\d{0,6}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variable Cost"
+        },
+        "fixed_cost": {
+          "anyOf": [
+            {
+              "maximum": 1000000000000.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,25}0*$)\\d{0,18}\\.\\d{0,6}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fixed Cost"
+        },
+        "cash": {
+          "anyOf": [
+            {
+              "maximum": 1000000000000.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,25}0*$)\\d{0,18}\\.\\d{0,6}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cash"
+        },
+        "annual_volume_growth_pct": {
+          "anyOf": [
+            {
+              "maximum": 300.0,
+              "minimum": -100.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,25}0*$)\\d{0,18}\\.\\d{0,6}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": 0,
+          "title": "Annual Volume Growth Pct"
+        },
+        "annual_cost_growth_pct": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": -100.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,25}0*$)\\d{0,18}\\.\\d{0,6}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": 0,
+          "title": "Annual Cost Growth Pct"
+        },
+        "pre_money": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "maximum": 1000000000000.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,25}0*$)\\d{0,18}\\.\\d{0,6}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pre Money"
+        },
+        "investment": {
+          "anyOf": [
+            {
+              "maximum": 1000000000000.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,25}0*$)\\d{0,18}\\.\\d{0,6}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Investment"
+        },
+        "new_pool_pct": {
+          "anyOf": [
+            {
+              "maximum": 50.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,25}0*$)\\d{0,18}\\.\\d{0,6}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": 0,
+          "title": "New Pool Pct"
+        }
+      },
+      "title": "Finance",
+      "type": "object"
+    },
+    "Founder": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "role": {
+          "default": "",
+          "maxLength": 120,
+          "title": "Role",
+          "type": "string"
+        },
+        "percent": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "maximum": 100.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,3}|(?=[\\d.]{1,10}0*$)\\d{0,3}\\.\\d{0,6}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Percent"
+        },
+        "contribution": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Contribution",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "percent"
+      ],
+      "title": "Founder",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "summary": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Summary",
+      "type": "string"
+    },
+    "industry": {
+      "default": "",
+      "maxLength": 120,
+      "title": "Industry",
+      "type": "string"
+    },
+    "stage": {
+      "default": "idea",
+      "enum": [
+        "idea",
+        "mvp",
+        "growth",
+        "scale"
+      ],
+      "title": "Stage",
+      "type": "string"
+    },
+    "jurisdiction": {
+      "default": "CN",
+      "enum": [
+        "CN",
+        "HK",
+        "US",
+        "other"
+      ],
+      "title": "Jurisdiction",
+      "type": "string"
+    },
+    "target_market": {
+      "default": "",
+      "maxLength": 300,
+      "title": "Target Market",
+      "type": "string"
+    },
+    "customers": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Customers",
+      "type": "string"
+    },
+    "problem": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Problem",
+      "type": "string"
+    },
+    "solution": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Solution",
+      "type": "string"
+    },
+    "revenue_model": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Revenue Model",
+      "type": "string"
+    },
+    "costs": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Costs",
+      "type": "string"
+    },
+    "channels": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Channels",
+      "type": "string"
+    },
+    "resources": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Resources",
+      "type": "string"
+    },
+    "activities": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Activities",
+      "type": "string"
+    },
+    "partners": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Partners",
+      "type": "string"
+    },
+    "moat": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Moat",
+      "type": "string"
+    },
+    "competitors": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Competitors",
+      "type": "string"
+    },
+    "traction": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Traction",
+      "type": "string"
+    },
+    "team": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Team",
+      "type": "string"
+    },
+    "funding_use": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Funding Use",
+      "type": "string"
+    },
+    "entity_name": {
+      "default": "",
+      "maxLength": 160,
+      "title": "Entity Name",
+      "type": "string"
+    },
+    "service_scope": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Service Scope",
+      "type": "string"
+    },
+    "data_practices": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Data Practices",
+      "type": "string"
+    },
+    "refund_policy": {
+      "default": "",
+      "maxLength": 1500,
+      "title": "Refund Policy",
+      "type": "string"
+    },
+    "contact": {
+      "default": "",
+      "maxLength": 300,
+      "title": "Contact",
+      "type": "string"
+    },
+    "evidence": {
+      "default": "",
+      "maxLength": 3000,
+      "title": "Evidence",
+      "type": "string"
+    },
+    "founders": {
+      "items": {
+        "$ref": "#/$defs/Founder"
+      },
+      "maxItems": 20,
+      "title": "Founders",
+      "type": "array"
+    },
+    "finance": {
+      "$ref": "#/$defs/Finance"
+    },
+    "completed_steps": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10,
+      "title": "Completed Steps",
+      "type": "array"
+    },
+    "expected_revision": {
+      "minimum": 1,
+      "title": "Expected Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "name",
+    "expected_revision"
+  ],
+  "title": "ProjectUpdate",
+  "type": "object"
+}

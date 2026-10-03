@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CampusMateToolDecision",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool",
+        "arguments"
+      ],
+      "properties": {
+        "tool": {
+          "const": "opportunity_search"
+        },
+        "arguments": {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "job",
+                    "contest",
+                    "civil_service",
+                    "volunteer",
+                    "club",
+                    "graduate"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Type"
+            },
+            "q": {
+              "anyOf": [
+                {
+                  "maxLength": 80,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Q"
+            }
+          },
+          "title": "SearchArgs",
+          "type": "object"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool",
+        "arguments"
+      ],
+      "properties": {
+        "tool": {
+          "const": "eligibility_check"
+        },
+        "arguments": {
+          "properties": {
+            "opportunity_id": {
+              "title": "Opportunity Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "opportunity_id"
+          ],
+          "title": "EligibilityCheckIn",
+          "type": "object",
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool",
+        "arguments"
+      ],
+      "properties": {
+        "tool": {
+          "const": "team_match"
+        },
+        "arguments": {
+          "additionalProperties": false,
+          "properties": {
+            "skills": {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 20,
+              "title": "Skills",
+              "type": "array"
+            }
+          },
+          "title": "MatchArgs",
+          "type": "object"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool",
+        "arguments"
+      ],
+      "properties": {
+        "tool": {
+          "const": "tracker_write"
+        },
+        "arguments": {
+          "properties": {
+            "opportunity_id": {
+              "title": "Opportunity Id",
+              "type": "string"
+            },
+            "stage": {
+              "default": "saved",
+              "enum": [
+                "saved",
+                "preparing",
+                "applied",
+                "interview",
+                "completed"
+              ],
+              "title": "Stage",
+              "type": "string"
+            },
+            "note": {
+              "default": "",
+              "maxLength": 500,
+              "title": "Note",
+              "type": "string"
+            }
+          },
+          "required": [
+            "opportunity_id"
+          ],
+          "title": "TrackerWriteIn",
+          "type": "object",
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool",
+        "arguments"
+      ],
+      "properties": {
+        "tool": {
+          "const": "deadline_remind"
+        },
+        "arguments": {
+          "properties": {
+            "opportunity_id": {
+              "title": "Opportunity Id",
+              "type": "string"
+            },
+            "hours_before": {
+              "default": 24,
+              "maximum": 720,
+              "minimum": 1,
+              "title": "Hours Before",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "opportunity_id"
+          ],
+          "title": "ReminderIn",
+          "type": "object",
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool",
+        "arguments"
+      ],
+      "properties": {
+        "tool": {
+          "const": "message_connect"
+        },
+        "arguments": {
+          "properties": {
+            "target": {
+              "maxLength": 80,
+              "minLength": 1,
+              "title": "Target",
+              "type": "string"
+            }
+          },
+          "required": [
+            "target"
+          ],
+          "title": "Connect",
+          "type": "object",
+          "additionalProperties": false
+        }
+      }
+    }
+  ]
+}

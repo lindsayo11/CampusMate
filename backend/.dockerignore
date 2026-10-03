@@ -1,0 +1,7 @@
+.deps
+.venv
+__pycache__
+*.db
+.env
+pip-*
+tests
