@@ -21,13 +21,13 @@ ARTICLE_SELECTORS = ('article', '.v_news_content', '.wp_articlecontent', '.mce-c
 DATE = re.compile(r'(20\d{2})\s*[年./-]\s*(\d{1,2})\s*[月./-]\s*(\d{1,2})(?:日)?')
 TOPIC_PATTERNS = {
     'postgraduate': r'推免|免试|夏令营|硕士.*(?:招生|报考|章程|简章|办法|考试|复试|调剂)|研究生.*(?:招生|接收|报名|章程|简章)',
-    'examination': r'研究生|硕士|考研|报考点|专升本|自学考试|四六级|英语四|英语六|计算机等级|职业资格',
+    'examination': r'研究生|硕士|考研|报考点|专升本|自学考试|四六级|英语四|英语六|计算机等级|职业资格|教师资格|成人高校.*招生|成人高考',
     'employment': r'招聘|就业|实习|双选|宣讲|见习|西部计划|三支一扶',
     'recruitment': r'招聘|招考|公务员|选调|事业单位|三支一扶|人才引进',
     'overseas': r'留学|奖学金|公派|出国|境外|海外|交换生|交换项目|校际交换|短期访学|国际合作培养|国际交流.*(?:项目|报名)|scholarship|fellowship|study abroad',
     'entrepreneurship': r'创业|创新|挑战杯|竞赛|大赛|申报|征集|孵化',
     'policy': r'就业|创业|毕业生|人才|教育|科技|创新|企业|补贴|税费',
-    'funding': r'资助|奖学金|奖助|助学|勤工|困难补助|困难认定|经济困难|补偿代偿|基金|申报|申请|项目指南|funding|scholarship|fellowship|grant|doctoral|studentship',
+    'funding': r'资助|奖学金|奖助|助学|勤工|困难补助|困难认定|经济困难|补偿代偿|基金(?!会|委员|管理)|申报|申请|项目指南|funding|scholarship|fellowship|grant|doctoral|studentship',
 }
 
 
@@ -150,7 +150,7 @@ def notice_title(soup, topic='postgraduate', title_selector=None, title_context=
                 # Only remove the final website suffix; a joint programme may
                 # contain hyphens and university names inside its real title.
                 value = re.sub(r'\s*[-|｜]\s*[^-|｜]{0,60}(?:研究生招生网|研究生院|招生网)$','',value)
-                if topic != 'postgraduate' or re.search(r'20\d{2}|办法|章程|通知|简章|要求|细则|公告|政策|指南|项目', value):
+                if re.search(r'20\d{2}|办法|章程|通知|简章|要求|细则|公告|政策|指南|项目|申请|报名|招聘信息|招聘启事|scholarship|fellowship|funding|admission|exchange', value, re.I):
                     return value
     raise ParseError('未找到通知标题')
 
@@ -180,7 +180,7 @@ def discover_notices(content, base_url, year=None, limit=30, topic='postgraduate
         if not matches_topic(title, topic):
             continue
         # A site logo or category such as “硕士招生” is not an article.
-        if not re.search(r'20\d{2}|通知|公告|办法|章程|简章|规定|政策|指南|须知|细则|要求|安排|计划|项目|报名|申请|scholarship|fellowship', title, re.I):
+        if not re.search(r'20\d{2}|通知|公告|办法|章程|简章|规定|政策|指南|须知|细则|要求|安排|计划|项目|报名|申请|招聘信息|招聘启事|scholarship|fellowship', title, re.I):
             continue
         if re.search(r'名单|成绩查询|登录|公示|拟录取|录取通知书|隐私', title):
             continue

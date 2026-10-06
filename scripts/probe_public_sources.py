@@ -4,6 +4,7 @@ One host is processed serially; distinct hosts may be probed concurrently.
 import argparse
 import hashlib
 import json
+import re
 import sys
 import time
 from collections import Counter, defaultdict
@@ -16,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'backend'))
 from app.adapters.base import RawArtifact
 from app.adapters.education import UniversityNoticeAdapter
-from app.adapters.notice_text import document_base
+from app.adapters.notice_text import document_base, matches_topic
 from app.adapters.index_discovery import discover_index
 from app.adapters.public_request import fetch_public_resource
 from app.adapters.public_json_notice import PublicJSONNoticeAdapter
@@ -113,6 +114,14 @@ def probe(entry):
                                 raise ValueError('PDF 重定向离开官方主机')
                             parsed = adapter.parse(RawArtifact(pdf['data'],pdf['final_url'],pdfs[0],pdf['content_type']))
                             article = pdf
+                        title = parsed.records[0]['title']
+                        # A reachable site shell or unrelated attachment is not a
+                        # validated notice. Check the parser's own title, never
+                        # substitute the listing title as article evidence.
+                        if not matches_topic(title + ' ' + entry.get('title_context', ''), entry['topic']):
+                            raise ParseError('正文标题与配置主题不符；需校准正文或附件')
+                        if not re.search(r'20\d{2}|通知|公告|办法|章程|简章|规定|政策|指南|须知|细则|要求|安排|计划|项目|报名|申请|招聘信息|招聘启事|scholarship|fellowship|funding', title, re.I):
+                            raise ParseError('正文仅有网站或栏目标题；未验证真实通知')
                         row.update(status='ready', sample={'url': article.get('canonical_url',article['final_url']),
                             'title': parsed.records[0]['title'], 'evidence': len(parsed.evidence),
                             'sha256': hashlib.sha256(article['data']).hexdigest()})

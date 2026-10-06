@@ -454,7 +454,8 @@ class UniversityNoticeAdapter(SourceAdapter):
                         title=candidate;break
                 else:continue
                 break
-        if not 8<=len(title)<=200 or not matches_topic(title, self.topic):
+        if (not 8<=len(title)<=200 or not matches_topic(title, self.topic)
+                or not re.search(r'通知|公告|办法|章程|简章|细则|指南|须知|目录|大纲|招生计划|政策|申请|报名|notice|announcement|guidelines|scholarship|fellowship|funding', title, re.I)):
             raise ParseError('PDF 首页未找到明确的主题标题')
         evidence = [{'record_key':'notice','field':'body','evidence_location':f'page={pages[i]}',
                      'quote_or_normalized_fact':pages[i+1].strip(), 'extractor':'parser',

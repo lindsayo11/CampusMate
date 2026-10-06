@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-10-03T07:13:21.107852+00:00",
+  "checked_at": "2026-10-06T16:21:12.967628+00:00",
   "sources": [
     {
       "code": "CM-GR-004-RUC",
@@ -77,9 +77,9 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T15:59:55.470393+00:00",
+        "checked_at": "2026-10-06T15:56:48.402567+00:00",
         "status": "blocked",
-        "error": "来源 HTTP 请求失败或超时"
+        "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
     },
     {
@@ -216,7 +216,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T15:59:55.470676+00:00",
+        "checked_at": "2026-10-06T15:56:48.402720+00:00",
         "status": "blocked",
         "error": "来源 HTTP 请求失败或超时"
       }
@@ -238,7 +238,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T15:59:55.470714+00:00",
+        "checked_at": "2026-10-06T15:56:48.402843+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -319,7 +319,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T15:59:55.470803+00:00",
+        "checked_at": "2026-10-06T15:56:48.402939+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -368,11 +368,18 @@
       "path_code": null,
       "interval_hours": 12,
       "detail_interval_hours": 24,
-      "status": "blocked",
+      "status": "ready",
       "probe": {
-        "checked_at": "2026-10-01T15:59:55.925046+00:00",
-        "status": "blocked",
-        "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
+        "checked_at": "2026-10-06T15:56:48.403025+00:00",
+        "status": "ready",
+        "discovered": 2,
+        "sample": {
+          "url": "https://yjsy.blcu.edu.cn/info/1048/9599.htm",
+          "title": "关于部分专业继续接收推免生报名的通知",
+          "evidence": 2,
+          "sha256": "030b52ae04ff33f2c8b97eaee922be989209b169e10901c29594a7dbc5d982e9"
+        },
+        "error": ""
       }
     },
     {
@@ -392,7 +399,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T15:59:56.559806+00:00",
+        "checked_at": "2026-10-06T15:56:48.403095+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -414,7 +421,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T15:59:56.577431+00:00",
+        "checked_at": "2026-10-06T15:56:48.403144+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -465,11 +472,18 @@
       "path_code": null,
       "interval_hours": 12,
       "detail_interval_hours": 24,
-      "status": "blocked",
+      "status": "ready",
       "probe": {
-        "checked_at": "2026-10-01T15:59:56.851162+00:00",
-        "status": "blocked",
-        "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
+        "checked_at": "2026-10-06T15:56:48.403187+00:00",
+        "status": "ready",
+        "discovered": 6,
+        "sample": {
+          "url": "https://yzb.nankai.edu.cn/_upload/article/files/a2/37/e3fb797347b295edab0391cf7c19/f690d3b2-9493-441b-a948-495fbf573682.pdf",
+          "title": "南开大学 2027 年推荐优秀应届本科毕业生免试攻读硕士学位和直接攻读博士学位研究生招生录取工作办法",
+          "evidence": 7,
+          "sha256": "de2c5f67fdb16a1b315765c5807ad37f5fbc7f31e8c2c56dbc14666fdb3400a4"
+        },
+        "error": ""
       }
     },
     {
@@ -487,12 +501,21 @@
       "path_code": null,
       "interval_hours": 12,
       "detail_interval_hours": 24,
-      "status": "blocked",
+      "status": "ready",
       "probe": {
-        "checked_at": "2026-10-01T16:06:32.083733+00:00",
-        "status": "blocked",
-        "error": "来源内容超过大小或时间限制"
-      }
+        "checked_at": "2026-10-06T16:06:00.436375+00:00",
+        "status": "ready",
+        "discovered": 18,
+        "sample": {
+          "url": "https://yzb.tju.edu.cn/xwzx/zxxx/202609/t20260908_324696.htm",
+          "title": "天津大学2027年推荐优秀应届本科毕业生免试攻读硕士学位和直接攻读博士学位研究生招生录取工作办法",
+          "evidence": 92,
+          "sha256": "2a5d85385b31a853ba4f71121b3fd01d9081d48e09b206bd40f42a5e18ec57cd"
+        },
+        "error": ""
+      },
+      "article_selector": ".TRS_Editor",
+      "title_selector": "td.font_18_b"
     },
     {
       "code": "CM-GR-004-HEBUT",
@@ -571,7 +594,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T15:59:57.179258+00:00",
+        "checked_at": "2026-10-06T15:56:48.403337+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -678,11 +701,13 @@
       "path_code": null,
       "interval_hours": 12,
       "detail_interval_hours": 24,
-      "status": "blocked",
+      "status": "index_ready",
       "probe": {
-        "checked_at": "2026-10-01T16:06:32.083849+00:00",
-        "status": "blocked",
-        "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
+        "checked_at": "2026-10-06T15:56:48.403420+00:00",
+        "status": "index_ready",
+        "discovered": 4,
+        "detail_error": "检测到登录或验证码页面，不得作为后台采集来源",
+        "error": ""
       }
     },
     {
@@ -731,7 +756,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T15:59:58.834555+00:00",
+        "checked_at": "2026-10-06T15:56:48.403547+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -811,7 +836,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T15:59:59.470168+00:00",
+        "checked_at": "2026-10-06T15:56:48.610999+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -889,11 +914,18 @@
       "path_code": null,
       "interval_hours": 12,
       "detail_interval_hours": 24,
-      "status": "blocked",
+      "status": "ready",
       "probe": {
-        "checked_at": "2026-10-01T15:59:59.863024+00:00",
-        "status": "blocked",
-        "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
+        "checked_at": "2026-10-06T15:56:48.703158+00:00",
+        "status": "ready",
+        "discovered": 6,
+        "sample": {
+          "url": "https://yjszs.ecnu.edu.cn/ef/9b/c43264a782235/page.htm",
+          "title": "华东师范大学2027年硕士研究生招生简章",
+          "evidence": 75,
+          "sha256": "bd51bcfe9d7ab4173627444a368d2ed6370e2aa86122cbbde8122f78d642d0df"
+        },
+        "error": ""
       }
     },
     {
@@ -940,12 +972,24 @@
       "path_code": null,
       "interval_hours": 12,
       "detail_interval_hours": 24,
-      "status": "blocked",
+      "status": "ready",
       "probe": {
-        "checked_at": "2026-10-01T16:00:00.313074+00:00",
-        "status": "blocked",
-        "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
-      }
+        "checked_at": "2026-10-06T16:03:09.038856+00:00",
+        "status": "ready",
+        "discovered": 8,
+        "sample": {
+          "url": "https://gs.sufe.edu.cn/Home/Detail/8035",
+          "title": "上海财经大学关于部分专业（研究方向）继续通过“推免服务系统”接收2027年推免生的通知",
+          "evidence": 15,
+          "sha256": "0a623fe7fb95a9c1b3027fc9353cc91916d1ed7559a18812b4c903b2e0cdfecc"
+        },
+        "error": ""
+      },
+      "article_selector": ".single-programme .conn",
+      "title_selector": "h5.text-center",
+      "detail_path_prefixes": [
+        "/Home/Detail/"
+      ]
     },
     {
       "code": "CM-GR-004-ECUST",
@@ -1022,7 +1066,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:00.808706+00:00",
+        "checked_at": "2026-10-06T15:56:48.865032+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -1044,7 +1088,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:00.981025+00:00",
+        "checked_at": "2026-10-06T15:56:48.923977+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -1058,17 +1102,26 @@
       "topic": "postgraduate",
       "source_class": "university",
       "index_urls": [
-        "https://yjs.shou.edu.cn/"
+        "https://yjs.shou.edu.cn/18564/list.htm",
+        "https://yjs.shou.edu.cn/18604/list.htm",
+        "https://yjs.shou.edu.cn/18611/list.htm"
       ],
       "endpoint_name": "graduate_admission_notices",
       "path_code": null,
       "interval_hours": 12,
       "detail_interval_hours": 24,
-      "status": "blocked",
+      "status": "ready",
       "probe": {
-        "checked_at": "2026-10-01T16:00:01.225966+00:00",
-        "status": "blocked",
-        "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
+        "checked_at": "2026-10-06T15:56:49.293483+00:00",
+        "status": "ready",
+        "discovered": 5,
+        "sample": {
+          "url": "https://yjs.shou.edu.cn/2026/0930/c18604a355793/page.htm",
+          "title": "上海海洋大学2027年硕士研究生招生章程",
+          "evidence": 91,
+          "sha256": "9a299211c973b48fa2f83cae31022fae851848afab3e0c6d705b5cd0ce9da320"
+        },
+        "error": ""
       }
     },
     {
@@ -1175,7 +1228,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:01.885801+00:00",
+        "checked_at": "2026-10-06T15:56:49.513914+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -1197,7 +1250,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:01.941246+00:00",
+        "checked_at": "2026-10-06T15:56:49.837112+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -1248,9 +1301,9 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:02.188239+00:00",
+        "checked_at": "2026-10-06T15:56:50.032210+00:00",
         "status": "blocked",
-        "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
+        "error": "来源 HTTP 请求失败或超时"
       }
     },
     {
@@ -1270,7 +1323,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:02.514261+00:00",
+        "checked_at": "2026-10-06T15:56:50.063418+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -1350,7 +1403,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:03.538934+00:00",
+        "checked_at": "2026-10-06T15:56:50.400875+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -1372,7 +1425,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:03.623470+00:00",
+        "checked_at": "2026-10-06T15:56:50.630139+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -1424,7 +1477,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:03.954938+00:00",
+        "checked_at": "2026-10-06T15:56:50.937390+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -1446,7 +1499,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:04.256379+00:00",
+        "checked_at": "2026-10-06T15:56:51.133146+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -1497,7 +1550,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:04.440664+00:00",
+        "checked_at": "2026-10-06T15:56:51.333541+00:00",
         "status": "blocked",
         "error": "来源 HTTP 请求失败或超时"
       }
@@ -1635,7 +1688,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:05.554326+00:00",
+        "checked_at": "2026-10-06T15:56:51.393078+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -1744,7 +1797,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:06.229778+00:00",
+        "checked_at": "2026-10-06T15:56:51.717838+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -1795,7 +1848,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:06.893927+00:00",
+        "checked_at": "2026-10-06T15:56:51.721898+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -1962,7 +2015,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:07.780336+00:00",
+        "checked_at": "2026-10-06T15:56:51.845200+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -2013,9 +2066,9 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:08.617792+00:00",
+        "checked_at": "2026-10-06T15:56:52.309657+00:00",
         "status": "blocked",
-        "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
+        "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
     },
     {
@@ -2035,7 +2088,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:08.619958+00:00",
+        "checked_at": "2026-10-06T15:56:52.757115+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -2145,7 +2198,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:09.265734+00:00",
+        "checked_at": "2026-10-06T15:56:53.250006+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -2196,7 +2249,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:09.624210+00:00",
+        "checked_at": "2026-10-06T15:56:53.268865+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -2424,7 +2477,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:11.126216+00:00",
+        "checked_at": "2026-10-06T15:56:53.443123+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -2475,9 +2528,9 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:11.672044+00:00",
+        "checked_at": "2026-10-06T15:56:53.669147+00:00",
         "status": "blocked",
-        "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
+        "error": "来源 HTTP 请求失败或超时"
       }
     },
     {
@@ -2526,7 +2579,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:11.988652+00:00",
+        "checked_at": "2026-10-06T15:56:53.705856+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -2548,7 +2601,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:12.416574+00:00",
+        "checked_at": "2026-10-06T15:56:53.857565+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -2657,34 +2710,8 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "code": "CM-GR-004-NWAFU",
-        "name": "西北农林科技大学",
-        "topic": "postgraduate",
-        "checked_at": "2026-10-03T05:52:50.178872+00:00",
+        "checked_at": "2026-10-06T15:56:53.959014+00:00",
         "status": "blocked",
-        "attempts": [
-          {
-            "url": "https://yjshy.nwafu.edu.cn/",
-            "final_url": "https://yjshy.nwafu.edu.cn/",
-            "status": 200,
-            "sha256": "f7c107e3036d8cbfc0510cc6b185c92c6b5d11b836567522a63378f0acbc2a39",
-            "discovered": 0
-          },
-          {
-            "url": "https://yjshy.nwafu.edu.cn/tzgg/zs/7b144d55998e4e11bb80db26886b77d3.htm",
-            "final_url": "https://yjshy.nwafu.edu.cn/tzgg/zs/7b144d55998e4e11bb80db26886b77d3.htm",
-            "status": 200,
-            "sha256": "86e3378f7f737f55aecd821fa3141c1ddbcc00623562347fc90343a68c59a4ea",
-            "discovered": 0
-          },
-          {
-            "url": "https://yjshy.nwafu.edu.cn/tzgg/yggz/9aa77e6aa0c94225b07f04fccf666d91.htm",
-            "final_url": "https://yjshy.nwafu.edu.cn/tzgg/yggz/9aa77e6aa0c94225b07f04fccf666d91.htm",
-            "status": 200,
-            "sha256": "d6592e91f19f704f920442f01ad96b02064dc396e5d8fa0eeb4564f156bb8223",
-            "discovered": 0
-          }
-        ],
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
     },
@@ -2764,7 +2791,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:13.990726+00:00",
+        "checked_at": "2026-10-06T15:56:54.164028+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -2865,18 +2892,28 @@
       "topic": "examination",
       "source_class": "government",
       "index_urls": [
-        "https://www.bjeea.cn/"
+        "https://www.bjeea.cn/html/bjeeagg/",
+        "https://www.bjeea.cn/html/fxlks/ncre/tongzhigonggao/index.html"
       ],
       "endpoint_name": "public_notices",
       "path_code": null,
       "interval_hours": 12,
       "detail_interval_hours": 24,
-      "status": "blocked",
+      "status": "ready",
       "probe": {
-        "checked_at": "2026-10-01T16:00:14.305411+00:00",
-        "status": "blocked",
-        "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
-      }
+        "checked_at": "2026-10-06T16:17:25.081325+00:00",
+        "status": "ready",
+        "discovered": 30,
+        "sample": {
+          "url": "https://www.bjeea.cn/html/ckcz/tzgg/2026/0908/88322.html",
+          "title": "2026年北京市成人高校招生考试报名网上缴费(已结束)",
+          "evidence": 15,
+          "sha256": "87559eba356d90884d5c434928bfb143a88d012dbe76586be0a4d7657aea9bcf"
+        },
+        "error": ""
+      },
+      "article_selector": ".info-txt .inner20",
+      "title_selector": ".info-ctit"
     },
     {
       "code": "CM-EXAM-TJ",
@@ -2895,7 +2932,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:14.562476+00:00",
+        "checked_at": "2026-10-06T15:56:54.394905+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -2946,7 +2983,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:15.120202+00:00",
+        "checked_at": "2026-10-06T15:56:54.490602+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -2968,7 +3005,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:15.368315+00:00",
+        "checked_at": "2026-10-06T15:56:54.906302+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -3104,7 +3141,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:16.033971+00:00",
+        "checked_at": "2026-10-06T15:56:54.998562+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -3126,7 +3163,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:16.083287+00:00",
+        "checked_at": "2026-10-06T15:56:55.213718+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -3178,7 +3215,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:16.422887+00:00",
+        "checked_at": "2026-10-06T15:56:55.614517+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -3200,7 +3237,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:16.568548+00:00",
+        "checked_at": "2026-10-06T15:56:55.638379+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -3251,7 +3288,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:16.645445+00:00",
+        "checked_at": "2026-10-06T15:56:55.700716+00:00",
         "status": "blocked",
         "error": "来源 HTTP 请求失败或超时"
       }
@@ -3273,7 +3310,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:17.139705+00:00",
+        "checked_at": "2026-10-06T15:56:55.770284+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -3295,7 +3332,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:17.327916+00:00",
+        "checked_at": "2026-10-06T15:56:55.899632+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -3433,7 +3470,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:18.274897+00:00",
+        "checked_at": "2026-10-06T15:56:56.112940+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -3455,7 +3492,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:18.383513+00:00",
+        "checked_at": "2026-10-06T15:56:56.208141+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -3506,7 +3543,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:18.664147+00:00",
+        "checked_at": "2026-10-06T15:56:56.294182+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -3587,7 +3624,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:19.240478+00:00",
+        "checked_at": "2026-10-06T15:56:56.564419+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -3698,7 +3735,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:19.831349+00:00",
+        "checked_at": "2026-10-06T15:56:56.612669+00:00",
         "status": "blocked",
         "error": "来源 HTTP 请求失败或超时"
       }
@@ -3786,7 +3823,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:20.683306+00:00",
+        "checked_at": "2026-10-06T15:56:56.790195+00:00",
         "status": "blocked",
         "error": "来源页面不存在（404）"
       }
@@ -3808,7 +3845,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:20.986107+00:00",
+        "checked_at": "2026-10-06T15:56:57.377861+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -3830,7 +3867,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:21.057646+00:00",
+        "checked_at": "2026-10-06T15:56:57.442719+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -3852,7 +3889,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:21.065518+00:00",
+        "checked_at": "2026-10-06T15:56:57.489790+00:00",
         "status": "blocked",
         "error": "来源页面不存在（404）"
       }
@@ -3874,7 +3911,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:21.139894+00:00",
+        "checked_at": "2026-10-06T15:56:57.825426+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -3896,7 +3933,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:21.358139+00:00",
+        "checked_at": "2026-10-06T15:56:58.025451+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -3918,7 +3955,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:21.444699+00:00",
+        "checked_at": "2026-10-06T15:56:58.163213+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -3940,7 +3977,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:21.486934+00:00",
+        "checked_at": "2026-10-06T15:56:58.219707+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -3991,7 +4028,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:21.533167+00:00",
+        "checked_at": "2026-10-06T15:56:58.226278+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -4069,12 +4106,21 @@
       "path_code": "domestic_study",
       "interval_hours": 12,
       "detail_interval_hours": 24,
-      "status": "blocked",
+      "status": "ready",
       "probe": {
-        "checked_at": "2026-10-01T16:00:21.714796+00:00",
-        "status": "blocked",
-        "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
-      }
+        "checked_at": "2026-10-06T16:03:09.038949+00:00",
+        "status": "ready",
+        "discovered": 25,
+        "sample": {
+          "url": "https://www.nsfc.gov.cn/p1/3381/2821/142775.html",
+          "title": "窦贤康主任出席中国（宁波）—中东欧国家 创新合作项目联合资助协议签约仪式并在宁波调研",
+          "evidence": 5,
+          "sha256": "a2a2574d197c54f6928166641c37ec467d3966d94bd71a321691fe6a240f31ad"
+        },
+        "error": ""
+      },
+      "article_selector": ".detail-content .detail-p",
+      "title_selector": ".detail-title"
     },
     {
       "code": "CM-PUBLIC-VOLUNTEER",
@@ -4122,7 +4168,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:21.895414+00:00",
+        "checked_at": "2026-10-06T15:56:58.495971+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -4223,17 +4269,24 @@
       "topic": "recruitment",
       "source_class": "government",
       "index_urls": [
-        "https://hrss.tj.gov.cn/"
+        "https://hrss.tj.gov.cn/ztzl/ztzl1/sydwgkzp/"
       ],
       "endpoint_name": "public_notices",
       "path_code": "public_institution",
       "interval_hours": 12,
       "detail_interval_hours": 24,
-      "status": "blocked",
+      "status": "ready",
       "probe": {
-        "checked_at": "2026-10-01T16:00:22.639780+00:00",
-        "status": "blocked",
-        "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
+        "checked_at": "2026-10-06T16:03:09.039020+00:00",
+        "status": "ready",
+        "discovered": 20,
+        "sample": {
+          "url": "https://hrss.tj.gov.cn/ztzl/ztzl1/sydwgkzp/202609/t20260929_7385123.html",
+          "title": "天津市部分事业单位公开招聘信息_事业单位公开招聘_天津市人力资源和社会保障局",
+          "evidence": 3,
+          "sha256": "2681e19e82d106f73607a18b9c9dfbf5d12297b01e410b589b1b0d8dfcec6c99"
+        },
+        "error": ""
       }
     },
     {
@@ -4253,7 +4306,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:23.132977+00:00",
+        "checked_at": "2026-10-06T15:56:58.731612+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -4370,7 +4423,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:24.507094+00:00",
+        "checked_at": "2026-10-06T15:56:58.894697+00:00",
         "status": "blocked",
         "error": "来源 HTTP 请求失败或超时"
       }
@@ -4530,17 +4583,24 @@
       "topic": "recruitment",
       "source_class": "government",
       "index_urls": [
-        "https://rst.fujian.gov.cn/"
+        "https://rst.fujian.gov.cn/zw/ztzl/zxzt/sydwrczp/zpfa/"
       ],
       "endpoint_name": "public_notices",
       "path_code": "public_institution",
       "interval_hours": 12,
       "detail_interval_hours": 24,
-      "status": "blocked",
+      "status": "ready",
       "probe": {
-        "checked_at": "2026-10-01T16:00:25.863448+00:00",
-        "status": "blocked",
-        "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
+        "checked_at": "2026-10-06T16:03:09.039122+00:00",
+        "status": "ready",
+        "discovered": 1,
+        "sample": {
+          "url": "https://rst.fujian.gov.cn/zw/ztzl/zxzt/sydwrczp/zpfa/202609/t20260917_7214858.htm",
+          "title": "2026年福建体育职业技术学院面向社会公开招聘工作人员方案",
+          "evidence": 80,
+          "sha256": "8e36d9e83e489eb43d66990f8cb7d49582b2bea346f76cd6303aed191e703e28"
+        },
+        "error": ""
       }
     },
     {
@@ -4560,9 +4620,9 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:26.055143+00:00",
+        "checked_at": "2026-10-06T15:56:59.071082+00:00",
         "status": "blocked",
-        "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
+        "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
     },
     {
@@ -4600,12 +4660,12 @@
       "code": "CM-HRSS-HA",
       "name": "河南省人力资源和社会保障厅",
       "publisher": "河南省人力资源和社会保障厅",
-      "base_url": "https://hrss.henan.gov.cn/",
+      "base_url": "https://ywzl.hrss.henan.gov.cn/",
       "region_code": "CN-HA",
       "topic": "recruitment",
       "source_class": "government",
       "index_urls": [
-        "https://hrss.henan.gov.cn/"
+        "https://ywzl.hrss.henan.gov.cn/viewCmsCac.do?cacId=4aef1408279926e601279e53eac517a5"
       ],
       "endpoint_name": "public_notices",
       "path_code": "public_institution",
@@ -4613,9 +4673,9 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:26.990196+00:00",
+        "checked_at": "2026-10-06T16:06:00.436620+00:00",
         "status": "blocked",
-        "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
+        "error": "来源 robots.txt 不允许采集"
       }
     },
     {
@@ -4664,7 +4724,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:27.194710+00:00",
+        "checked_at": "2026-10-06T15:57:00.023310+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -4715,7 +4775,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:27.274875+00:00",
+        "checked_at": "2026-10-06T15:57:00.052811+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -4729,7 +4789,7 @@
       "topic": "recruitment",
       "source_class": "government",
       "index_urls": [
-        "https://hrss.hainan.gov.cn/"
+        "https://hrss.hainan.gov.cn/hrss/sydwzp/"
       ],
       "endpoint_name": "public_notices",
       "path_code": "public_institution",
@@ -4737,10 +4797,12 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:27.353563+00:00",
+        "checked_at": "2026-10-06T16:03:09.039181+00:00",
         "status": "blocked",
-        "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
-      }
+        "error": "来源 HTTP 请求失败或超时"
+      },
+      "article_selector": "#zoom",
+      "title_selector": ".title_cen"
     },
     {
       "code": "CM-HRSS-CQ",
@@ -4759,7 +4821,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:27.391542+00:00",
+        "checked_at": "2026-10-06T15:57:00.233980+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -4781,9 +4843,9 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:27.423044+00:00",
+        "checked_at": "2026-10-06T15:57:00.235285+00:00",
         "status": "blocked",
-        "error": "来源 HTTP 请求失败或超时"
+        "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
     },
     {
@@ -4795,17 +4857,24 @@
       "topic": "recruitment",
       "source_class": "government",
       "index_urls": [
-        "https://rst.guizhou.gov.cn/"
+        "https://rst.guizhou.gov.cn/zwgk/zdlyxx/sydwgkzp/"
       ],
       "endpoint_name": "public_notices",
       "path_code": "public_institution",
       "interval_hours": 12,
       "detail_interval_hours": 24,
-      "status": "blocked",
+      "status": "ready",
       "probe": {
-        "checked_at": "2026-10-01T16:00:27.529766+00:00",
-        "status": "blocked",
-        "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
+        "checked_at": "2026-10-06T16:06:00.436696+00:00",
+        "status": "ready",
+        "discovered": 6,
+        "sample": {
+          "url": "https://rst.guizhou.gov.cn/zwgk/zdlyxx/sydwgkzp/202403/t20240312_83916272.html",
+          "title": "中共贵州省委组织部 贵州省人力资源和社会保障厅关于认真贯彻落实《事业单位工作人员 处分规定》的通知",
+          "evidence": 182,
+          "sha256": "4d78ad98f0dc91120591a90d668dbea1693a5dac20914577fcc0a75b517e5830"
+        },
+        "error": ""
       }
     },
     {
@@ -4917,7 +4986,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:28.111399+00:00",
+        "checked_at": "2026-10-06T15:57:00.431054+00:00",
         "status": "blocked",
         "error": "来源 HTTP 请求失败或超时"
       }
@@ -5062,7 +5131,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:30.395622+00:00",
+        "checked_at": "2026-10-06T15:57:00.431703+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -5084,7 +5153,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:28.694570+00:00",
+        "checked_at": "2026-10-06T15:57:01.017558+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -5220,7 +5289,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:29.833339+00:00",
+        "checked_at": "2026-10-06T15:57:01.103078+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -5242,7 +5311,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:30.011066+00:00",
+        "checked_at": "2026-10-06T15:57:01.247974+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -5264,7 +5333,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:30.023848+00:00",
+        "checked_at": "2026-10-06T15:57:01.541406+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -5286,10 +5355,17 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:30.280407+00:00",
+        "checked_at": "2026-10-06T16:06:00.436772+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
-      }
+      },
+      "article_selector": "[id^=\"vsb_content_\"]",
+      "title_selector": "h4.tit",
+      "detail_path_prefixes": [
+        "/notice/",
+        "/jcjob/",
+        "/job/"
+      ]
     },
     {
       "code": "CM-PUBLIC-SCU-JOBS",
@@ -5308,7 +5384,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:30.396664+00:00",
+        "checked_at": "2026-10-06T16:06:00.436829+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -5330,7 +5406,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:30.453769+00:00",
+        "checked_at": "2026-10-06T15:57:01.684116+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -5352,7 +5428,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:30.519116+00:00",
+        "checked_at": "2026-10-06T15:57:01.698227+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -5374,7 +5450,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:30.564686+00:00",
+        "checked_at": "2026-10-06T15:57:01.868012+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -5396,7 +5472,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:30.733778+00:00",
+        "checked_at": "2026-10-06T15:57:02.031416+00:00",
         "status": "blocked",
         "error": "来源 HTTP 请求失败或超时"
       }
@@ -5418,7 +5494,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:30.748051+00:00",
+        "checked_at": "2026-10-06T15:57:02.033101+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -5440,7 +5516,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:30.781793+00:00",
+        "checked_at": "2026-10-06T15:57:02.380037+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -5491,7 +5567,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:30.852767+00:00",
+        "checked_at": "2026-10-06T15:57:02.441521+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -5513,7 +5589,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:31.115735+00:00",
+        "checked_at": "2026-10-06T15:57:02.576216+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -5535,7 +5611,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:31.099012+00:00",
+        "checked_at": "2026-10-06T15:57:02.498136+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -5557,7 +5633,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:31.125066+00:00",
+        "checked_at": "2026-10-06T15:57:02.673706+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -5579,7 +5655,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:31.232594+00:00",
+        "checked_at": "2026-10-06T15:57:02.853744+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -5630,7 +5706,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:31.329102+00:00",
+        "checked_at": "2026-10-06T15:57:03.049267+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -5652,7 +5728,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:31.416795+00:00",
+        "checked_at": "2026-10-06T15:57:03.112680+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -5705,7 +5781,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:20.726630+00:00",
+        "checked_at": "2026-10-06T15:56:57.187879+00:00",
         "status": "blocked",
         "error": "来源 HTTP 请求失败或超时"
       }
@@ -5727,7 +5803,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:00:31.547764+00:00",
+        "checked_at": "2026-10-06T15:57:03.464003+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -5780,7 +5856,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T17:05:46.972234+00:00",
+        "checked_at": "2026-10-06T15:57:03.565985+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -5861,7 +5937,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T17:05:46.972384+00:00",
+        "checked_at": "2026-10-06T15:57:03.590240+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -5881,11 +5957,18 @@
       "path_code": "domestic_study",
       "interval_hours": 12,
       "detail_interval_hours": 24,
-      "status": "blocked",
+      "status": "ready",
       "probe": {
-        "checked_at": "2026-10-01T17:05:46.972487+00:00",
-        "status": "blocked",
-        "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
+        "checked_at": "2026-10-06T15:57:03.766913+00:00",
+        "status": "ready",
+        "discovered": 5,
+        "sample": {
+          "url": "https://zizhu.ecnu.edu.cn/ee/97/c41428a781975/page.htm",
+          "title": "华东师范大学关于2026-2027学年各类助学金评选工作的通知",
+          "evidence": 42,
+          "sha256": "bc54dafb32e285e212d475e6400b877dbb2ef50f50b629d07597a927ac74e666"
+        },
+        "error": ""
       }
     },
     {
@@ -5993,10 +6076,10 @@
       "detail_interval_hours": 24,
       "status": "index_ready",
       "probe": {
-        "checked_at": "2026-10-02T06:44:00+00:00",
+        "checked_at": "2026-10-06T15:57:03.945275+00:00",
         "status": "index_ready",
         "discovered": 30,
-        "detail_error": "正文跳转到官方访问权限限制页，未启用持续采集",
+        "detail_error": "检测到访问权限限制页面，不得作为后台采集来源",
         "error": ""
       }
     },
@@ -6105,11 +6188,18 @@
       "path_code": "domestic_study",
       "interval_hours": 12,
       "detail_interval_hours": 24,
-      "status": "blocked",
+      "status": "ready",
       "probe": {
-        "checked_at": "2026-10-01T17:05:46.972566+00:00",
-        "status": "blocked",
-        "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
+        "checked_at": "2026-10-06T15:57:04.146571+00:00",
+        "status": "ready",
+        "discovered": 6,
+        "sample": {
+          "url": "https://www.scuec.edu.cn/xszz/info/1009/2873.htm",
+          "title": "关于做好2025年秋季学期退役士兵学生国家助学金申报工作的通知",
+          "evidence": 14,
+          "sha256": "fca0c1f87896006568473c899bb55e13d6aa1de55cbc4486441755b8e329944b"
+        },
+        "error": ""
       }
     },
     {
@@ -6129,7 +6219,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T17:05:46.972627+00:00",
+        "checked_at": "2026-10-06T15:57:04.495101+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -6209,7 +6299,7 @@
       "detail_interval_hours": 24,
       "status": "index_ready",
       "probe": {
-        "checked_at": "2026-10-01T16:59:30.434608+00:00",
+        "checked_at": "2026-10-06T15:57:04.507508+00:00",
         "status": "index_ready",
         "discovered": 30,
         "detail_error": "仅允许配置白名单中的 HTTPS 官方源（443 端口，无凭据和片段）",
@@ -6380,7 +6470,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T17:05:46.972680+00:00",
+        "checked_at": "2026-10-06T15:57:04.553387+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -6402,7 +6492,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T17:05:46.972726+00:00",
+        "checked_at": "2026-10-06T15:57:04.676495+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -6453,7 +6543,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:59:33.111637+00:00",
+        "checked_at": "2026-10-06T15:57:04.870307+00:00",
         "status": "blocked",
         "error": "来源 HTTP 请求失败或超时"
       }
@@ -6533,7 +6623,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T17:05:46.972825+00:00",
+        "checked_at": "2026-10-06T15:57:04.993874+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -6584,7 +6674,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T17:05:46.972926+00:00",
+        "checked_at": "2026-10-06T15:57:05.172203+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -6606,7 +6696,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:59:35.568406+00:00",
+        "checked_at": "2026-10-06T15:57:05.213800+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -6628,7 +6718,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T17:05:46.973011+00:00",
+        "checked_at": "2026-10-06T15:57:05.300082+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -6680,7 +6770,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T17:05:46.973071+00:00",
+        "checked_at": "2026-10-06T15:57:05.348063+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -6702,7 +6792,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:59:35.875357+00:00",
+        "checked_at": "2026-10-06T15:57:05.405774+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -6724,7 +6814,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:59:35.967665+00:00",
+        "checked_at": "2026-10-06T15:57:05.476768+00:00",
         "status": "blocked",
         "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
@@ -6746,7 +6836,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T17:05:46.973124+00:00",
+        "checked_at": "2026-10-06T15:57:05.616001+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -6797,7 +6887,7 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:59:36.244667+00:00",
+        "checked_at": "2026-10-06T15:57:05.758974+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
@@ -6883,12 +6973,12 @@
       "code": "CM-PUBLIC-JOB-XMU",
       "name": "厦门大学就业招聘",
       "publisher": "厦门大学就业招聘",
-      "base_url": "https://jy.xmu.edu.cn/source",
+      "base_url": "https://jyzd.xmu.edu.cn/",
       "region_code": "CN-FJ",
       "topic": "employment",
       "source_class": "university",
       "index_urls": [
-        "https://jy.xmu.edu.cn/source"
+        "https://jyzd.xmu.edu.cn/"
       ],
       "endpoint_name": "public_notices",
       "path_code": "employment",
@@ -6896,9 +6986,9 @@
       "detail_interval_hours": 24,
       "status": "blocked",
       "probe": {
-        "checked_at": "2026-10-01T16:59:36.387357+00:00",
+        "checked_at": "2026-10-06T16:03:09.335569+00:00",
         "status": "blocked",
-        "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
+        "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
       }
     },
     {
@@ -6910,18 +7000,40 @@
       "topic": "employment",
       "source_class": "university",
       "index_urls": [
-        "https://career.bnu.edu.cn/frontpage/bnu/html/recruitmentinfoList.html"
+        "https://career.bnu.edu.cn/f/ajaxHome/ajax_findRecruitmentinfoLimitList"
       ],
       "endpoint_name": "public_notices",
       "path_code": "employment",
       "interval_hours": 12,
       "detail_interval_hours": 24,
-      "status": "blocked",
+      "status": "index_ready",
       "probe": {
-        "checked_at": "2026-10-01T16:59:36.423283+00:00",
-        "status": "blocked",
-        "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
-      }
+        "checked_at": "2026-10-06T16:21:09.678267+00:00",
+        "status": "index_ready",
+        "discovered": 9,
+        "detail_error": "仅允许配置白名单中的 HTTPS 官方源（443 端口，无凭据和片段）",
+        "error": ""
+      },
+      "discovery_format": "json",
+      "json_index": {
+        "items_path": [
+          "object"
+        ],
+        "title_field": "title",
+        "url_field": "url"
+      },
+      "index_requests": {
+        "https://career.bnu.edu.cn/f/ajaxHome/ajax_findRecruitmentinfoLimitList": {
+          "url": "https://career.bnu.edu.cn/f/ajaxHome/ajax_findRecruitmentinfoLimitList",
+          "method": "POST",
+          "read_only": true,
+          "form": {
+            "num": 10,
+            "positionType": 1
+          }
+        }
+      },
+      "discovery_reference": "https://career.bnu.edu.cn/frontpage/bnu/js/index.js?v=1.1"
     },
     {
       "code": "CM-PUBLIC-FUNDING-UKRI",
@@ -6977,7 +7089,7 @@
       "detail_interval_hours": 24,
       "status": "index_ready",
       "probe": {
-        "checked_at": "2026-10-01T17:35:20.887819+00:00",
+        "checked_at": "2026-10-06T15:57:06.018158+00:00",
         "status": "index_ready",
         "discovered": 15,
         "detail_error": "来源 HTTP 请求失败或超时",
@@ -7036,9 +7148,9 @@
       "history_index_limit": 32,
       "history_depth_limit": 20,
       "probe": {
-        "checked_at": "2026-10-01T20:14:44.624051+00:00",
+        "checked_at": "2026-10-06T15:57:06.195324+00:00",
         "status": "blocked",
-        "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
+        "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
       }
     },
     {
@@ -7087,14 +7199,583 @@
       "path_code": "employment",
       "interval_hours": 12,
       "detail_interval_hours": 24,
-      "status": "blocked",
+      "status": "ready",
       "history_index_limit": 24,
       "history_depth_limit": 20,
       "probe": {
-        "checked_at": "2026-10-01T20:19:42.803029+00:00",
+        "checked_at": "2026-10-06T16:03:09.689822+00:00",
+        "status": "ready",
+        "discovered": 9,
+        "sample": {
+          "url": "https://career.nankai.edu.cn/correcruit/content/id/119483.html",
+          "title": "中国农业发展银行2027年度校园招聘公告",
+          "evidence": 34,
+          "sha256": "41191581a54cb44f49dd34490d301defaac7dc67266b26cc349d33a12c57f573"
+        },
+        "error": ""
+      },
+      "article_selector": ".zpnr",
+      "title_selector": ".title1 a"
+    },
+    {
+      "code": "CM-PUBLIC-AID-JLU",
+      "name": "吉林大学学生资助",
+      "publisher": "吉林大学",
+      "base_url": "https://xszz.jlu.edu.cn/",
+      "region_code": "CN-JL",
+      "topic": "funding",
+      "source_class": "university",
+      "index_urls": [
+        "https://xszz.jlu.edu.cn/"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "domestic_study",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "ready",
+      "probe": {
+        "checked_at": "2026-10-06T16:03:10.084538+00:00",
+        "status": "ready",
+        "discovered": 8,
+        "sample": {
+          "url": "https://xszz.jlu.edu.cn/info/1010/2637.htm",
+          "title": "关于开展2026年吉林大学本科生“吉林大学助学金”评审工作的通知",
+          "evidence": 27,
+          "sha256": "14f1a26a12cbc5bccf1861de975025f34addfa55dbc120cd0efd9a82505cd68b"
+        },
+        "error": ""
+      },
+      "discovery_reference": "https://xszz.jlu.edu.cn/"
+    },
+    {
+      "code": "CM-PUBLIC-AID-CSU",
+      "name": "中南大学学生资助",
+      "publisher": "中南大学",
+      "base_url": "https://xgw.csu.edu.cn/",
+      "region_code": "CN-HN",
+      "topic": "funding",
+      "source_class": "university",
+      "index_urls": [
+        "https://xgw.csu.edu.cn/zzgl/tzgg.htm"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "domestic_study",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "ready",
+      "probe": {
+        "checked_at": "2026-10-06T16:03:10.456718+00:00",
+        "status": "ready",
+        "discovered": 14,
+        "sample": {
+          "url": "https://xgw.csu.edu.cn/info/1268/16991.htm",
+          "title": "关于做好2026-2027学年本科生国家助学金评定工作的通知-中南大学学生工作网",
+          "evidence": 24,
+          "sha256": "5bfdaf6b0bb9a61859c36b695fd3b7d479e51ddbe3bfd6e9f0a41f883d3ede93"
+        },
+        "error": ""
+      },
+      "discovery_reference": "https://xgw.csu.edu.cn/zzgl/tzgg.htm"
+    },
+    {
+      "code": "CM-PUBLIC-AID-NANKAI",
+      "name": "南开大学学生资助通知",
+      "publisher": "南开大学",
+      "base_url": "https://xgb.nankai.edu.cn/",
+      "region_code": "CN-TJ",
+      "topic": "funding",
+      "source_class": "university",
+      "index_urls": [
+        "https://xgb.nankai.edu.cn/News/notice.html"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "domestic_study",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "blocked",
+      "probe": {
+        "checked_at": "2026-10-06T16:03:10.518231+00:00",
+        "status": "blocked",
+        "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
+      },
+      "discovery_reference": "https://xgb.nankai.edu.cn/News/notice.html"
+    },
+    {
+      "code": "CM-PUBLIC-FUNDING-XJTU",
+      "name": "西安交通大学教育基金资助",
+      "publisher": "西安交通大学",
+      "base_url": "https://ef.xjtu.edu.cn/",
+      "region_code": "CN-SN",
+      "topic": "funding",
+      "source_class": "university",
+      "index_urls": [
+        "https://ef.xjtu.edu.cn/xwzx/tzgg.htm"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "domestic_study",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "ready",
+      "probe": {
+        "checked_at": "2026-10-06T16:12:08.115870+00:00",
+        "status": "ready",
+        "discovered": 9,
+        "sample": {
+          "url": "https://ef.xjtu.edu.cn/info/1021/8260.htm",
+          "title": "唐仲英基金会2027年资助项目公开征集通知",
+          "evidence": 34,
+          "sha256": "b7c45b6884d69c3992d1cc081dc15ddb29e598e9e726dfdc628903ba0522c29a"
+        },
+        "error": ""
+      },
+      "discovery_reference": "https://ef.xjtu.edu.cn/",
+      "detail_path_prefixes": [
+        "/info/"
+      ]
+    },
+    {
+      "code": "CM-PUBLIC-EXCHANGE-ECNU-GRAD",
+      "name": "华东师范大学研究生国际交流",
+      "publisher": "华东师范大学",
+      "base_url": "https://yjsy.ecnu.edu.cn/",
+      "region_code": "CN-SH",
+      "topic": "overseas",
+      "source_class": "university",
+      "index_urls": [
+        "https://yjsy.ecnu.edu.cn/gjjl_42076/list.htm"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "overseas_study",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "ready",
+      "probe": {
+        "checked_at": "2026-10-06T16:03:11.248979+00:00",
+        "status": "ready",
+        "discovered": 17,
+        "sample": {
+          "url": "https://yjsy.ecnu.edu.cn/db/6c/c42076a777068/page.htm",
+          "title": "国际交流｜关于2027年华东师大-澳大利亚麦考瑞大学联合培养博士研究生项目招生的通知",
+          "evidence": 82,
+          "sha256": "fda413c2e86405a9dbc6e78c3c8455b0ca076fb9efa7f6b87a3b6e36b9e4f5a7"
+        },
+        "error": ""
+      },
+      "discovery_reference": "https://yjsy.ecnu.edu.cn/gjjl_42076/list.htm"
+    },
+    {
+      "code": "CM-PUBLIC-EXCHANGE-SNNU",
+      "name": "陕西师范大学国际交流项目",
+      "publisher": "陕西师范大学",
+      "base_url": "https://ipo.snnu.edu.cn/",
+      "region_code": "CN-SN",
+      "topic": "overseas",
+      "source_class": "university",
+      "index_urls": [
+        "https://ipo.snnu.edu.cn/"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "overseas_study",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "ready",
+      "probe": {
+        "checked_at": "2026-10-06T16:03:11.874946+00:00",
+        "status": "ready",
+        "discovered": 5,
+        "sample": {
+          "url": "https://ipo.snnu.edu.cn/info/1460/19534.htm",
+          "title": "关于申报国家留学基金委2027年国别和区域研究人才支持计划的通知",
+          "evidence": 42,
+          "sha256": "f24ba6317c431194411cb07c85e3e3f6fd174fd5c59bead267ac439bb02482d4"
+        },
+        "error": ""
+      },
+      "discovery_reference": "https://ipo.snnu.edu.cn/"
+    },
+    {
+      "code": "CM-PUBLIC-EXCHANGE-PKU",
+      "name": "北京大学国际交流项目",
+      "publisher": "北京大学",
+      "base_url": "https://www.oir.pku.edu.cn/",
+      "region_code": "CN-BJ",
+      "topic": "overseas",
+      "source_class": "university",
+      "index_urls": [
+        "https://www.oir.pku.edu.cn/hwxx.htm",
+        "https://www.oir.pku.edu.cn/hwxx/cgjl/xjjl.htm"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "overseas_study",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "ready",
+      "probe": {
+        "checked_at": "2026-10-06T16:12:08.116020+00:00",
+        "status": "ready",
+        "discovered": 9,
+        "sample": {
+          "url": "https://www.oir.pku.edu.cn/info/1058/9794.htm",
+          "title": "北京大学2026-2027学生海外学习项目资助申请通知-北京大学国际合作部",
+          "evidence": 27,
+          "sha256": "22fce5b6f5826cf4d076d0212d0eaebe146dee99472befd4b32d2441a88754a7"
+        },
+        "error": ""
+      },
+      "discovery_reference": "https://www.oir.pku.edu.cn/xwzx/ggtz.htm",
+      "detail_path_prefixes": [
+        "/info/"
+      ]
+    },
+    {
+      "code": "CM-PUBLIC-EXCHANGE-NJAU",
+      "name": "南京农业大学出境留学项目",
+      "publisher": "南京农业大学",
+      "base_url": "https://intl.njau.edu.cn/",
+      "region_code": "CN-JS",
+      "topic": "overseas",
+      "source_class": "university",
+      "index_urls": [
+        "https://intl.njau.edu.cn/cjlx/tzgg1.htm"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "overseas_study",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "blocked",
+      "probe": {
+        "checked_at": "2026-10-06T16:03:12.368283+00:00",
+        "status": "blocked",
+        "error": "静态栏目未发现主题详情链接；需校准栏目或动态页面"
+      },
+      "discovery_reference": "https://intl.njau.edu.cn/cjlx/tzgg1.htm"
+    },
+    {
+      "code": "CM-PUBLIC-EXCHANGE-WHU",
+      "name": "武汉大学海外学习项目",
+      "publisher": "武汉大学",
+      "base_url": "https://oir.whu.edu.cn/",
+      "region_code": "CN-HB",
+      "topic": "overseas",
+      "source_class": "university",
+      "index_urls": [
+        "https://oir.whu.edu.cn/gzzd/xshwxxgl.htm",
+        "https://oir.whu.edu.cn/xzzx/xshwxxgl.htm"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "overseas_study",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "ready",
+      "probe": {
+        "checked_at": "2026-10-06T16:06:00.633256+00:00",
+        "status": "ready",
+        "discovered": 4,
+        "sample": {
+          "url": "https://oir.whu.edu.cn/info/1022/8148.htm",
+          "title": "武汉大学学生出国（境）交流学习管理办法-武汉大学国际交流部",
+          "evidence": 150,
+          "sha256": "222919fb3fd9877a417bbf1e1597176795aed3366d6b7ed384f04981b70f64ef"
+        },
+        "error": ""
+      },
+      "discovery_reference": "https://oir.whu.edu.cn/hwxxxm1/xq_n_jlxm.htm",
+      "detail_path_prefixes": [
+        "/info/"
+      ]
+    },
+    {
+      "code": "CM-PUBLIC-EXCHANGE-SCU",
+      "name": "四川大学本科交流项目",
+      "publisher": "四川大学",
+      "base_url": "https://jwc.scu.edu.cn/",
+      "region_code": "CN-SC",
+      "topic": "overseas",
+      "source_class": "university",
+      "index_urls": [
+        "https://jwc.scu.edu.cn/"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "overseas_study",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "ready",
+      "probe": {
+        "checked_at": "2026-10-06T16:03:13.634665+00:00",
+        "status": "ready",
+        "discovered": 1,
+        "sample": {
+          "url": "https://jwc.scu.edu.cn/info/1069/10805.htm",
+          "title": "关于选派本科生参加俄罗斯圣彼得堡国立大学2027年春季学期交换生项目的通知",
+          "evidence": 33,
+          "sha256": "8287318734a006fbf6e212f0384dfd4866d85acb454cb5fcf14f8f641520953b"
+        },
+        "error": ""
+      },
+      "discovery_reference": "https://jwc.scu.edu.cn/"
+    },
+    {
+      "code": "CM-PUBLIC-EXCHANGE-BJTU",
+      "name": "北京交通大学国际合作交流",
+      "publisher": "北京交通大学",
+      "base_url": "https://intl.bjtu.edu.cn/",
+      "region_code": "CN-BJ",
+      "topic": "overseas",
+      "source_class": "university",
+      "index_urls": [
+        "https://intl.bjtu.edu.cn/tzgg/index.htm"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "overseas_study",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "ready",
+      "probe": {
+        "checked_at": "2026-10-06T16:06:00.697490+00:00",
+        "status": "ready",
+        "discovered": 3,
+        "sample": {
+          "url": "https://intl.bjtu.edu.cn/tzgg/5bd6d1cac4184a10ae24fe33909b7d33.htm",
+          "title": "2027年春季学期港澳台校际交换项目报名通知",
+          "evidence": 26,
+          "sha256": "533cdd176c69548739a6f9a227bfe2a1dbd66d9890439c03c2cf0e12079bbb2f"
+        },
+        "error": ""
+      },
+      "discovery_reference": "https://intl.bjtu.edu.cn/tzgg/index.htm",
+      "article_selector": ".main .content"
+    },
+    {
+      "code": "CM-PUBLIC-CONTEST-SCU",
+      "name": "四川大学学科竞赛",
+      "publisher": "四川大学",
+      "base_url": "https://jwc.scu.edu.cn/",
+      "region_code": "CN-SC",
+      "topic": "entrepreneurship",
+      "source_class": "university",
+      "index_urls": [
+        "https://jwc.scu.edu.cn/jxgl/xkjs.htm"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "entrepreneurship",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "ready",
+      "probe": {
+        "checked_at": "2026-10-06T16:03:15.009385+00:00",
+        "status": "ready",
+        "discovered": 11,
+        "sample": {
+          "url": "https://jwc.scu.edu.cn/info/1043/10833.htm",
+          "title": "关于组织2026年四川省大学生孙训方力学竞赛参赛报名的通知",
+          "evidence": 28,
+          "sha256": "8c92cfa40eea4136a980b049e86c94444c7d8def2bdd60e8a47ee12f25be0762"
+        },
+        "error": ""
+      },
+      "discovery_reference": "https://jwc.scu.edu.cn/jxgl/xkjs.htm"
+    },
+    {
+      "code": "CM-PUBLIC-CONTEST-PKU",
+      "name": "北京大学创新创业竞赛",
+      "publisher": "北京大学",
+      "base_url": "https://sie.pku.edu.cn/",
+      "region_code": "CN-BJ",
+      "topic": "entrepreneurship",
+      "source_class": "university",
+      "index_urls": [
+        "https://sie.pku.edu.cn/xwgg/tzgg/index.htm"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "entrepreneurship",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "ready",
+      "probe": {
+        "checked_at": "2026-10-06T16:06:00.828984+00:00",
+        "status": "ready",
+        "discovered": 13,
+        "sample": {
+          "url": "https://sie.pku.edu.cn/xwgg/tzgg/c8cfb7bc582d4cc6acf519939241eaaf.htm",
+          "title": "2026中英青年创新大赛暨中国国际大学生创新大赛（2026）英国区域赛开启报名",
+          "evidence": 47,
+          "sha256": "867c8c3adb2701a06f3477b15d4f3a47a636dabc72ae4e74d336e2a9600f9efc"
+        },
+        "error": ""
+      },
+      "discovery_reference": "https://sie.pku.edu.cn/xwgg/tzgg/index.htm",
+      "article_selector": "#articleDiv",
+      "title_selector": "#shareTitle"
+    },
+    {
+      "code": "CM-PUBLIC-CONTEST-WIT",
+      "name": "武汉工程大学创新创业竞赛",
+      "publisher": "武汉工程大学",
+      "base_url": "https://ie.wit.edu.cn/",
+      "region_code": "CN-HB",
+      "topic": "entrepreneurship",
+      "source_class": "university",
+      "index_urls": [
+        "https://ie.wit.edu.cn/index/tzgg.htm"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "entrepreneurship",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "ready",
+      "probe": {
+        "checked_at": "2026-10-06T16:03:14.074379+00:00",
+        "status": "ready",
+        "discovered": 9,
+        "sample": {
+          "url": "https://ie.wit.edu.cn/info/1010/3929.htm",
+          "title": "关于举办2026年第十一届科云杯全国大学生财会职业能力大赛武汉工程大学选拔赛的通知",
+          "evidence": 42,
+          "sha256": "d18dc6c909a04c4491c8830b7b007a6a6910895ed993b8656b54e70d38cab235"
+        },
+        "error": ""
+      },
+      "discovery_reference": "https://ie.wit.edu.cn/index/tzgg.htm"
+    },
+    {
+      "code": "CM-PUBLIC-CONTEST-CQU",
+      "name": "重庆大学学生交叉创新竞赛",
+      "publisher": "重庆大学",
+      "base_url": "https://sxic.cqu.edu.cn/",
+      "region_code": "CN-CQ",
+      "topic": "entrepreneurship",
+      "source_class": "university",
+      "index_urls": [
+        "https://sxic.cqu.edu.cn/content/news-list?menuIds=64%2C66&params=33&singlePage=1"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "entrepreneurship",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "blocked",
+      "probe": {
+        "checked_at": "2026-10-06T16:03:14.241030+00:00",
         "status": "blocked",
         "error": "无法确认官方 robots 规则（网络或重定向异常），等待重试"
-      }
+      },
+      "discovery_reference": "https://sxic.cqu.edu.cn/content/news-list?menuIds=64%2C66&params=33&singlePage=1"
+    },
+    {
+      "code": "CM-PUBLIC-RECRUIT-BNU",
+      "name": "北京师范大学人才招聘",
+      "publisher": "北京师范大学",
+      "base_url": "https://hr.bnu.edu.cn/",
+      "region_code": "CN-BJ",
+      "topic": "recruitment",
+      "source_class": "university",
+      "index_urls": [
+        "https://hr.bnu.edu.cn/rcgzbgs/xxgg/tzgg/"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "public_institution",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "ready",
+      "probe": {
+        "checked_at": "2026-10-06T16:06:01.704687+00:00",
+        "status": "ready",
+        "discovered": 6,
+        "sample": {
+          "url": "https://hr.bnu.edu.cn/rcgzbgs/xxgg/tzgg/857a9cf771884a669d414890668fc218.htm",
+          "title": "北京师范大学法学院、纪检监察研究院招聘专任教师公告",
+          "evidence": 28,
+          "sha256": "7c7b10ef54f243c8e0b942d65a20f26f31e3451b5065c54dc9cb9e732d585eff"
+        },
+        "error": ""
+      },
+      "discovery_reference": "https://hr.bnu.edu.cn/rcgzbgs/xxgg/tzgg/",
+      "article_selector": ".zhengwen",
+      "title_selector": ".biaoti .STYLE1"
+    },
+    {
+      "code": "CM-PUBLIC-RECRUIT-FUZHOU",
+      "name": "福州市事业单位招聘通知",
+      "publisher": "福州市人力资源和社会保障局",
+      "base_url": "https://www.fuzhou.gov.cn/",
+      "region_code": "CN-FJ",
+      "topic": "recruitment",
+      "source_class": "government",
+      "index_urls": [
+        "https://www.fuzhou.gov.cn/zgfzzt/srsj/fzrs/tzgg/"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "public_institution",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "index_ready",
+      "probe": {
+        "checked_at": "2026-10-06T16:03:15.341572+00:00",
+        "status": "index_ready",
+        "discovered": 2,
+        "detail_error": "检测到登录或验证码页面，不得作为后台采集来源",
+        "error": ""
+      },
+      "discovery_reference": "https://www.fuzhou.gov.cn/zgfzzt/srsj/fzrs/tzgg/"
+    },
+    {
+      "code": "CM-PUBLIC-POLICY-FJ",
+      "name": "福建就业创业支持政策",
+      "publisher": "福建省人力资源和社会保障厅",
+      "base_url": "https://rst.fujian.gov.cn/",
+      "region_code": "CN-FJ",
+      "topic": "policy",
+      "source_class": "government",
+      "index_urls": [
+        "https://rst.fujian.gov.cn/zw/zfxxgk/zfxxgkml/zyywgz/jycj/"
+      ],
+      "endpoint_name": "public_notices",
+      "path_code": "employment",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "ready",
+      "probe": {
+        "checked_at": "2026-10-06T16:03:10.454585+00:00",
+        "status": "ready",
+        "discovered": 30,
+        "sample": {
+          "url": "https://rst.fujian.gov.cn/zw/zfxxgk/zfxxgkml/zyywgz/jycj/202609/t20260916_7214247.htm",
+          "title": "福建省人力资源和社会保障厅 福建省教育厅福建省财政厅 国家税务总局福建省税务局关于落实失业保险支持企业稳岗扩岗的通知 _ 劳动就业 _ 省人社厅",
+          "evidence": 13,
+          "sha256": "cd1b19bd97ac77afacb004783747d49d70c00ec05d64db600b8362a0c4e12fcb"
+        },
+        "error": ""
+      },
+      "discovery_reference": "https://rst.fujian.gov.cn/zw/zfxxgk/zfxxgkml/zyywgz/jycj/"
+    },
+    {
+      "code": "CM-EXAM-JS",
+      "name": "江苏省教育考试院公开招考通知",
+      "publisher": "江苏省教育考试院",
+      "base_url": "https://www.jseea.cn/",
+      "region_code": "CN-JS",
+      "topic": "examination",
+      "source_class": "government",
+      "index_urls": [
+        "https://www.jseea.cn/webfile/index/index_zkxx/"
+      ],
+      "endpoint_name": "public_exam_notices",
+      "path_code": "domestic_study",
+      "interval_hours": 12,
+      "detail_interval_hours": 24,
+      "status": "ready",
+      "probe": {
+        "checked_at": "2026-10-06T16:18:44.297844+00:00",
+        "status": "ready",
+        "discovered": 9,
+        "sample": {
+          "url": "https://www.jseea.cn/webfile/index/index_zkxx/2026-09-24/7508779451111444480.html",
+          "title": "江苏省2027年硕士研究生报考点设置 - 招考信息",
+          "evidence": 3,
+          "sha256": "e8557b57252fae644d0a99dc11f878967b33f531f0818929601107d8203414bc"
+        },
+        "error": ""
+      },
+      "discovery_reference": "https://www.jseea.cn/webfile/index/index_zkxx/"
     }
   ]
 }

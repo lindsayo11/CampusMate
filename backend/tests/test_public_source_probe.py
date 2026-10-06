@@ -1,6 +1,7 @@
 """Bounded fallback distinguishes real ingestion from reachable listing pages."""
 import importlib.util
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -8,6 +9,7 @@ from app.adapters.notice_text import discover_notices
 from app.adapters.education import PublicNoticeAdapter
 from app.adapters.base import RawArtifact
 from app.notice_watch import embedded_pdfs
+from app.parsers import ParseError
 
 SPEC = importlib.util.spec_from_file_location('source_probe',
     Path(__file__).resolve().parents[2] / 'scripts/probe_public_sources.py')
@@ -92,3 +94,51 @@ def test_first_party_base_resolves_original_attachments_and_pdf_wrappers():
     assert parsed.records[0]['attachments'][0]['url'] == 'https://official.example/files/materials.pdf'
     assert set(embedded_pdfs(html, base)) == {'https://official.example/files/materials.pdf',
         'https://official.example/files/notice.pdf'}
+
+
+def test_provincial_recruitment_information_without_year_is_discovered():
+    title = '天津市部分事业单位公开招聘信息'
+    html = f'<a href="/notice/123.html">{title}</a><a href="/list">招聘信息</a>'
+    assert discover_notices(html, 'https://official.example/', topic='recruitment') == [
+        {'title': title, 'url': 'https://official.example/notice/123.html'}]
+
+
+def test_probe_does_not_count_a_site_shell_as_a_real_notice(monkeypatch):
+    base = 'https://official.example/'
+    def fetch(url):
+        if url == base:
+            return response(url, '<a href="/notice">2027年毕业生校园招聘公告</a>')
+        return response(url, '<title>某大学就业指导中心</title><article>'
+            '学生就业指导中心提供职业生涯咨询服务，本网站欢迎各位同学浏览，更多内容请参阅导航栏目。'
+            '</article>')
+    monkeypatch.setattr(probe, 'fetch_public', fetch)
+    row = probe.probe({'code':'sample','name':'Sample','topic':'employment',
+        'base_url':base,'index_urls':[base]})
+    assert row['status'] == 'index_ready' and 'sample' not in row
+    assert '未找到通知标题' in row['detail_error']
+
+
+def test_supporting_position_table_is_not_a_primary_admission_notice(monkeypatch):
+    from app import parsers
+    monkeypatch.setattr(parsers, 'extract_isolated', lambda *args: SimpleNamespace(
+        text='[第 1 页]\n序号 集团公司 招生学院\n全日制硕士计划\n高校导师姓名\n招生专业\n合作企业专家\n培养地点',
+        evidence=[]))
+    with pytest.raises(ParseError, match='PDF 首页未找到明确的主题标题'):
+        PublicNoticeAdapter('postgraduate').parse(RawArtifact(
+            b'%PDF-table', 'https://official.example/positions.pdf', 'sample'))
+
+
+def test_foundation_recruitment_is_not_mistaken_for_student_funding():
+    html = ('<a href="/job">西安交通大学教育基金会招聘公告</a>'
+            '<a href="/grant">唐仲英基金会2027年资助项目公开征集通知</a>')
+    assert [r['url'] for r in discover_notices(html, 'https://official.example/', topic='funding')] == [
+        'https://official.example/grant']
+
+
+@pytest.mark.parametrize('title', [
+    '2026年下半年北京市中小学教师资格考试（笔试）报名公告',
+    '2026年北京市成人高校招生考试报名网上缴费通知',
+])
+def test_teacher_and_adult_education_exam_notices_are_discovered(title):
+    assert discover_notices(f'<a href="/exam">{title}</a>',
+        'https://official.example/', topic='examination')[0]['title'] == title
