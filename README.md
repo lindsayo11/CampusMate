@@ -77,6 +77,8 @@
 | `/admin/intake-document` · `/admin/source-candidates` | 导入文档与候选来源处理 |
 | `/admin/operations` · `/admin/reports` · `/admin/audit` | 运行状态、报表与操作审计 |
 
+采集支持官方栏目发现、RSS / Atom、公开 JSON 与网站地图，解析正文与 PDF / DOC / XLS 附件（含图片 OCR），带持久队列、同文归并、失败诊断与覆盖质量监控。
+
 治理约束是硬性的：采集只访问 HTTPS 白名单主机，逐跳复核重定向，检查 robots.txt，不执行网页 JavaScript；发布需要独立审核，单人环境无法绕过。采集失败不会伪装成成功。
 
 ### 账号与安全
@@ -299,8 +301,3 @@ backend/.venv/bin/python scripts/export_demo_data.py your.db --output demo-data/
 ## 开源协议
 
 [MIT](LICENSE)
-
-
-## 数据采集开发进度（2026-10-04）
-
-新增多频道来源目录、RSS／JSON／网站地图发现、附件与 OCR、采集质量和告警、公开原文交换；保留登录、创业工作台和设置页。启动、迁移和验证说明见 [数据接入进度](docs/DATA_COLLECTION_PROGRESS.md)，历史扩充记录见 [持续信息源扩充](docs/SOURCE_EXPANSION.md)。
