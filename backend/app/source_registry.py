@@ -6,7 +6,7 @@ from uuid import NAMESPACE_URL, uuid5
 
 import yaml
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from .auth import require_admin
@@ -37,6 +37,10 @@ def _json(value):
 def seed_registry(db: Session, path: Path | None = None) -> dict[str, int]:
     config_path = path or Path(__file__).with_name("source_registry.yaml")
     body = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    if path is None:
+        from .public_source_catalog import registry_sources
+        existing = {item['code'] for item in body['sources']}
+        body['sources'].extend(item for item in registry_sources() if item['code'] not in existing)
     source_count = endpoint_count = 0
     for item in body["sources"]:
         source_id = stable_id("source:" + item["code"])
@@ -214,15 +218,18 @@ def source_out(row: Source, db: Session, include_endpoints=False):
 
 @router.get("/sources")
 def list_sources(path: str | None = None, region_code: str | None = None, school_id: str | None = None,
-                 active: bool = True, limit: int = Query(100, ge=1, le=200), db: Session = Depends(get_db)):
+                 active: bool = True, limit: int = Query(500, ge=1, le=1000),
+                 offset: int = Query(0, ge=0), db: Session = Depends(get_db)):
     stmt = select(Source).where(Source.active == active)
     if region_code:
         stmt = stmt.where(Source.region_code == region_code)
     if school_id:
         stmt = stmt.where(Source.school_id == school_id)
-    rows = db.scalars(stmt.order_by(Source.authority_level, Source.source_code).limit(limit)).all()
     if path:
-        rows = [row for row in rows if path in json.loads(row.supported_paths) or "all" in json.loads(row.supported_paths)]
+        # Filter before pagination; a larger inventory must not hide later sources.
+        stmt = stmt.where(or_(Source.supported_paths.contains(json.dumps(path), autoescape=True),
+                              Source.supported_paths.contains('"all"', autoescape=True)))
+    rows = db.scalars(stmt.order_by(Source.authority_level, Source.source_code).offset(offset).limit(limit)).all()
     return [source_out(row, db) for row in rows]
 
 

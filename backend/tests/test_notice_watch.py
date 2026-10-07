@@ -16,7 +16,7 @@ def setup(monkeypatch):
     eid,sid=str(uuid4()),str(uuid4())
     base='https://watch.example.edu/'
     with SessionLocal.begin() as db:
-        db.add(Source(id=sid,source_code='WATCH-'+sid,name='自动采集测试大学',publisher='测试大学',
+        db.add(Source(id=sid,source_code='WATCH-'+sid[:24],name='自动采集测试大学',publisher='测试大学',
             authority_level='A',source_class='university',official=True,jurisdiction_level='school',
             base_url=base,active=True,verified_at=datetime.now(UTC)))
         db.add(SourceEndpoint(id=eid,source_id=sid,name='watch',endpoint_type='html',url=base+'list',
@@ -50,38 +50,38 @@ def test_new_links_detail_changes_even_when_index_304(monkeypatch):
             assert kw['strict_robots'] is True
             calls.append((url,a));return pages[url]
         monkeypatch.setattr(watch,'collect_bytes_conditional',fetch)
-        assert watch.process_once()['kind']=='index'
-        assert watch.process_once()['status']=='updated'
+        assert watch.process_once(endpoint_ids=[eid])['kind']=='index'
+        assert watch.process_once(endpoint_ids=[eid])['status']=='updated'
         with SessionLocal() as db:
             first=db.scalar(select(DocumentVersion).where(DocumentVersion.source_endpoint_id==eid))
             first_id=first.id
         # Newly added URL is automatically discovered; no manifest edits.
         pages[base+'list']=response(base+'list',('<a href="a">测试大学2027年推免研究生申请通知</a><a href="b">测试大学2027年硕士招生报名通知</a>').encode())
         pages[base+'b']=response(base+'b',article('报名截止：2026年10月9日。申请材料和提交方式以官方通知为准，请在规定时间完成报名。'))
-        due(eid,'index');assert watch.process_once()['kind']=='index'
-        assert watch.process_once()['status']=='updated'
+        due(eid,'index');assert watch.process_once(endpoint_ids=[eid])['kind']=='index'
+        assert watch.process_once(endpoint_ids=[eid])['status']=='updated'
         pages[base+'list']=response(base+'list',not_modified=True)
-        due(eid,'index');assert watch.process_once()['status']=='unchanged'
+        due(eid,'index');assert watch.process_once(endpoint_ids=[eid])['status']=='unchanged'
         pages[base+'a']=response(base+'a',article('报名截止：2026年10月10日。申请材料和提交方式以官方通知为准，请在规定时间完成报名。'))
         due(eid,'detail')
-        results=[watch.process_once(),watch.process_once()]
+        results=[watch.process_once(endpoint_ids=[eid]),watch.process_once(endpoint_ids=[eid])]
         assert {r['status'] for r in results}=={'updated','unchanged'}
         with SessionLocal() as db:
             docs=db.scalars(select(DocumentVersion).where(DocumentVersion.source_endpoint_id==eid,
                 DocumentVersion.canonical_url==base+'a').order_by(DocumentVersion.version_no)).all()
             assert len(docs)==2 and docs[1].previous_id==first_id
-        due(eid,'detail');watch.process_once();watch.process_once()
+        due(eid,'detail');watch.process_once(endpoint_ids=[eid]);watch.process_once(endpoint_ids=[eid])
         with SessionLocal() as db:
             assert len(db.scalars(select(DocumentVersion).where(DocumentVersion.source_endpoint_id==eid)).all())==3
         with SessionLocal.begin() as db:db.get(SourceEndpoint,eid).scheduled=False
-        due(eid,'index');assert watch.process_once() is None
+        due(eid,'index');assert watch.process_once(endpoint_ids=[eid]) is None
 
 def test_failures_isolated_and_lease_fence(monkeypatch):
     with TestClient(app):
         eid,base=setup(monkeypatch)
         def fail(*a,**kw):raise FetchError('来源限流',429,'7200')
         monkeypatch.setattr(watch,'collect_bytes_conditional',fail)
-        result=watch.process_once();assert result['status']=='retry'
+        result=watch.process_once(endpoint_ids=[eid]);assert result['status']=='retry'
         with SessionLocal() as db:
             row=db.scalar(select(NoticeResource).where(NoticeResource.endpoint_id==eid))
             assert row.next_check_at-row.checked_at>=timedelta(hours=2)
@@ -92,7 +92,7 @@ def test_failures_isolated_and_lease_fence(monkeypatch):
                 db.execute(update(NoticeResource).where(NoticeResource.endpoint_id==eid).values(lease_token='new-owner'))
             return response(url,b'<a href="a">'+ '测试大学2027年推免研究生申请通知'.encode()+b'</a>')
         monkeypatch.setattr(watch,'collect_bytes_conditional',steal)
-        assert watch.process_once()['status']=='lease_lost'
+        assert watch.process_once(endpoint_ids=[eid])['status']=='lease_lost'
         with SessionLocal.begin() as db:
             db.execute(update(NoticeResource).where(NoticeResource.endpoint_id==eid)
                 .values(lease_until=datetime.now(UTC)-timedelta(minutes=1)))
@@ -107,8 +107,8 @@ def test_pdf_wrapper_and_scanned_pdf_are_visible_issues(monkeypatch):
             watch.add_resource(db,eid,base+'wrapper','detail',datetime.now(UTC))
         monkeypatch.setattr(watch,'collect_bytes_conditional',lambda url,*a,**kw:response(url,
             b'<iframe src="file.pdf"></iframe>' if url.endswith('wrapper') else b'%PDF-broken'))
-        assert watch.process_once()['status']=='attachments_pending'
-        assert watch.process_once()['status']=='needs_review'
+        assert watch.process_once(endpoint_ids=[eid])['status']=='attachments_pending'
+        assert watch.process_once(endpoint_ids=[eid])['status']=='needs_review'
         with SessionLocal.begin() as db:db.get(SourceEndpoint,eid).scheduled=False
 
 def test_literal_onclick_and_no_script_execution():
@@ -116,6 +116,29 @@ def test_literal_onclick_and_no_script_execution():
     <div onclick="evil();window.open('/private')">某大学2028年接收推免研究生办法</div>'''
     assert discover_notices(html,'https://watch.example.edu/list')==[
         {'url':'https://watch.example.edu/article/2','title':'某大学2028年接收推免研究生办法'}]
+
+
+def test_targeted_collection_respects_pauses_and_leaves_other_sources_queued(monkeypatch):
+    with TestClient(app):
+        first, base = setup(monkeypatch)
+        second, _ = setup(monkeypatch)
+        calls = []
+        def fetch(url, *args, **kwargs):
+            calls.append(url)
+            return response(url, '<a href="a">测试大学2027年硕士招生报名通知</a>'.encode())
+        monkeypatch.setattr(watch, 'collect_bytes_conditional', fetch)
+        with SessionLocal.begin() as db:
+            db.get(SourceEndpoint, second).scheduled = False
+        assert watch.process_once(endpoint_ids=[second]) is None and not calls
+        assert watch.process_once(endpoint_ids=[]) is None
+        with SessionLocal.begin() as db:
+            db.get(SourceEndpoint, second).scheduled = True
+        assert watch.process_once(endpoint_ids=[second])['kind'] == 'index'
+        with SessionLocal.begin() as db:
+            untouched = db.scalar(select(NoticeResource).where(NoticeResource.endpoint_id == first))
+            assert untouched.checked_at is None and untouched.lease_token is None
+            db.get(SourceEndpoint, first).scheduled = False
+            db.get(SourceEndpoint, second).scheduled = False
 
 
 def test_title_and_discovery_cover_embedded_pdf_and_joint_programme():

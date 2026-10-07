@@ -91,12 +91,76 @@ class NoticeResource(Base):
     document_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
     discovered_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     checked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_success_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     changed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     next_check_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
     lease_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     lease_token: Mapped[str | None] = mapped_column(String(36), nullable=True)
     failures: Mapped[int] = mapped_column(Integer, default=0)
     error: Mapped[str] = mapped_column(String(500), default="")
+
+
+class CollectionSyncState(Base):
+    __tablename__ = 'collection_sync_states'
+    name: Mapped[str] = mapped_column(String(40),primary_key=True)
+    last_checked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_success_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    state: Mapped[str] = mapped_column(String(20),default='pending')
+    pulled: Mapped[int] = mapped_column(Integer,default=0)
+    pushed: Mapped[int] = mapped_column(Integer,default=0)
+    pending: Mapped[int] = mapped_column(Integer,default=0)
+    error: Mapped[str] = mapped_column(String(500),default='')
+    lease_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class CollectionSyncRecord(Base):
+    __tablename__ = 'collection_sync_records'
+    key: Mapped[str] = mapped_column(String(100),primary_key=True)
+    document_id: Mapped[str | None] = mapped_column(String(36),index=True)
+    content_hash: Mapped[str] = mapped_column(String(64),default='')
+    state: Mapped[str] = mapped_column(String(30))
+    error: Mapped[str] = mapped_column(String(500),default='')
+    observed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class CollectionAttempt(Base):
+    __tablename__ = 'collection_attempts'
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    resource_id: Mapped[str] = mapped_column(String(36), index=True)
+    endpoint_id: Mapped[str] = mapped_column(String(36), index=True)
+    observed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+    outcome: Mapped[str] = mapped_column(String(30))
+    error: Mapped[str] = mapped_column(String(500), default='')
+    content_hash: Mapped[str] = mapped_column(String(64), default='')
+    content_type: Mapped[str] = mapped_column(String(160), default='')
+    # Failed responses are private diagnostic archives, never published evidence.
+    content: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
+
+
+class CollectionAlert(Base):
+    __tablename__ = 'collection_alerts'
+    key: Mapped[str] = mapped_column(String(160), primary_key=True)
+    endpoint_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    status: Mapped[str] = mapped_column(String(20), index=True)
+    message: Mapped[str] = mapped_column(String(500))
+    first_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class CollectionAlertDelivery(Base):
+    __tablename__ = 'collection_alert_deliveries'
+    key: Mapped[str] = mapped_column(String(64),primary_key=True)
+    alert_key: Mapped[str] = mapped_column(String(160),index=True)
+    status: Mapped[str] = mapped_column(String(20))
+    message: Mapped[str] = mapped_column(String(500))
+    state: Mapped[str] = mapped_column(String(20),index=True,default='queued')
+    attempts: Mapped[int] = mapped_column(Integer,default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    next_attempt_at: Mapped[datetime] = mapped_column(DateTime(timezone=True),index=True)
+    delivered_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    lease_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    error: Mapped[str] = mapped_column(String(160),default='')
 
 
 class SourceEndpointRun(Base):

@@ -299,3 +299,8 @@ backend/.venv/bin/python scripts/export_demo_data.py your.db --output demo-data/
 ## 开源协议
 
 [MIT](LICENSE)
+
+
+## 数据采集开发进度（2026-10-04）
+
+新增多频道来源目录、RSS／JSON／网站地图发现、附件与 OCR、采集质量和告警、公开原文交换；保留登录、创业工作台和设置页。启动、迁移和验证说明见 [数据接入进度](docs/DATA_COLLECTION_PROGRESS.md)，历史扩充记录见 [持续信息源扩充](docs/SOURCE_EXPANSION.md)。

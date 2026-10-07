@@ -174,7 +174,7 @@ def readiness(db, doc):
     return snapshot, blocks
 
 
-def auto_publish(db, doc):
+def auto_publish(db, doc, restore_peer=False):
     if doc.import_mode not in {'system', 'demo'} or doc.deleted_at:
         return False
     snapshot, blocks = readiness(db, doc)
@@ -182,6 +182,8 @@ def auto_publish(db, doc):
         return False
     row = db.scalar(select(DataPublication).where(DataPublication.document_id == doc.id))
     if row and row.status in {'withdrawn', 'rejected', 'superseded'}:
+        return False
+    if row and row.status == "peer_hidden" and not restore_peer:
         return False
     payload, now = canonical(snapshot), datetime.now(UTC)
     if not row:
@@ -567,7 +569,7 @@ def catalog(q: str = Query("", max_length=100), path: str | None = None,
             limit: int = Query(30, ge=1, le=100), status: Literal["all", "active", "expired"] = "all",
             school: Annotated[str, Query(max_length=120)] = '', year: Annotated[int | None, Query(ge=2000,le=2100)] = None,
             kind: Literal['all','application_notice','reference','news_report']='all',
-            sort: Literal['recent','deadline']='recent',
+            sort: Literal['recent','deadline']='recent', group_duplicates: bool = True,
             db: Session = Depends(get_db)):
     results = []
     codes = path_codes(db, path)
@@ -599,7 +601,12 @@ def catalog(q: str = Query("", max_length=100), path: str | None = None,
         results.sort(key=lambda item:(item['deadline'] is None,item['deadline'] or '',item['id']))
     else:
         results.sort(key=lambda item:(item['document'].get('publish_time') or '',item['document']['fetched_at'],item['id']),reverse=True)
-    return {"total": len(results), "items": results[offset:offset + limit]}
+    raw_total = len(results)
+    if group_duplicates:
+        from .notice_duplicates import group_identical
+        results = group_identical(results)
+    return {"total": len(results), "raw_total": raw_total, "merged_items": raw_total - len(results),
+            "items": results[offset:offset + limit]}
 
 
 @router.get('/coverage')
@@ -610,15 +617,25 @@ def coverage(db: Session = Depends(get_db)):
     for row,data in visible(db):
         source = data['source']
         entry = by_source.setdefault(source['source_code'],{'name':source['name'],'source_code':source['source_code'],
-            'items':0,'notices':0,'dated_items':0,'last_collected':None})
+            'items':0,'notices':0,'dated_items':0,'dated_notices':0,'availability':{},'last_collected':None})
         entry['items'] += len(data['items'])
         entry['notices'] += sum(content_kind(i['title'])=='application_notice' for i in data['items'])
         entry['dated_items'] += sum(bool(i['deadline']) for i in data['items'])
+        entry['dated_notices'] += sum(bool(i['deadline']) and content_kind(i['title'])=='application_notice' for i in data['items'])
+        for item in data['items']:
+            state = information_state(item)
+            entry['availability'][state] = entry['availability'].get(state,0)+1
         entry['last_collected'] = max(entry['last_collected'] or '',data['document']['fetched_at'])
+    from .public_source_catalog import catalog_status
+    monitors = monitor_status(db)
+    from .coverage_quality import summarize, recent_attempts
+    from .operations import WorkerHeartbeat
     return {'registered_sources':db.scalar(select(func.count()).select_from(Source).where(Source.active.is_(True))),
         'sources_with_content':len(by_source),'sources':sorted(by_source.values(),key=lambda x:x['source_code']),
         'automatic_collection_enabled':settings.collector_enabled or settings.public_notice_watch_enabled,
-        'monitors':monitor_status(db)}
+        'monitors':monitors, 'source_catalog':catalog_status(monitors),
+        'quality':{**summarize(monitors,list(by_source.values()),db.get(WorkerHeartbeat,'reminders')),
+                   **recent_attempts(db)}}
 
 
 def path_codes(db, code):
@@ -767,8 +784,10 @@ def deliver_data_alerts():
     """Persist exactly once per subscription; withdrawal overrides an old deadline alert."""
     now, delivered = datetime.now(UTC), 0
     with SessionLocal.begin() as db:
-        available = {row.id for row, _ in visible(db)}
         rows = db.scalars(select(DataSubscription).where(DataSubscription.status == "active")).all()
+        if not rows:
+            return 0
+        available = {row.id for row, _ in visible(db)}
         for row in rows:
             due = row.remind_at
             due = due.replace(tzinfo=UTC) if due and due.tzinfo is None else due

@@ -14,7 +14,7 @@ from uuid import uuid4
 from sqlalchemy import or_, select, update
 
 from .adapters.base import RawArtifact
-from .adapters.education import MoEPolicyAdapter, UniversityNoticeAdapter, YZChsiAdapter
+from .adapters.education import MoEPolicyAdapter, UniversityNoticeAdapter, PublicNoticeAdapter, YZChsiAdapter
 from .adapters.entrepreneurship import GovernmentPolicyAdapter
 from .adapters.overseas import OverseasRegistryAdapter, OverseasUniversityProgramAdapter
 from .adapters.public_recruitment import (
@@ -31,6 +31,7 @@ from .intake import (
     ingest_overseas_program,
     ingest_overseas_registry,
     ingest_public_recruitment,
+    ingest_public_notice,
     record_document_version,
 )
 from .intake_governance import gate_reason
@@ -49,7 +50,7 @@ HIGH_RISK_PATTERN = re.compile(
 )
 
 IMPLEMENTED_PARSERS = {'CivilServiceWorkbookAdapter','MoEPolicyAdapter','YZChsiAdapter',
-    'UniversityNoticeAdapter','InstitutionRecruitmentAdapter','MohrssPublicJobAdapter',
+    'UniversityNoticeAdapter','PublicNoticeAdapter','InstitutionRecruitmentAdapter','MohrssPublicJobAdapter',
     'RegionalRecruitmentDirectoryAdapter','OverseasRegistryAdapter',
     'OverseasUniversityProgramAdapter','GovernmentPolicyAdapter','GenericTextAdapter'}
 
@@ -248,6 +249,10 @@ def process_endpoint_once():
             if not required.issubset(config):
                 raise ParseError("CivilServiceWorkbookAdapter 缺少 cycle_code、cycle_name 或 cycle_year")
             parsed_text = None
+        elif parser_type == 'PublicNoticeAdapter':
+            PublicNoticeAdapter(config['topic'], config.get('article_selector'), config.get('title_selector')).parse(RawArtifact(fetched['data'], fetched['final_url'],
+                run.source_item_id, fetched['content_type']))
+            parsed_text = None
         elif parser_type in {"MoEPolicyAdapter", "YZChsiAdapter", "UniversityNoticeAdapter"}:
             if parser_type == "UniversityNoticeAdapter" and config.get('notice_scope') != 'university':
                 required = {"institution_code", "institution_name", "program_code", "program_name",
@@ -367,6 +372,8 @@ def _persist_fetched(db, source, endpoint, raw, config, parsed_text, completed_a
             config["cycle_code"], config["cycle_name"], int(config["cycle_year"]))
     elif parser in {"MoEPolicyAdapter", "YZChsiAdapter", "UniversityNoticeAdapter"}:
         result = ingest_education_html(db, source, endpoint, raw, config)
+    elif parser == 'PublicNoticeAdapter':
+        result = ingest_public_notice(db, source, endpoint, raw, config)
     elif parser in {"InstitutionRecruitmentAdapter", "MohrssPublicJobAdapter", "RegionalRecruitmentDirectoryAdapter"}:
         result = ingest_public_recruitment(db, source, endpoint, raw, config)
     elif parser in {"OverseasRegistryAdapter", "OverseasUniversityProgramAdapter"}:

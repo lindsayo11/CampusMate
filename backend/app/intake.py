@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from .adapters.base import RawArtifact
 from .adapters.civil_service import CivilServiceWorkbookAdapter
-from .adapters.education import (MoEPolicyAdapter, UniversityNoticeAdapter, YZChsiAdapter,
+from .adapters.education import (MoEPolicyAdapter, UniversityNoticeAdapter, PublicNoticeAdapter, YZChsiAdapter,
                                    classify_path)
 from .adapters.entrepreneurship import GovernmentPolicyAdapter
 from .adapters.overseas import OverseasRegistryAdapter, OverseasUniversityProgramAdapter
@@ -46,6 +46,8 @@ from .models import Path as DevelopmentPath
 def record_document_version(db: Session, endpoint: SourceEndpoint, raw: RawArtifact,
                             raw_text: str, fetched_at: datetime | None = None):
     now = fetched_at or datetime.now(UTC)
+    # Native collectors and the original-exchange receiver share this lock on PostgreSQL.
+    db.scalar(select(SourceEndpoint).where(SourceEndpoint.id == endpoint.id).with_for_update())
     digest = hashlib.sha256(raw.content).hexdigest()
     latest = db.scalar(select(DocumentVersion).where(
         DocumentVersion.source_endpoint_id == endpoint.id,
@@ -614,11 +616,58 @@ def ingest_yz_program_catalog(db: Session, source: Source, endpoint: SourceEndpo
             "evidence": len(parsed.evidence)}
 
 
+def ingest_public_notice(db: Session, source: Source, endpoint: SourceEndpoint, raw: RawArtifact,
+                         config: dict):
+    """Archive first-party notices across channels; never manufacture positions or rules."""
+    if config.get('json_detail'):
+        from .adapters.public_json_notice import PublicJSONNoticeAdapter
+        adapter = PublicJSONNoticeAdapter(config['topic'], config['json_detail'])
+    else:
+        adapter = PublicNoticeAdapter(config['topic'], config.get('article_selector'), config.get('title_selector'),
+            config.get('title_context', ''),config.get('date_timezone'))
+    parsed = adapter.parse(raw)
+    values = parsed.records[0]
+    document, changed = record_document_version(db, endpoint, raw,
+        json.dumps(adapter.normalize(parsed), ensure_ascii=False))
+    document.publish_time = _date(parsed.metadata.get('publish_time'))
+    if not changed:
+        return {'changed': False, 'document_version_id': document.id, 'items': 0, 'rules': 0, 'evidence': 0}
+    _persist_evidence(db, source, document, parsed.evidence)
+    item_id = _stable('public-notice', source.id, raw.source_item_id)
+    payload = {'title': values['title'][:200], 'item_type': 'public_notice',
+        'description': values['body'], 'start_time': _date(values.get('open_at')),
+        'deadline': _date(values.get('deadline_at')), 'location': source.region_code or '',
+        'materials': json.dumps(values.get('material_quotes', []) + values.get('attachments', []), ensure_ascii=False),
+        'source_document_id': document.id, 'status': 'draft'}
+    item = db.get(DevelopmentItem, item_id)
+    if item:
+        for key, value in payload.items():
+            setattr(item, key, value)
+    else:
+        db.add(DevelopmentItem(id=item_id, **payload))
+    path_code = config.get('path_code') or classify_path(values['title'])
+    if config['topic'] == 'examination':
+        path_code = classify_path(values['title']) or path_code
+    if path_code:
+        path = _ensure_path(db, path_code)
+        for link in db.scalars(select(DevelopmentItemPath).where(
+                DevelopmentItemPath.development_item_id == item_id)).all():
+            if link.path_id != path.id:
+                db.delete(link)
+        if not db.scalar(select(DevelopmentItemPath).where(
+                DevelopmentItemPath.development_item_id == item_id, DevelopmentItemPath.path_id == path.id)):
+            db.add(DevelopmentItemPath(development_item_id=item_id, path_id=path.id))
+    db.flush()
+    return {'changed': True, 'document_version_id': document.id, 'items': 1, 'rules': 0,
+            'evidence': len(parsed.evidence)}
+
+
 def ingest_university_notice(db: Session, source: Source, endpoint: SourceEndpoint, raw: RawArtifact,
                              config: dict):
     # School-wide notices have no specific program. Do not manufacture one.
     if config.get('notice_scope') == 'university':
-        adapter = UniversityNoticeAdapter()
+        adapter = UniversityNoticeAdapter(article_selector=config.get('article_selector'),
+                                         title_selector=config.get('title_selector'))
         parsed = adapter.parse(raw)
         values = parsed.records[0]
         document, changed = record_document_version(db, endpoint, raw,

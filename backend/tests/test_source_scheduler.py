@@ -23,7 +23,7 @@ from app.source_scheduler import interval_delta, process_endpoint_once, schedule
 def make_endpoint(*, fetch_interval="12h", max_failures=3):
     suffix = str(uuid4())
     source = Source(
-        id=str(uuid4()), source_code="TEST-SCHED-" + suffix, name="调度测试源", publisher="测试发布者",
+        id=str(uuid4()), source_code="TEST-SCHED-" + suffix[:24], name="调度测试源", publisher="测试发布者",
         authority_level="A", source_class="government", official=True,
         jurisdiction_level="national", supported_paths="[]", supported_item_types="[]",
         base_url="https://example.edu/", active=True, verified_at=datetime.now(UTC),
@@ -159,7 +159,7 @@ def test_retry_after_then_manual_takeover(monkeypatch):
             assert run.attempts == attempt
             if attempt < 3:
                 assert run.status == "retry" and run.http_status == 429
-                assert run.ready_at >= datetime.now(UTC).replace(tzinfo=None) + timedelta(seconds=100)
+                assert run.ready_at.replace(tzinfo=UTC) >= datetime.now(UTC) + timedelta(seconds=100)
                 run.ready_at = datetime.now(UTC) - timedelta(seconds=1)
             else:
                 assert run.status == "failed"

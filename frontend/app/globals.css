@@ -160,3 +160,6 @@ body { line-height:1.7; }
 .correction-form {display:grid;gap:12px;margin:16px 0;}.correction-form label {display:grid;gap:6px;}.correction-form select,.correction-form textarea {width:100%;border:1px solid var(--line);border-radius:8px;padding:10px;}.correction-form textarea {min-height:96px;}.correction-form button {justify-self:start;}.plan-preparation .field-hint {font-size:12px;}.preparation-step label {font-size:13px;}
 
 .agent-document-preview{margin:14px 0;max-width:100%;overflow-wrap:anywhere}.agent-document-preview summary{font-size:13px;cursor:pointer}.agent-document-preview .startup-draft{font-size:13px;line-height:1.85;max-height:420px;overflow:auto;padding:16px 0}.agent-document-preview .startup-draft h3{font-size:17px}.agent-document-preview .startup-draft h4{font-size:14px;margin-top:22px}
+
+.source-catalog-filters { grid-template-columns: 1.2fr 1fr 1fr; margin: 18px 0; }
+@media (max-width: 760px) { .source-catalog-filters { grid-template-columns: 1fr; } }
