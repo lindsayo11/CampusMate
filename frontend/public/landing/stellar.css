@@ -1,0 +1,60 @@
+/* Homepage hero only. The public-page motion toggle remains the single control. */
+.hero-visual.stellar-scene {
+  --stellar-orbit-seconds: 40;
+  --stellar-twinkle-seconds: 7;
+  width: 100%;
+  max-width: 720px;
+  min-width: 0;
+  height: auto;
+  aspect-ratio: 8 / 7;
+  justify-self: center;
+}
+.stellar-system {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.stellar-orbit {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1;
+  stroke-opacity: .6;
+}
+.stellar-satellite {
+  transform-box: view-box;
+  transform-origin: 0 0;
+}
+.stellar-label rect {
+  fill: #080b11;
+  fill-opacity: .94;
+  stroke: #fff;
+  stroke-opacity: .7;
+  stroke-width: .85;
+}
+.stellar-label-stem {
+  fill: none;
+  stroke: #fff;
+  stroke-width: .8;
+  stroke-opacity: .55;
+}
+.stellar-label text {
+  font-family: Arial, "Microsoft YaHei", sans-serif;
+  user-select: none;
+}
+.stellar-label-index {
+  fill: #c7cbd5;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.stellar-label-name {
+  fill: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -.25px;
+}
+@media (max-width: 760px) {
+  .hero-visual.stellar-scene { max-width: 520px; }
+  .stellar-label-name { font-size: 22px; }
+  .stellar-label-index { font-size: 12px; }
+}

@@ -1,9 +1,11 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { Icon, PageHeading } from "@/components/ui";
+import { apiBase } from "@/lib/api";
+import StartupWorkspace from "@/app/startup/startup-workspace";
 
 type Output = { title: string; detail: string };
 type Prompt = { label: string; hint: string };
@@ -535,11 +537,9 @@ export default function EntrepreneurshipPage() {
   const [expandedOutput, setExpandedOutput] = useState("");
   const [expandedValidation, setExpandedValidation] = useState(VALIDATION_MODULES[0].title);
   const [hydrated, setHydrated] = useState(false);
-
-  useEffect(() => {
-    document.body.classList.add("venture-black");
-    return () => document.body.classList.remove("venture-black");
-  }, []);
+  const [showWorkbench, setShowWorkbench] = useState(false);
+  const [projectId, setProjectId] = useState("");
+  const [workflowSynced, setWorkflowSynced] = useState(false);
 
   useEffect(() => {
     try {
@@ -572,6 +572,41 @@ export default function EntrepreneurshipPage() {
       // Local progress is optional.
     }
   }, [draft, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated || workflowSynced) return;
+    let cancelled = false;
+    const defaultBrief = { name: "我的创新创业项目", summary: "", industry: "", stage: "idea", jurisdiction: "CN", target_market: "", customers: "", problem: "", solution: "", revenue_model: "", costs: "", channels: "", resources: "", activities: "", partners: "", moat: "", competitors: "", traction: "", team: "", funding_use: "", entity_name: "", service_scope: "", data_practices: "", refund_policy: "", contact: "", evidence: "", founders: [], finance: { price: null, monthly_units: null, variable_cost: null, fixed_cost: null, cash: null, annual_volume_growth_pct: 0, annual_cost_growth_pct: 0, pre_money: null, investment: null, new_pool_pct: 0 }, completed_steps: [] };
+    const run = async () => {
+      try {
+        const listResponse = await fetch(`${apiBase}/v1/startup/projects`, { credentials: "include" });
+        if (!listResponse.ok) return;
+        const projects = await listResponse.json() as { id: string }[];
+        let id = projects[0]?.id;
+        if (!id) {
+          const created = await fetch(`${apiBase}/v1/startup/projects`, { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify(defaultBrief) });
+          if (!created.ok) return;
+          id = (await created.json() as { id: string }).id;
+        }
+        const response = await fetch(`${apiBase}/v1/startup/projects/${id}/workflow`, { credentials: "include" });
+        const saved = response.ok ? await response.json() as { workflow?: DraftState; revision?: number } : {};
+        if (saved.workflow && Object.keys(saved.workflow).length > 0) {
+          if (!cancelled) setDraft(safeDraft(saved.workflow));
+        } else {
+          await fetch(`${apiBase}/v1/startup/projects/${id}/workflow`, { method: "PUT", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ expected_revision: saved.revision, workflow: draft }) });
+        }
+        if (!cancelled) { setProjectId(id); setWorkflowSynced(true); }
+      } catch { /* project tools remain usable when the API is offline */ }
+    };
+    void run();
+    return () => { cancelled = true; };
+  }, [draft, hydrated, workflowSynced]);
+
+  useEffect(() => {
+    if (!hydrated || !workflowSynced || !projectId) return;
+    const timer = window.setTimeout(() => { void fetch(`${apiBase}/v1/startup/projects/${projectId}/workflow`, { method: "PUT", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ workflow: draft }) }); }, 450);
+    return () => window.clearTimeout(timer);
+  }, [draft, hydrated, projectId, workflowSynced]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -628,7 +663,10 @@ export default function EntrepreneurshipPage() {
   return <div className="shell venture-shell">
     <PageHeading eyebrow="创业操作系统" title="创新创业路径" description="从机会发现到战略迭代，把每一步的输入、证据、产出和决策都沉淀下来。">
       <Link className="button secondary" href="/data?path=entrepreneurship&view=sources" title="查看创业政策与参考来源"><Icon name="book" size={15} /><span>来源库</span></Link>
+      <button type="button" className="button secondary" onClick={() => setShowWorkbench((value) => !value)}><Icon name="spark" size={15} />{showWorkbench ? "收起项目资料" : "打开项目资料"}</button>
     </PageHeading>
+
+    {showWorkbench && <section className="venture-integrated-workbench" aria-label="创业项目工作台"><div className="venture-integrated-head"><div><p className="eyebrow">项目资料与文稿</p><h2>当前项目</h2></div><span>{projectId ? "项目已绑定" : "正在绑定项目"}</span></div><StartupWorkspace embedded /></section>}
 
     <section className="venture-journey" aria-label="创新创业十三步">
       <div className="venture-journey-head"><div><p className="eyebrow">13 个步骤</p><h2><Icon name="arrow" size={18} />创业工作流</h2></div><span className="venture-progress" title={`${completedSteps} / ${WORKFLOW_STEPS.length} 个决策闸门已完成`}><strong>{progress}%</strong><small>{completedSteps}/{WORKFLOW_STEPS.length}</small></span></div>
@@ -649,7 +687,7 @@ export default function EntrepreneurshipPage() {
     </section>
 
     <div className="venture-workspace">
-      <section className="venture-main-panel" aria-labelledby="venture-step-title">
+      <section className="venture-main-panel" data-motion-key={step.code} aria-labelledby="venture-step-title">
         <header className="venture-panel-header"><div><p className="eyebrow"><Icon name={STEP_ICONS[draft.current]} size={13} /> 第 {String(draft.current + 1).padStart(2, "0")} 步 / {step.code} · {step.phase}</p><h2 id="venture-step-title">{step.title}</h2></div><span className="venture-current-mark"><Icon name="spark" size={15} />当前步骤</span></header>
 
         {step.special === "entry" && <section className="venture-entry-section"><div className="venture-section-label"><span><Icon name="search" size={14} />切入路径</span><small>选择一个起点</small></div><div className="venture-entry-grid">{FORCES.map((item) => <button type="button" key={item.id} className={`venture-entry-card ${selectedForce.id === item.id ? "active" : ""}`} onClick={() => chooseForce(item.id)} aria-pressed={selectedForce.id === item.id} title={`${item.detail} ${item.risk}`}><span className="venture-force-icon"><Icon name={item.id === "demand" ? "users" : item.id === "market" ? "search" : item.id === "product" ? "file" : "spark"} size={16} /></span><span><strong>{item.title}</strong></span><Icon name="chevron" size={14} /></button>)}</div><div className="venture-entry-brief"><div title={selectedForce.evidence}><span className="settings-label"><Icon name="book" size={13} />证据</span></div><div title={selectedForce.risk}><span className="settings-label"><Icon name="shield" size={13} />风险</span></div></div></section>}
@@ -670,7 +708,6 @@ export default function EntrepreneurshipPage() {
         <footer className="venture-actions"><button type="button" className="button primary" onClick={markStageReady}><Icon name="check" size={15} />标记为待复核</button>{draft.reviewed[String(draft.current)] && <span className="venture-review-status" role="status"><Icon name="check" size={14} />草稿已标记为待复核</span>}<div className="venture-step-actions"><button type="button" className="button quiet" onClick={() => chooseStep(draft.current - 1)} disabled={draft.current === 0}><Icon name="arrow" size={14} />上一步</button><button type="button" className="button secondary" onClick={() => chooseStep(draft.current + 1)} disabled={draft.current === WORKFLOW_STEPS.length - 1} title={draft.current === WORKFLOW_STEPS.length - 1 ? "已经是最后一步" : "Next step：前往下一步"}>下一步<Icon name="arrow" size={14} /></button></div></footer>
       </section>
 
-      <aside className="venture-aside" aria-label="步骤工具"><section className="venture-guide"><span className="venture-guide-icon"><Icon name="book" size={18} /></span><p className="eyebrow">使用指南</p><h3>{step.short}</h3><ol><li title="记录本步输入"><Icon name="book" size={14} /><span>输入</span></li><li title="附上证据"><Icon name="file" size={14} /><span>证据</span></li><li title="选择下一步动作"><Icon name="check" size={14} /><span>闸门</span></li></ol></section><section className="venture-help"><div><Icon name="spark" size={17} /><h3>让 AI 协助</h3></div><p>AI 可以先整理材料、测算和文案，你保留事实核验与关键决策。</p><Link href={`/agent?intent=paths&path=entrepreneurship&step=${draft.current + 1}`} className="section-link" title="让 AI 提供第二视角">打开 AI 助手<Icon name="arrow" size={14} /></Link></section><section className="venture-source"><span className="eyebrow"><Icon name="check" size={13} />当前决策</span><strong>{draft.gates[String(draft.current)] || "尚未选择"}</strong><Link href="/knowledge" className="section-link" title="打开来源库">查找原文<Icon name="arrow" size={14} /></Link></section></aside>
     </div>
   </div>;
 }

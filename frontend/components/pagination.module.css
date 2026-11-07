@@ -1,0 +1,10 @@
+.pagination{display:flex;justify-content:center;align-items:center;gap:10px;padding:30px 0 8px;margin-top:24px;border-top:1px solid var(--cm-line)}
+.pagination .page{display:inline-flex;align-items:center;justify-content:center;flex:none;width:46px;height:46px;min-height:46px;padding:0!important;border:1px solid var(--cm-line-strong)!important;border-radius:10px!important;background:var(--cm-surface)!important;color:var(--cm-ink)!important;font-size:16px;font-weight:650;line-height:1;text-decoration:none!important;box-shadow:none!important;transition:background .15s,color .15s,border-color .15s}
+.pagination .page:hover{background:var(--cm-accent-soft)!important;border-color:var(--cm-accent)!important;color:var(--cm-accent-text)!important}
+.pagination .page[aria-current=page]{background:var(--cm-accent)!important;border-color:var(--cm-accent)!important;color:var(--cm-inverse)!important}
+.pagination .page:disabled{background:var(--cm-surface-subtle)!important;border-color:var(--cm-line)!important;color:var(--cm-muted)!important;cursor:not-allowed;opacity:1!important}
+.pagination .page:focus-visible{outline:3px solid var(--cm-focus)!important;outline-offset:3px}
+.pagination .page :is(span,svg){color:inherit!important}
+.previous{display:flex;transform:rotate(180deg)}
+.ellipsis{display:grid;place-items:center;width:24px;height:46px;color:var(--cm-muted)!important}
+@media(prefers-reduced-motion:reduce){.pagination .page{transition:none}}

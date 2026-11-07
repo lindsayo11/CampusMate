@@ -1,0 +1,67 @@
+/* Motion is a separate layer: the existing layouts and business UI stay intact. */
+:root {
+  --cm-motion-fast: 180ms;
+  --cm-motion-normal: 350ms;
+  --cm-motion-ease: cubic-bezier(.22,1,.36,1);
+}
+.motion-page { min-width: 0; }
+.motion-count { font-variant-numeric: tabular-nums; }
+.workspace-topbar .motion-toggle {
+  display: inline-flex; flex: none; align-items: center; justify-content: center; gap: 6px;
+  min-height: 32px; padding: 6px 9px; margin-left: auto; border: 1px solid var(--cm-line, #d9e5ec); border-radius: 9px;
+  background: var(--cm-paper, #f7fafc); color: var(--cm-muted, #49647a); box-shadow: none; cursor: pointer; font: inherit; font-size: 11px;
+}
+.workspace-topbar .motion-toggle ~ .topbar-icon { margin-left: 0; }
+.workspace-topbar .motion-toggle:hover { background: var(--cm-surface-subtle, #eaf3f9); color: var(--cm-accent, #2369a6); }
+.motion-toggle:disabled { cursor: default; opacity: .65; }
+.motion-toggle:focus-visible { outline: 2px solid var(--cm-focus, #327baa); outline-offset: 3px; }
+.workspace-sidebar .nav-item { position: relative; }
+.workspace-sidebar .motion-nav-marker {
+  position: absolute; left: 0; top: calc(50% - 9px); width: 3px; height: 18px;
+  border-radius: 3px; background: var(--cm-accent, #327baa); pointer-events: none;
+}
+html[data-cm-motion="on"] :is(.nav-item, .stream-item) > :is(svg, .huge-icon) {
+  transition: transform var(--cm-motion-normal) var(--cm-motion-ease);
+}
+html[data-cm-motion="on"] :is(.nav-item, .stream-item):hover > :is(svg, .huge-icon) { transform: translateX(2px); }
+html[data-cm-motion="on"] :is(.button, .icon-button, .topbar-icon, .motion-toggle, .console-continue) {
+  transition: transform var(--cm-motion-fast) var(--cm-motion-ease), background-color var(--cm-motion-fast), box-shadow var(--cm-motion-fast);
+}
+html[data-cm-motion="on"] :is(.button, .icon-button, .topbar-icon, .console-continue):active { transform: scale(.97); }
+html[data-cm-motion="on"] :is(.console-action-card, .console-stat, .console-direction-card, .console-bottom-actions > a, .plan-card, .notifications-summary-strip > a) {
+  transition: transform var(--cm-motion-normal) var(--cm-motion-ease), box-shadow var(--cm-motion-normal) var(--cm-motion-ease), border-color var(--cm-motion-fast), background-color var(--cm-motion-fast);
+}
+@media (hover: hover) and (pointer: fine) {
+  html[data-cm-motion="on"] :is(.console-action-card, .console-stat, .console-direction-card, .console-bottom-actions > a, .notifications-summary-strip > a):hover {
+    transform: translateY(-4px); box-shadow: 0 12px 26px -14px rgb(var(--cm-shadow-rgb) / 0.302);
+  }
+  html[data-cm-motion="on"] :is(.console-action-icon, .console-direction-icon, .console-bottom-icon) {
+    transition: transform var(--cm-motion-normal) var(--cm-motion-ease);
+  }
+  html[data-cm-motion="on"] :is(.console-action-card, .console-direction-card, .console-bottom-actions > a):hover > :is(.console-action-icon, .console-direction-icon, .console-bottom-icon) {
+    transform: rotate(-5deg) scale(1.06);
+  }
+  html[data-cm-motion="on"] :is(.console-direction-card, .console-bottom-actions > a, .console-continue) > svg:last-child {
+    transition: transform var(--cm-motion-normal) var(--cm-motion-ease);
+  }
+  html[data-cm-motion="on"] :is(.console-direction-card, .console-bottom-actions > a, .console-continue):hover > svg:last-child { transform: translateX(4px); }
+}
+html[data-cm-motion="on"] :is(.global-search, .settings-content input, .settings-content select, .settings-content textarea) {
+  transition: border-color var(--cm-motion-fast), box-shadow var(--cm-motion-fast);
+}
+html[data-cm-motion="on"] .global-search:focus-within { box-shadow: 0 0 0 4px rgb(var(--cm-shadow-rgb) / 0.071); border-color: var(--cm-focus, #82afcc); }
+/* Stop legacy CSS animations as well as the new motion components. */
+html[data-cm-motion="off"] *, html[data-cm-motion="off"] *::before, html[data-cm-motion="off"] *::after {
+  animation: none !important; transition: none !important; scroll-behavior: auto !important;
+}
+html[data-cm-motion="off"] .cm-reveal { opacity: 1 !important; translate: none !important; }
+html[data-cm-motion="off"] :is(.console-action-card, .console-stat, .console-direction-card, .console-bottom-actions > a):hover { transform: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .cm-reveal { opacity: 1 !important; translate: none !important; }
+  :is(.console-action-card, .console-stat, .console-direction-card, .console-bottom-actions > a):hover { transform: none !important; }
+}
+@media (max-width: 760px) {
+  .workspace-topbar .motion-toggle { width: 32px; padding: 6px; margin-left: auto; }
+  .workspace-topbar .motion-toggle span { display: none; }
+}

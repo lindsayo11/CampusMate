@@ -11,6 +11,7 @@ class StartupProject(Base):
     user_id: Mapped[str] = mapped_column(String(80), index=True)
     name: Mapped[str] = mapped_column(String(160))
     brief_json: Mapped[str] = mapped_column(Text)
+    workflow_json: Mapped[str] = mapped_column(Text, default="{}")
     revision: Mapped[int] = mapped_column(Integer, default=1)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))

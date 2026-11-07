@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import {useState} from 'react';
 import {useRouter} from 'next/navigation';
 
@@ -16,4 +16,15 @@ export function NoticeWatchControls({id,enabled}:{id:string;enabled:boolean}){
   }catch(e){setMessage((e as Error).message)}finally{setBusy(false)}
  }
  return <div className="actions"><button disabled={busy} onClick={()=>run(false)}>{enabled?'暂停':'恢复'}</button>{enabled&&<button disabled={busy} onClick={()=>run(true)}>检查栏目</button>}<span role="status">{message}</span></div>
+}
+
+export function NoticeWatchRescanAll(){
+ const [busy,setBusy]=useState(false),[message,setMessage]=useState('');
+ const router=useRouter();
+ async function run(){
+  setBusy(true);setMessage('');
+  try{const r=await fetch('/api/backend/v1/admin/notice-watch/rescan-all',{method:'POST'});const data=await r.json();if(!r.ok)throw Error(data.detail||'操作失败');setMessage(`已加入 ${data.sources} 个来源的更新队列`);router.refresh();}
+  catch(e){setMessage((e as Error).message)}finally{setBusy(false)}
+ }
+ return <div className="actions"><button disabled={busy} onClick={run}>{busy?'提交中…':'立即更新全部路线'}</button><span role="status">{message}</span></div>
 }

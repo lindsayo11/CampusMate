@@ -1,6 +1,7 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 export default function Login() {
+  const next = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("next") : null;
   const [message, setMessage] = useState("");
   const [signup, setSignup] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -9,7 +10,7 @@ export default function Login() {
     try {
       const r = await fetch("/api/session", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: f.get("email"), password: f.get("password"), action: signup ? "signup" : "login" }) });
       const data = await r.json();
-      if (!r.ok) setMessage(data.detail); else if (data.confirmation_required) setMessage(data.message); else location.assign("/profile");
+      if (!r.ok) setMessage(data.detail); else if (data.confirmation_required) setMessage(data.message); else location.assign(next || "/console");
     } catch { setMessage("网络错误，请重试"); } finally { setBusy(false); }
   }}><label>邮箱<input required name="email" type="email" maxLength={254} autoComplete="username" /></label><label>密码<input required name="password" type="password" minLength={signup ? 8 : 1} maxLength={1024} autoComplete={signup ? "new-password" : "current-password"} /></label><button disabled={busy}>{busy ? "处理中…" : signup ? "注册" : "登录"}</button></form><button disabled={busy} onClick={() => { setSignup(!signup); setMessage(""); }}>{signup ? "已有账号，去登录" : "没有账号，去注册"}</button><button disabled={busy} onClick={async () => {
     setBusy(true); try { const r = await fetch("/api/session", { method: "DELETE" }); const data = await r.json(); setMessage(data.message || data.detail); } catch { setMessage("网络错误，请重试"); } finally { setBusy(false); }

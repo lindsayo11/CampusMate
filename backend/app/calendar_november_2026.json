@@ -1,0 +1,350 @@
+{
+  "batch": "november-2026-official-20261107",
+  "month": "2026-11",
+  "entries": [
+    {
+      "key": "nov26-bjut-digital-media",
+      "url": "https://cs.bjut.edu.cn/info/1340/4376.htm",
+      "source_label": "北京工业大学计算机学院",
+      "title": "2026 全国大学生数字媒体科技作品及创意竞赛",
+      "summary": "报名与校级初赛已结束。11 月安排为赛区选拔、入围名单公布与全国总决赛；限已报名且通过相应选拔的作品，具体安排以组委会通知为准。",
+      "location": "全国 · 线上评审与答辩",
+      "category": "contest", "path_code": null,
+      "checks": ["2026", "11月2日", "11月15日", "11月19日", "11月22日", "11月27日", "11月29日", "全国总决赛"],
+      "excerpt": "赛区选拔赛：2026年11月2日—11月15日；入围名单公布：2026年11月19日—11月22日；全国总决赛：2026年11月27日—11月29日。",
+      "milestones": [
+        {"key":"regional", "title":"数字媒体竞赛 · 赛区选拔", "start":"2026-11-02T00:00:00+08:00", "end":"2026-11-15T23:59:59+08:00", "precision":"day", "note":"限已提交作品的团队；不是新增报名窗口。"},
+        {"key":"shortlist", "title":"数字媒体竞赛 · 全国总决赛入围公布", "start":"2026-11-19T00:00:00+08:00", "end":"2026-11-22T23:59:59+08:00", "precision":"day", "note":"关注组委会发布的入围作品与总决赛安排。"},
+        {"key":"final", "title":"数字媒体竞赛 · 全国总决赛", "start":"2026-11-27T00:00:00+08:00", "end":"2026-11-29T23:59:59+08:00", "precision":"day", "note":"仅限入围团队；在线评审展示与答辩安排以组委会通知为准。"}
+      ]
+    },
+    {
+      "key": "nov26-bit-data-elements",
+      "url": "https://jwb.bit.edu.cn/xs/pyfa_2/tzgg__26/92c0d995fa3a4e5180339fc6940d35b0.htm",
+      "source_label": "北京理工大学教务部",
+      "title": "2027 第四届大学生数据要素素质大赛报名",
+      "summary": "北京理工大学发布的参赛通知：报名窗口为 11 月 1 日至 12 月 31 日，通过指定网站报名并提交作品。须核对学籍、组队及赛区要求，不收取报名费。",
+      "location": "全国 · 线上报名",
+      "category": "contest", "path_code": null,
+      "checks": ["2027年第四届", "2026年11月1日至2026年12月31日", "不收取报名费"],
+      "excerpt": "报名时间：2026年11月1日至2026年12月31日。本次大赛不收取报名费。",
+      "milestones": [
+        {"key":"registration", "title":"数据要素素质大赛 · 报名窗口", "start":"2026-11-01T00:00:00+08:00", "end":"2026-12-31T23:59:59+08:00", "precision":"day", "note":"报名窗口跨月；作品要求、学籍及赛区限制请核对原文。"}
+      ]
+    },
+    {
+      "key": "nov26-gdut-lab-skills",
+      "url": "https://jnds.gdut.edu.cn/info/1023/1283.htm",
+      "source_label": "广东工业大学竞赛官网",
+      "title": "2026 广东省工科大学生实验综合技能竞赛",
+      "summary": "广东省全日制本科院校在校大学生赛事，报名已截止。通知暂定 11 月 7—8 日竞赛，参赛队需再次核对最新通知与报到安排。",
+      "location": "广东工业大学大学城校区",
+      "category": "contest", "path_code": null,
+      "checks": ["2026年", "11月7", "8日", "日程安排（暂定）", "广东省全日制本科院校"],
+      "excerpt": "日程安排（暂定）：报到时间为2026年11月7日；竞赛时间为2026年11月7-8日。",
+      "milestones": [
+        {"key":"contest", "title":"广东工科实验技能竞赛（暂定）", "start":"2026-11-07T00:00:00+08:00", "end":"2026-11-08T23:59:59+08:00", "precision":"day", "note":"原文标记暂定，限已获参赛资格的广东本科高校学生；不是开放报名。"}
+      ]
+    },
+    {
+      "key": "nov26-suat-ai4science",
+      "url": "https://ai4science.suat-sz.edu.cn/",
+      "source_label": "深圳理工大学 AI4Science 大赛官网",
+      "title": "AI4Science 创新应用大赛",
+      "summary": "人工智能驱动的生命科学创新赛事，11 月 14 日在深圳理工大学举办。报名已于 10 月 11 日结束，现场决赛与路演资格以主办方通知为准。",
+      "location": "深圳理工大学",
+      "category": "contest", "path_code": "entrepreneurship",
+      "checks": ["2026年11月14日", "2026年9月1日", "10月11日", "AI4Science"],
+      "excerpt": "举办时间2026年11月14日；报名时间2026年9月1日—10月11日；举办地点深圳理工大学。",
+      "milestones": [
+        {"key":"final", "title":"AI4Science · 创新应用大赛决赛", "start":"2026-11-14T00:00:00+08:00", "end":"2026-11-14T23:59:59+08:00", "precision":"day", "note":"项目路演与专家评审，具体时刻及入场要求以主办方通知为准。"}
+      ]
+    },
+    {
+      "key": "nov26-xjtu-fpga",
+      "url": "https://jwb.bit.edu.cn/xs/pyfa_2/tzgg__26/97dc9f2b043740d192dd7e5454b5288d.htm",
+      "source_label": "北京理工大学教务部",
+      "title": "2026 全国大学生嵌入式芯片与系统设计竞赛 FPGA 赛道",
+      "summary": "高校官方通知列出 FPGA 创新设计赛道作品提交和决赛时间。报名已经结束；每队不超过 3 人，决赛仅限晋级队伍。",
+      "location": "全国 · 决赛在江苏南京江北新区",
+      "category": "contest", "path_code": null,
+      "checks": ["2026年11月4日18点", "2026年11月20日-11月22日", "FPGA"],
+      "excerpt": "作品提交时间2026年11月4日18点，竞赛决赛时间2026年11月20日-11月22日。",
+      "milestones": [
+        {"key":"submission", "title":"FPGA 设计竞赛 · 作品提交截止", "start":null, "end":"2026-11-04T18:00:00+08:00", "precision":"time", "note":"限已报名参赛队；北京时间 18:00 截止。"},
+        {"key":"final", "title":"FPGA 设计竞赛 · 全国决赛", "start":"2026-11-20T00:00:00+08:00", "end":"2026-11-22T23:59:59+08:00", "precision":"day", "note":"仅供晋级团队安排；具体日程与地点请核对后续通知。"}
+      ]
+    },
+    {
+      "key": "nov26-cqwu-programming",
+      "url": "https://jxb.cqwu.edu.cn/article_434303.html",
+      "source_label": "重庆文理学院教务处",
+      "title": "重庆文理学院 2026 年程序设计大赛",
+      "summary": "面向该校全日制在校本科生的个人程序设计比赛，11 月 17 日报名截止，11 月 21 日晚正式竞赛。校外学生不可套用该校报名安排。",
+      "location": "重庆文理学院计算机工程实验教学中心",
+      "category": "contest", "path_code": null,
+      "checks": ["2026年11月17日", "2026年11月21日19:00", "21:30", "全日制在校本科生"],
+      "excerpt": "报名时间：即日起至2026年11月17日；竞赛时间：2026年11月21日19:00—21:30。",
+      "milestones": [
+        {"key":"registration", "title":"重庆文理程序设计大赛 · 校内报名截止", "start":null, "end":"2026-11-17T23:59:59+08:00", "precision":"day", "note":"适用对象为重庆文理学院在校本科生。"},
+        {"key":"contest", "title":"重庆文理程序设计大赛 · 正式竞赛", "start":"2026-11-21T19:00:00+08:00", "end":"2026-11-21T21:30:00+08:00", "precision":"time", "note":"校内个人赛；按通知完成报名后参加。"}
+      ]
+    },
+    {
+      "key": "nov26-tianjin-civil",
+      "url": "https://www.tj.gov.cn/zwgk/zfxxgkzl/fdzdgknr/zkly/zk/202611/t20261103_7649185.html",
+      "source_label": "天津政务网",
+      "source_class": "government",
+      "title": "天津市 2027 年度考试录用公务员",
+      "summary": "11 月 3 日至 9 日网上报名，通过资格审查后于 11 月 11 日 16:00 前缴费。报考资格、职位要求、减免费用与考试安排须逐项核对官方公告。",
+      "location": "天津",
+      "category": "civil_service", "path_code": "national_civil_service",
+      "checks": ["2027", "2026年11月3日8:30至11月9日18:00", "11月11日16:00", "缴费确认"],
+      "excerpt": "报名时间：2026年11月3日8:30至11月9日18:00；通过资格审查的报考人员于11月3日8:30至11月11日16:00缴纳笔试费用。",
+      "milestones": [
+        {"key":"registration", "title":"天津公务员招考 · 报名窗口", "start":"2026-11-03T08:30:00+08:00", "end":"2026-11-09T18:00:00+08:00", "precision":"time", "note":"仅可选一个职位；应预留资格审查及补充材料时间。"},
+        {"key":"payment", "title":"天津公务员招考 · 缴费确认截止", "start":null, "end":"2026-11-11T16:00:00+08:00", "precision":"time", "note":"限已通过资格审查人员；减免费用办理要求见原文。"}
+      ]
+    },
+    {
+      "key": "nov26-guangzhou-rail-jobs",
+      "url": "https://jy.gzhu.edu.cn/web/Index/jobs-brief-detail?id=SXUXSWJ",
+      "source_label": "广州大学就业网",
+      "title": "2026 广州轨道交通周人才专场招聘会",
+      "summary": "面向各大院校应届毕业生及社会求职人才，涵盖勘察设计、建设、运维与经营等岗位。11 月 10 日在广交会展馆举行，入场手续请核对公告。",
+      "location": "广州广交会展馆 D 区珠江散步道",
+      "category": "job", "path_code": "employment",
+      "checks": ["2026年11月10日", "9：00－17：00", "各大院校应届毕业生及社会求职人才"],
+      "excerpt": "活动时间：2026年11月10日（9：00－17：00）；地点：中国进出口商品交易会D区珠江散步道。",
+      "milestones": [
+        {"key":"jobfair", "title":"广州轨道交通 · 人才专场招聘会", "start":"2026-11-10T09:00:00+08:00", "end":"2026-11-10T17:00:00+08:00", "precision":"time", "note":"面向应届毕业生及社会求职人才；岗位及入场流程请查看原文。"}
+      ]
+    },
+    {
+      "key": "nov26-nfu-accounting-jobs",
+      "url": "https://kjxy.nfu.edu.cn/info/1095/23473.htm",
+      "source_label": "广州南方学院会计学院",
+      "title": "广州南方学院 2027 届财会专场招聘会",
+      "summary": "会计学院秋季专场招聘会，11 月 18 日下午举行。原文 11 月 14 日报名截止针对用人单位，不能当作学生报名截止；校外学生应先确认入校要求。",
+      "location": "广州南方学院中和楼二楼",
+      "category": "job", "path_code": "employment",
+      "checks": ["2026年11月18日", "13:30-17:30", "中和楼二楼"],
+      "excerpt": "招聘会时间：2026年11月18日，下午13:30-17:30；地点：广州南方学院中和楼二楼。",
+      "milestones": [
+        {"key":"jobfair", "title":"广州南方学院 · 财会专场招聘会", "start":"2026-11-18T13:30:00+08:00", "end":"2026-11-18T17:30:00+08:00", "precision":"time", "note":"毕业生求职日程；校外人员请先确认校园入场安排。"}
+      ]
+    },
+    {
+      "key": "nov26-zhku-data-env-jobs",
+      "url": "https://hjxy.zhku.edu.cn/info/1054/10535.htm",
+      "source_label": "仲恺农业工程学院资源与环境学院",
+      "title": "仲恺农业工程学院资源环境与数学数据专场招聘会",
+      "summary": "面向 2027 届毕业生的秋季专场招聘会，11 月 19 日下午举办。公告中的 11 月 15 日报名期限属于企业报名；校外学生应核对入校要求。",
+      "location": "广州 · 仲恺农业工程学院白云校区文化活动中心二楼",
+      "category": "job", "path_code": "employment",
+      "checks": ["2026年11月19日", "14:00—17:00", "白云校区文化活动中心二楼"],
+      "excerpt": "举办时间：2026年11月19日（星期四）下午14:00—17:00；举办地点：白云校区文化活动中心二楼。",
+      "milestones": [
+        {"key":"jobfair", "title":"仲恺农工 · 资源环境与数学数据招聘会", "start":"2026-11-19T14:00:00+08:00", "end":"2026-11-19T17:00:00+08:00", "precision":"time", "note":"查看岗位与专业要求，校外学生请先核对校园准入安排。"}
+      ]
+    },
+    {
+      "key": "nov26-gzus-jobfair",
+      "url": "https://job.gzus.edu.cn/detail/jobfair?id=29946",
+      "source_label": "广州软件学院就业服务网",
+      "title": "广州软件学院 2027 届毕业生综合供需对接活动",
+      "summary": "11 月 17 日下午在广州校区举行，涵盖软件、电子信息、设计与商科等专业。通知欢迎从化及周边高校毕业生，入校和岗位安排仍以学校通知为准。",
+      "location": "广州软件学院广州校区田径运动场",
+      "category": "job", "path_code": "employment",
+      "checks": ["2026年11月17日", "14:00", "17:30", "周边地区的高校毕业生"],
+      "excerpt": "时间：2026年11月17日14:00－17:30；地点：广州软件学院（广州校区）田径运动场。",
+      "milestones": [
+        {"key":"jobfair", "title":"广州软件学院 · 综合校园招聘会", "start":"2026-11-17T14:00:00+08:00", "end":"2026-11-17T17:30:00+08:00", "precision":"time", "note":"企业报名截止不等于学生入场截止；请核对学校发布的参会要求。"}
+      ]
+    },
+    {
+      "key": "nov26-oxford-materials",
+      "url": "https://www.materials.ox.ac.uk/node/4097156",
+      "source_label": "牛津大学材料系",
+      "title": "牛津大学材料系研究生申请 · 11 月批次",
+      "summary": "材料系公布 11 月 13 日中午的申请截止。需要完整提交申请与所需文件；符合条件的申请可被考虑授予奖学金，申请并不保证录取或资助。",
+      "location": "英国 · 牛津 · 在线申请",
+      "category": "graduate", "path_code": "overseas_study",
+      "checks": ["Friday 13 November 2026", "midday", "Wednesday 6 January 2027"],
+      "excerpt": "Applications are accepted by the Department by midday for the deadlines below: Friday 13 November 2026.",
+      "milestones": [
+        {"key":"application", "title":"牛津材料系 · 11 月申请批次截止", "start":null, "end":"2026-11-13T12:00:00+00:00", "precision":"time", "note":"英国当地中午 12:00，即北京时间 20:00；请提前完成推荐信与申请材料。"}
+      ]
+    },
+    {
+      "key": "nov26-hkust-amc-briefing",
+      "url": "https://amc.hkust.edu.hk/index.php/events/fall-202728-admission-opens-online-briefing-sessions-mfa-arts-and-machine-creativity",
+      "source_label": "香港科技大学艺术与机器创造学部",
+      "title": "香港科技大学艺术与机器创造 MFA 线上招生说明会",
+      "summary": "2027/28 学年 MFA 招生说明会，11 月 20 日场次以英语进行，介绍课程、学习机会及申请要求。线上 Zoom 活动，请通过官网预约，不是申请截止日。",
+      "location": "线上 · Zoom · 香港时间",
+      "category": "graduate", "path_code": "overseas_study",
+      "checks": ["20 November 2026", "3:00-4:00 pm (HKT)", "2027/28"],
+      "excerpt": "20 November 2026 (English); 3:00-4:00 pm (HKT); Format: Zoom.",
+      "milestones": [
+        {"key":"briefing", "title":"港科大 MFA · 英语线上招生说明会", "start":"2026-11-20T15:00:00+08:00", "end":"2026-11-20T16:00:00+08:00", "precision":"time", "note":"香港时间与北京时间相同；先在官方页面预约。"}
+      ]
+    },
+    {
+      "key": "nov26-neuq-innovation-review",
+      "url": "https://cxcyzx.neuq.edu.cn/info/1055/6407.htm",
+      "source_label": "东北大学秦皇岛分校大学生创新创业中心",
+      "title": "2026 大创训练与创新大赛重点项目结项验收",
+      "summary": "适用于该校 2026 年立项且列入验收名单的项目，11 月 3—20 日安排答辩验收。不是新项目征集，个人答辩时间需等待学校另行通知。",
+      "location": "东北大学秦皇岛分校 · 校内项目",
+      "category": "calendar", "path_code": "entrepreneurship",
+      "checks": ["2026年11月3日-11月20日", "答辩验收", "具体时间另行通知"],
+      "excerpt": "2026年11月3日-11月20日，答辩验收。学校组织专家对结项项目进行答辩评审，具体时间另行通知。",
+      "milestones": [
+        {"key":"review", "title":"东北秦皇岛 · 大创项目答辩验收窗口", "start":"2026-11-03T00:00:00+08:00", "end":"2026-11-20T23:59:59+08:00", "precision":"day", "note":"仅限校内验收名单项目；窗口日期不是每位同学的具体答辩时间。"}
+      ]
+    },
+    {
+      "key": "nov26-cuit-innovation-check",
+      "url": "https://gcsjzx.cuit.edu.cn/info/1191/1966.htm",
+      "source_label": "成都信息工程大学工程实践中心",
+      "title": "成都信息工程大学 2026 大创项目中期检查",
+      "summary": "面向该校 2026 年立项大创项目，11 月 2 日 9:00 至 19 日 12:00 在线填报中期报告与成果证明。不是面向所有学生的创新项目报名。",
+      "location": "成都信息工程大学 · 校内系统",
+      "category": "calendar", "path_code": "entrepreneurship",
+      "checks": ["2026年11月2日上午09:00", "11月19日中午12:00", "中期检查报告"],
+      "excerpt": "登录系统在线填写中期检查报告，时间：2026年11月2日上午09:00—11月19日中午12:00。",
+      "milestones": [
+        {"key":"report", "title":"成信大 · 大创中期报告提交窗口", "start":"2026-11-02T09:00:00+08:00", "end":"2026-11-19T12:00:00+08:00", "precision":"time", "note":"仅限该校已立项项目；提交后还需指导教师及学院审核。"}
+      ]
+    },
+    {
+      "key": "nov26-bit-ai-plus",
+      "url": "https://jwb.bit.edu.cn/xs/pyfa_2/tzgg__26/77a29ad7001d49488a4a4544f12aac92.htm",
+      "source_label": "北京理工大学教务部",
+      "title": "第二届北京市大学生人工智能+创新大赛",
+      "summary": "面向北京地区高校在校本科生，支持跨校组队。北理工通知要求 11 月 9 日前初始报名；企业分赛场选拔安排为 11 月 26 日至 12 月 5 日，须先通过学校推荐。",
+      "location": "北京地区高校 · 企业分赛场",
+      "category": "contest", "path_code": "entrepreneurship",
+      "checks": ["2026年11月9日", "2026年11月26日-12月5日", "北京地区普通高等学校在校本科生"],
+      "excerpt": "各参赛队伍须于2026年11月9日前完成初始报名；2026年11月26日-12月5日组织企业分赛场比赛。",
+      "milestones": [
+        {"key":"registration", "title":"北京 AI+ 大赛 · 北理工初始报名截止", "start":null, "end":"2026-11-09T23:59:59+08:00", "precision":"day", "note":"此为北理工通知的报名要求；其他学校应核对牵头高校安排。"},
+        {"key":"enterprise", "title":"北京 AI+ 大赛 · 企业分赛场选拔", "start":"2026-11-26T00:00:00+08:00", "end":"2026-12-05T23:59:59+08:00", "precision":"day", "note":"仅限学校推荐队伍，具体测试及答辩时间依各赛题通知。"}
+      ]
+    },
+    {
+      "key": "nov26-bit-engineering",
+      "url": "https://jwb.bit.edu.cn/xs/pyfa_2/tzgg__26/e84a45f539904374b8e85935608a3c8b.htm",
+      "source_label": "北京理工大学教务部",
+      "title": "2027 北京市大学生工程实践与创新能力竞赛 · 北理工选拔",
+      "summary": "北京理工大学校内选拔赛报名表 11 月 15 日前提交，校内选拔暂定于次年 3 月初完成。这里只收录校内报名截止，不把待定赛期当成 11 月比赛。",
+      "location": "北京理工大学 · 工程训练中心",
+      "category": "contest", "path_code": null,
+      "checks": ["2026年11月15日", "校内赛", "2027年"],
+      "excerpt": "各参赛队提交报名表截止时间：2026年11月15日。",
+      "milestones": [
+        {"key":"registration", "title":"工程实践创新竞赛 · 北理工校赛报名截止", "start":null, "end":"2026-11-15T23:59:59+08:00", "precision":"day", "note":"仅适用于北理工校内选拔报名，报名表与提交方式见官方附件。"}
+      ]
+    },
+    {
+      "key": "nov26-sysu-qinghai",
+      "url": "https://ce.sysu.edu.cn/zh-hans/article/9270",
+      "source_label": "中山大学化学学院",
+      "title": "青海省 2027 年面向中山大学定向选调 · 报名提醒",
+      "summary": "中山大学化学学院 11 月招聘信息汇总收录青海定向选调公告，明确 11 月 12 日 18:00 截止。须进一步核对中大就业网对应完整公告的专业、学历及选调条件，不能仅凭就读学校认定符合资格。",
+      "location": "青海 · 面向中山大学相关毕业生",
+      "category": "civil_service", "path_code": "national_civil_service",
+      "checks": ["2027年度面向中山大学定向招录选调生", "2026年11月12日18:00"],
+      "excerpt": "青海省2027年度面向中山大学定向招录选调生公告：截止时间2026年11月12日18:00。",
+      "milestones": [
+        {"key":"registration", "title":"青海定向选调 · 中山大学报名截止", "start":null, "end":"2026-11-12T18:00:00+08:00", "precision":"time", "note":"按官网完整职位与选调条件核对；并不表示所有中大学生都可报。"}
+      ]
+    },
+    {
+      "key": "nov26-sysu-graduate-award",
+      "url": "https://cse.sysu.edu.cn/article/3691",
+      "source_label": "中山大学计算机学院",
+      "title": "中大计算机学院 2026 届基层就业奖励申请（第二批）",
+      "summary": "面向符合条件的该院 2026 届非定向毕业生，基层就业奖励申请材料于 11 月 12 日 17:00 前提交。其他学院或年级不能套用此截止日期和申报资格。",
+      "location": "中山大学计算机学院 · 校内",
+      "category": "calendar", "path_code": "employment",
+      "checks": ["2026届", "11月12日（周四）17：00", "第二批"],
+      "excerpt": "符合申报条件的应届毕业生向学院申请，于11月12日（周四）17：00前提交材料。",
+      "milestones": [
+        {"key":"application", "title":"中大计算机学院 · 基层就业奖励申请截止", "start":null, "end":"2026-11-12T17:00:00+08:00", "precision":"time", "note":"限该院符合奖励条件的 2026 届非定向毕业生。"}
+      ]
+    },
+    {
+      "key": "nov26-sysu-medical-jobs",
+      "url": "https://zssom.sysu.edu.cn/article/12334",
+      "source_label": "中山大学中山医学院",
+      "title": "中山医学院 2026 年秋季校园招聘日",
+      "summary": "11 月 7 日下午举办，面向中大 2027 届医科类本科、硕博毕业生及有实习需求的其他年级医科学生。原文未明确具体小时，请按学院通知入场。",
+      "location": "中山医学院研究生楼 A 座三楼一站式学生社区",
+      "category": "job", "path_code": "employment",
+      "checks": ["2026年11月7日", "中山大学2027届医科类", "下午"],
+      "excerpt": "2026年11月7日（星期六）下午举办中山医学院2026年秋季校园招聘日（第3期）。",
+      "milestones": [
+        {"key":"jobfair", "title":"中山医学院 · 秋季校园招聘日", "start":"2026-11-07T00:00:00+08:00", "end":"2026-11-07T23:59:59+08:00", "precision":"day", "note":"原文说明为下午，未给出小时；此全天标记仅用于日期定位。"}
+      ]
+    },
+    {
+      "key": "nov26-scudem-submission",
+      "url": "https://contest.comap.com/scudem/instructions.html",
+      "source_label": "COMAP 竞赛主办方",
+      "source_class": "organization",
+      "title": "SCUDEM XI 2026 微分方程建模挑战 · 提交截止",
+      "summary": "COMAP 公布挑战于美国东部标准时间 11 月 10 日 15:00 结束，参赛队须完成视频及 AI 使用报告提交。报名已结束；北京时间为 11 月 11 日凌晨 4:00。",
+      "location": "国际 · 线上提交",
+      "category": "contest", "path_code": null,
+      "checks": ["SCUDEM XI 2026", "3:00 p.m. EST on Tuesday, November 10, 2026", "AI Use Report"],
+      "excerpt": "Challenge Ends: 3:00 p.m. EST on Tuesday, November 10, 2026.",
+      "milestones": [
+        {"key":"submission", "title":"SCUDEM 建模挑战 · 视频与报告截止", "start":null, "end":"2026-11-10T15:00:00-05:00", "precision":"time", "note":"美国 EST 11 月 10 日 15:00，对应北京时间 11 月 11 日 04:00；仅限已报名队伍。"}
+      ]
+    },
+    {
+      "key": "nov26-oxford-statistics-open",
+      "url": "https://www.stats.ox.ac.uk/index.php/events/postgraduate-open-day-2026",
+      "source_label": "牛津大学统计系",
+      "title": "牛津大学统计系研究生开放日",
+      "summary": "统计系博士及 StatML 项目说明，支持线上参与。活动为英国时间 11 月 11 日 13:00—14:45，官网要求 11 月 9 日前预约；请提前注册获取线上参与方式。",
+      "location": "英国牛津 · 可线上参加",
+      "category": "graduate", "path_code": "overseas_study",
+      "checks": ["11 November 2026", "13:00-14:45", "Monday 9 November"],
+      "excerpt": "Postgraduate Open Day; 11 Nov 2026 13:00-14:45. Please register by Monday 9 November.",
+      "milestones": [
+        {"key":"open-day", "title":"牛津统计系 · 研究生线上开放日", "start":"2026-11-11T13:00:00+00:00", "end":"2026-11-11T14:45:00+00:00", "precision":"time", "note":"北京时间 21:00—22:45；官网要求 11 月 9 日前完成预约。"}
+      ]
+    },
+    {
+      "key": "nov26-oxford-physics-open",
+      "url": "https://www.physics.ox.ac.uk/study/postgraduates/dphil-atmospheric-oceanic-and-planetary-physics",
+      "source_label": "牛津大学物理系",
+      "title": "牛津大学大气海洋与行星物理博士线上开放日",
+      "summary": "面向意向博士申请者的线上研究与招生介绍，英国时间 11 月 24 日 13:30—16:00。北京时间跨至次日零点，报名及线上入口请查看官方页面。",
+      "location": "线上 · 英国时间",
+      "category": "graduate", "path_code": "overseas_study",
+      "checks": ["24th November 2026", "1:30pm to 4:00pm", "UK time"],
+      "excerpt": "Online on Tuesday 24th November 2026, from 1:30pm to 4:00pm (UK time).",
+      "milestones": [
+        {"key":"open-day", "title":"牛津大气海洋物理 · 博士线上开放日", "start":"2026-11-24T13:30:00+00:00", "end":"2026-11-24T16:00:00+00:00", "precision":"time", "note":"北京时间 11 月 24 日 21:30—25 日 00:00，注意跨日；不是申请截止日。"}
+      ]
+    },
+    {
+      "key": "nov26-pku-teacher-plan",
+      "url": "https://www.gse.pku.edu.cn/syxw/tzgg/147d8335f45a4da5a0fcec6ae8393ac2.htm",
+      "source_label": "北京大学教育学院",
+      "title": "北京大学国优计划 · 校内选拔申请",
+      "summary": "面向符合公告条件的北大理工农医全日制研究生，含已获北大 2027 年推免拟录取资格的应届本科生。报名问卷 11 月 10 日 9:00 截止，电子材料同日 12:00 前提交。",
+      "location": "北京大学 · 校内选拔",
+      "category": "graduate", "path_code": "recommendation_exemption",
+      "checks": ["2026年11月10日上午09:00", "2026年11月10日中午12:00", "已获北京大学2027年推免拟录取资格"],
+      "excerpt": "报名时间至2026年11月10日上午09:00；申请人应于2026年11月10日中午12:00前提交电子版材料。",
+      "milestones": [
+        {"key":"registration", "title":"北大国优计划 · 校内报名截止", "start":null, "end":"2026-11-10T09:00:00+08:00", "precision":"time", "note":"问卷 9:00 截止、材料 12:00 截止；仅限公告规定的北大学生及已获北大推免拟录取资格者。"}
+      ]
+    }
+  ]
+}

@@ -1,6 +1,9 @@
 # 环境与密钥
 .env
 .env*.local
+.env.*
+!.env.example
+!.env.*.example
 
 # Python
 .venv/
@@ -20,6 +23,10 @@ dist/
 # 数据库
 # 运行时数据库不入库；公开演示快照（已脱敏）是唯一例外
 *.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
 !demo-data/release-preview.db
 
 # 本地运行数据与测试产物
@@ -29,6 +36,13 @@ test-results/
 playwright-report/
 artifacts/
 *_probe.json
+*.log
+coverage/
+docs/local-*-review/
+# Machine-specific deployment and verification records stay local.
+docs/VPS_STATIC_DEPLOYMENT_20261107.md
+docs/VPS_WORKSPACE_SYNC_20261107.md
+docs/AGENT_REAL_AI_20261107.md
 
 # 编辑器与系统文件
 .vscode/

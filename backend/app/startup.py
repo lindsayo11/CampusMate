@@ -28,6 +28,7 @@ def brief_of(row):
 
 def project_out(row):
     return {'id':row.id,'brief':json.loads(row.brief_json),'revision':row.revision,
+        'workflow':json.loads(row.workflow_json or '{}'),
         'created_at':row.created_at,'updated_at':row.updated_at}
 
 
@@ -86,6 +87,29 @@ def create_project(body:Brief,user:str=Depends(actor_id),db:Session=Depends(get_
 @router.get('/projects/{pid}')
 def project(pid:str,user:str=Depends(actor_id),db:Session=Depends(get_db)):
     return project_out(own_project(db,pid,user))
+
+
+@router.get('/projects/{pid}/workflow')
+def workflow(pid:str,user:str=Depends(actor_id),db:Session=Depends(get_db)):
+    row=own_project(db,pid,user)
+    return {'project_id':pid,'revision':row.revision,'workflow':json.loads(row.workflow_json or '{}')}
+
+
+@router.put('/projects/{pid}/workflow')
+def save_workflow(pid:str,body:dict,user:str=Depends(actor_id),db:Session=Depends(get_db)):
+    row=own_project(db,pid,user)
+    expected=body.get('expected_revision')
+    if expected is not None and expected != row.revision:
+        raise HTTPException(409,'项目资料已有新版本，请刷新后保存流程')
+    state=body.get('workflow',body)
+    if not isinstance(state,dict):
+        raise HTTPException(422,'流程状态格式不正确')
+    payload=json.dumps(state,ensure_ascii=False,separators=(',',':'))
+    row.workflow_json=payload
+    row.updated_at=datetime.now(UTC)
+    audit(db,user,'startup_workflow_update','startup:'+pid)
+    db.commit()
+    return {'project_id':pid,'revision':row.revision,'workflow':json.loads(payload)}
 
 
 @router.put('/projects/{pid}')

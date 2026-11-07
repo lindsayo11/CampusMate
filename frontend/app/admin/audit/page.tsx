@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import {useEffect,useState} from "react";
 import {apiBase} from "@/lib/api";
 type Event={id:number;actor:string;action:string;resource:string;created_at:string};

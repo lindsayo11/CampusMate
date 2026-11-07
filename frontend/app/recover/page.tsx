@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+﻿export const dynamic = "force-dynamic";
 import Form from "@/components/recover-form";
 export default function Page() {
  const configured = process.env.SUPABASE_URL?.startsWith("https://") && !!process.env.SUPABASE_ANON_KEY;

@@ -176,6 +176,31 @@ class DocumentVersion(Base):
     previous_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
 
 
+class DocumentInsight(Base):
+    """Optional AI-generated summary grounded in one immutable source version."""
+    __tablename__ = "document_insights"
+    document_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    status: Mapped[str] = mapped_column(String(20), default="queued", index=True)
+    summary: Mapped[str] = mapped_column(Text, default="")
+    keywords: Mapped[str] = mapped_column(Text, default="[]")
+    model: Mapped[str] = mapped_column(String(80), default="")
+    error: Mapped[str] = mapped_column(String(300), default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class DevelopmentChannelSummary(Base):
+    """Aggregated, source-grounded guidance for one development channel."""
+    __tablename__ = "development_channel_summaries"
+    path_code: Mapped[str] = mapped_column(String(80), primary_key=True)
+    status: Mapped[str] = mapped_column(String(20), default="queued", index=True)
+    fingerprint: Mapped[str] = mapped_column(String(64), default="", index=True)
+    payload: Mapped[str] = mapped_column(Text, default="{}")
+    model: Mapped[str] = mapped_column(String(80), default="")
+    error: Mapped[str] = mapped_column(String(300), default="")
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
 class Evidence(Base):
     __tablename__ = "evidence"
     id: Mapped[str] = mapped_column(String(36), primary_key=True)

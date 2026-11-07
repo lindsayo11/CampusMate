@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import {useState} from "react";
 export default function Recover(){
  const [email,setEmail]=useState(""),[sent,setSent]=useState(false),[busy,setBusy]=useState(false),[done,setDone]=useState(false),[message,setMessage]=useState("");

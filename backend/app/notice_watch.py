@@ -107,11 +107,11 @@ def install(db, actor, manifest_path=None):
         # Re-installation preserves pauses and operator configuration.
         if config.get('collection_mode') != MODE:
             endpoint.adapter_config = json.dumps({'notice_scope':'university','collection_mode':MODE,
-                'index_urls':urls,'interval_hours':12,'authorized_by':actor},ensure_ascii=False)
+                'index_urls':urls,'interval_hours':8,'authorized_by':actor},ensure_ascii=False)
             endpoint.scheduled = True
             endpoint.manual_takeover = False
             endpoint.paused_reason = ''
-            endpoint.fetch_interval = '12h'
+            endpoint.fetch_interval = '8h'
         elif config.get('index_urls') != urls:
             config['index_urls'] = urls
             endpoint.adapter_config = json.dumps(config,ensure_ascii=False)
@@ -119,6 +119,11 @@ def install(db, actor, manifest_path=None):
             db.execute(update(NoticeResource).where(NoticeResource.endpoint_id==endpoint.id,
                 NoticeResource.kind=='index').values(status='retired',
                     next_check_at=datetime(2100,1,1,tzinfo=UTC)))
+        config = config_for(endpoint)
+        config['interval_hours'] = 8
+        config['index_urls'] = urls
+        endpoint.adapter_config = json.dumps(config, ensure_ascii=False)
+        endpoint.fetch_interval = '8h'
         for url in urls:
             add_resource(db,endpoint.id,url,'index',datetime.now(UTC))
         installed += 1
@@ -246,6 +251,8 @@ def process_once(now=None):
                         if not doc.deleted_at:
                             if auto_publish(db,doc):
                                 publish_collected_document(db,doc)
+                                from .development_insights import enqueue as enqueue_insight
+                                enqueue_insight(db,doc)
                         row.document_id = doc.id
                         changed = result['changed']
                         row.status = 'updated' if changed else 'unchanged'
@@ -257,7 +264,7 @@ def process_once(now=None):
             row.checked_at = finished
             if changed:
                 row.changed_at = finished
-            row.next_check_at = finished + timedelta(hours=12 if row.kind == 'index' else 24)
+            row.next_check_at = finished + timedelta(hours=8 if row.kind == 'index' else 24)
             row.failures,row.error = 0,''
             row.lease_until = row.lease_token = None
             return {'url':url,'kind':row.kind,'status':row.status,'document_id':row.document_id}
@@ -318,7 +325,7 @@ def monitor_status(db):
             'pending':sum(not r.checked_at and r.kind != 'index' for r in rows),
             'issues':len(errors),'last_error':index_errors[-1].error if index_errors else '',
             'index_healthy':bool(indices and all(r.content_hash and not r.error for r in indices)),
-            'interval_hours':12})
+            'interval_hours':8})
     return sorted(result,key=lambda x:x['source_code'])
 
 
@@ -367,3 +374,22 @@ def rescan(endpoint_id:str,user=Depends(require_admin),db=Depends(get_db)):
     audit(db,user,'notice_watch_rescan',endpoint_id)
     db.commit()
     return {'status':'queued'}
+
+
+@router.post('/rescan-all')
+def rescan_all(user=Depends(require_admin),db=Depends(get_db)):
+    """Queue the six-route watch frontier for an immediate bounded refresh."""
+    if not settings.public_notice_watch_enabled:
+        raise HTTPException(422,'持续采集服务未启用')
+    now = datetime.now(UTC)
+    endpoints = [ep for ep in db.scalars(select(SourceEndpoint)).all()
+                 if config_for(ep).get('collection_mode') == MODE and permitted(db, ep)]
+    endpoint_ids = [ep.id for ep in endpoints]
+    if endpoint_ids:
+        db.execute(update(NoticeResource).where(
+            NoticeResource.endpoint_id.in_(endpoint_ids),
+            NoticeResource.kind == 'index', NoticeResource.status != 'retired'
+        ).values(next_check_at=now))
+    audit(db,user,'notice_watch_rescan_all','source_registry',{'sources':len(endpoint_ids)})
+    db.commit()
+    return {'status':'queued','sources':len(endpoint_ids),'interval_hours':8}

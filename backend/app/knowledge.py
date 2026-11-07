@@ -1,10 +1,11 @@
 """Traceable lexical retrieval over explicitly public, reviewed source versions."""
 import hashlib
+import json
 import re
 from datetime import UTC, datetime
 from typing import Literal
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from sqlalchemy import (Boolean, Integer, String, Text, and_, case, delete, func, or_,
                         select, update)
@@ -63,7 +64,8 @@ class KnowledgePublication(Base):
 class SearchIn(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
     query: str = Field(min_length=2, max_length=200)
-    type: Literal['job', 'contest', 'civil_service', 'volunteer', 'club', 'graduate'] | None = None
+    type: Literal['job', 'contest', 'civil_service', 'volunteer', 'club', 'graduate',
+                  'policy', 'education_policy', 'university_notice', 'calendar', 'campus', 'reference'] | None = None
     opportunity_id: str | None = Field(default=None, max_length=40)
     limit: int = Field(default=5, ge=1, le=10)
 
@@ -271,6 +273,87 @@ def search_documents(body, db):
 @router.post("/knowledge/search")
 def search(body: SearchIn, user: str = Depends(actor_id), db: Session = Depends(get_db)):
     return search_documents(body, db)
+
+
+def document_statement():
+    # The directory and reader must never bypass search's publication/version gate.
+    visible_ids = visible_statement().with_only_columns(SourceDocument.id).distinct()
+    return (select(SourceDocument, KnowledgePublication, Opportunity)
+            .join(KnowledgePublication, KnowledgePublication.document_id == SourceDocument.id)
+            .outerjoin(Opportunity, Opportunity.id == KnowledgePublication.opportunity_id)
+            .where(SourceDocument.id.in_(visible_ids)))
+
+
+def reading_text(raw_text):
+    """Unwrap known collector containers for reading; never rewrite the archived source."""
+    if len(raw_text) > 2000000 or not raw_text.lstrip().startswith(('[', '{')):
+        return raw_text
+    try:
+        payload = json.loads(raw_text)
+    except (ValueError, RecursionError):
+        return raw_text
+    records = payload if isinstance(payload, list) else [payload]
+    if not records or not all(isinstance(record, dict) and isinstance(record.get('body'), str)
+                              and record['body'].strip() for record in records):
+        return raw_text
+    sections = []
+    for record in records:
+        title = record.get('title', '')
+        body = record['body']
+        sections.append((title + '\n\n' if isinstance(title, str) and title
+                         and not body.lstrip().startswith(title) else '') + body)
+    return '\n\n'.join(sections)
+
+
+def document_card(doc, publication, opportunity, chunk_count):
+    readable = reading_text(doc.raw_text)
+    paragraphs = [line.strip() for line in readable.splitlines() if len(line.strip()) >= 35
+                  and not line.strip().startswith(('来源页面：', '校伴标注：', '标题：'))]
+    excerpt = ' '.join(paragraphs[:2]) or re.sub(r'\s+', ' ', readable).strip()
+    return {"document_id": doc.id, "title": opportunity.title if opportunity else publication.title,
+            "type": opportunity.type if opportunity else publication.item_type,
+            "source_url": doc.source_url, "fetched_at": doc.fetched_at.replace(tzinfo=UTC)
+            if doc.fetched_at.tzinfo is None else doc.fetched_at,
+            "content_hash": doc.content_hash, "excerpt": excerpt[:240], "chunk_count": chunk_count,
+            "opportunity_id": opportunity.id if opportunity else None}
+
+
+@router.get("/knowledge/documents")
+def browse_documents(kind: str | None = Query(None, max_length=30),
+                     offset: int = Query(0, ge=0, le=100000), limit: int = Query(9, ge=1, le=24),
+                     user: str = Depends(actor_id), db: Session = Depends(get_db)):
+    stmt = document_statement()
+    item_type = func.coalesce(Opportunity.type, KnowledgePublication.item_type)
+    facets = dict(db.execute(stmt.with_only_columns(item_type, func.count())
+                            .group_by(item_type)).all())
+    if kind:
+        stmt = stmt.where(item_type == kind)
+    total = db.scalar(select(func.count()).select_from(stmt.with_only_columns(SourceDocument.id).subquery())) or 0
+    rows = db.execute(stmt.order_by(SourceDocument.fetched_at.desc(), SourceDocument.id)
+                      .offset(offset).limit(limit)).all()
+    ids = [row[0].id for row in rows]
+    counts = dict(db.execute(select(DocumentChunk.document_id, func.count())
+                            .where(DocumentChunk.document_id.in_(ids)).group_by(DocumentChunk.document_id)).all())
+    all_ids = document_statement().with_only_columns(SourceDocument.id)
+    chunks = db.scalar(select(func.count()).select_from(DocumentChunk)
+                       .where(DocumentChunk.document_id.in_(all_ids))) or 0
+    return {"items": [document_card(*row, counts.get(row[0].id, 0)) for row in rows],
+            "total": total, "library_total": sum(facets.values()), "chunk_total": chunks,
+            "by_type": facets, "offset": offset, "limit": limit}
+
+
+@router.get("/knowledge/documents/{document_id}")
+def read_document(document_id: str, user: str = Depends(actor_id), db: Session = Depends(get_db)):
+    row = db.execute(document_statement().where(SourceDocument.id == document_id)).first()
+    if not row:
+        raise HTTPException(404, "原文不存在、版本已更新或已停止公开")
+    doc = row[0]
+    count = db.scalar(select(func.count()).select_from(DocumentChunk)
+                      .where(DocumentChunk.document_id == doc.id)) or 0
+    readable = reading_text(doc.raw_text)
+    return {**document_card(*row, count), "text": doc.raw_text[:120000],
+            "display_text": readable[:120000], "is_formatted": readable != doc.raw_text,
+            "truncated": len(doc.raw_text) > 120000, "character_count": len(doc.raw_text)}
 
 
 @router.get("/knowledge/chunks/{chunk_id}")

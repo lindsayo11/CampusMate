@@ -3,7 +3,7 @@ from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 from fastapi.testclient import TestClient
-from sqlalchemy import select
+from sqlalchemy import delete, select
 
 from app import source_scheduler
 from app.collector_http import FetchError
@@ -64,14 +64,34 @@ def test_interval_parser_is_bounded_and_explicit():
     assert interval_delta("manual") is None
 
 
+def test_automatic_schedule_caps_refresh_interval_at_eight_hours():
+    _,endpoint_id=make_endpoint(fetch_interval="30d")
+    schedule_due_endpoints()
+    with SessionLocal() as db:
+        endpoint=db.get(SourceEndpoint,endpoint_id)
+        next_run=endpoint.next_run_at
+        next_run=next_run.replace(tzinfo=UTC) if next_run.tzinfo is None else next_run
+        assert next_run<=datetime.now(UTC)+timedelta(hours=8,seconds=1)
+    # This test only checks the scheduling horizon; don't leave a queued job
+    # that can be claimed by later worker tests.
+    with SessionLocal.begin() as db:
+        db.execute(delete(SourceEndpointRun).where(SourceEndpointRun.endpoint_id==endpoint_id))
+
+
 def test_endpoint_scheduler_version_change_304_and_review(monkeypatch):
     _, endpoint_id = make_endpoint()
     body = "官方公告。报名截止日期为2026年10月20日，请以原文为准。".encode()
     monkeypatch.setattr(source_scheduler, "collect_bytes_conditional", lambda *a, **kw: success(body))
     assert schedule_due_endpoints() == 1
+    with SessionLocal() as db:
+        endpoint=db.get(SourceEndpoint,endpoint_id)
+        next_run=endpoint.next_run_at
+        next_run=next_run.replace(tzinfo=UTC) if next_run.tzinfo is None else next_run
+        assert next_run<=datetime.now(UTC)+timedelta(hours=8,seconds=1)
     assert process_endpoint_once()
     with SessionLocal() as db:
         run = db.scalar(select(SourceEndpointRun).where(SourceEndpointRun.endpoint_id == endpoint_id))
+        assert run.status == "succeeded", run.error
         document = db.get(DocumentVersion, run.document_version_id)
         review = db.scalar(select(SourceChangeReview).where(
             SourceChangeReview.document_version_id == document.id))
@@ -178,7 +198,7 @@ def test_concurrent_workers_claim_one_endpoint_run(monkeypatch):
         list(pool.map(lambda _: process_endpoint_once(), range(2)))
     with SessionLocal() as db:
         runs = db.scalars(select(SourceEndpointRun).where(SourceEndpointRun.endpoint_id == endpoint_id)).all()
-        assert len(runs) == 1 and runs[0].status == "succeeded"
+        assert len(runs) == 1 and runs[0].status == "succeeded", runs[0].error if runs else "missing run"
     assert len(calls) == 1
 
 

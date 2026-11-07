@@ -1,4 +1,4 @@
-import {notFound} from "next/navigation";
+﻿import {notFound} from "next/navigation";
 import Link from "next/link";
 import { type Opportunity } from "@/lib/api";
 import { ActionPanel } from "@/components/action-panel";

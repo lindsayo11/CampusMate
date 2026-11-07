@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import {PageHeading,Icon,TopicBar,type IconName} from '@/components/ui';
 import {privateApi} from '@/lib/session-api';
 const modules:[string,string,string,IconName][]=[['/admin/data','数据接入与发布','查看文档、处理阻塞、发布完整版本。','file'],['/admin/registry','数据源管理','核对官方来源、采集端点与运行状态。','link'],['/admin/review','人工内容审核','核对手动提交的信息与原文依据。','shield'],['/admin/sources','人工内容导入','归档公开原文，录入待审结构化内容。','plus'],['/admin/reports','举报处理','核实消息举报，处理不当内容。','users'],['/admin/operations','运行状态','检查后台任务、服务与数据接入状态。','settings']];

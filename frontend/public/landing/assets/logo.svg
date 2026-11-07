@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="CampusMate 校伴">
+  <title>校伴 · 同行之页</title>
+  <rect x="2" y="2" width="60" height="60" rx="18" fill="#3d5849"/>
+  <rect x="2.5" y="2.5" width="59" height="59" rx="17.5" fill="none" stroke="#92a491" stroke-opacity=".55"/>
+  <path d="M29 18C20 13 12 20 12 32s8 19 17 14" fill="none" stroke="#f7f5eb" stroke-width="3.7" stroke-linecap="round"/>
+  <path d="M27 43V23c5 0 9 3 12 7 3-4 7-7 12-7v20c-5 0-9 2-12 6-3-4-7-6-12-6Z" fill="#e8ecdf"/>
+  <path d="M39 31v13" stroke="#3d5849" stroke-width="2" stroke-linecap="round"/>
+  <path d="M31 28c2 1 4 2 5 4M43 32c1-2 3-3 4-4" fill="none" stroke="#92a491" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

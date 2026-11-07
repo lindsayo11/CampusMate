@@ -10,6 +10,20 @@ class Settings(BaseSettings):
     dify_app_key: str = ""
     development_dify_api_base: str = ""
     development_dify_app_key: str = ""
+    # Optional grounded web research for the development assistant.  Secrets
+    # are supplied only through the deployment environment, never the client.
+    deepseek_api_base: str = "https://api.deepseek.com/v1"
+    deepseek_api_key: str = ""
+    deepseek_model: str = "deepseek-v4-flash"
+    tavily_api_base: str = "https://api.tavily.com"
+    tavily_api_key: str = ""
+    web_search_timeout_seconds: float = 20.0
+    web_search_max_results: int = 5
+    jev_api_base: str = "https://api.typesafe.ai/v1"
+    jev_api_key: str = ""
+    jev_model: str = "jev-latest"
+    seed_public_content: bool = True
+    seed_starter_plans: bool = False
     demo_mode: bool = False
     supabase_url: str = ""
     supabase_anon_key: str = ""
