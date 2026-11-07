@@ -1,6 +1,6 @@
 # Email Signup OTP
 
-在 Supabase Dashboard 中打开 Authentication → Email Templates → Confirm signup，替换为 `supabase/templates/confirmation.html`。模板必须渲染 `{{ .Token }}`；注册页会把这 8 位验证码提交到 `/api/session`，由 Supabase Auth 验证后再设置账号密码。
+在 Supabase Dashboard 中打开 Authentication → Email Templates → Confirm signup，替换为 `supabase/templates/confirmation.html`。模板必须渲染 `{{ .Token }}`；注册页会把这 6 位验证码提交到 `/api/session`，由 Supabase Auth 验证后再设置账号密码。
 
 保持 Confirm email 开启。当前项目的 `GET /auth/v1/settings` 已确认邮箱注册开启且未自动确认，但这只能说明身份服务接受了请求，不能证明邮件已经投递。
 

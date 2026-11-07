@@ -10,7 +10,7 @@ function cookieOptions() {
 }
 
 function safeNext(value: string | null) {
-  return value && value.startsWith("/") && !value.startsWith("//") ? value : "/console";
+  return value && value.startsWith("/") && !value.startsWith("//") ? value : "/settings";
 }
 
 export function GET(req: NextRequest) {

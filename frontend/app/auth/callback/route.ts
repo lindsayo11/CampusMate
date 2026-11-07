@@ -10,7 +10,7 @@ function clearOAuthCookies(response: NextResponse) {
 }
 
 function safeNext(value: string | undefined) {
-  return value && value.startsWith("/") && !value.startsWith("//") ? value : "/console";
+  return value && value.startsWith("/") && !value.startsWith("//") ? value : "/settings";
 }
 
 export async function GET(req: NextRequest) {

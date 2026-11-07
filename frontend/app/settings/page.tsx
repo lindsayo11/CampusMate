@@ -1,7 +1,7 @@
 import { privateApi } from "@/lib/session-api";
 import type { Profile } from "@/lib/api";
+import { PageHeading } from "@/components/ui";
 import { SettingsPanel } from "@/components/settings-panel";
-import s from "@/components/settings-studio.module.css";
 
 type Account = { user_id: string; email: string | null; is_admin: boolean };
 type Section = "personal" | "notifications" | "permissions";
@@ -15,7 +15,12 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
   ]);
 
   return (
-    <div className={s.page}>
+    <div className="shell settings-shell">
+      <PageHeading
+        eyebrow="ACCOUNT SETTINGS"
+        title="Settings"
+        description="Manage your profile, notifications, and workspace permissions."
+      />
       <SettingsPanel initialProfile={profile} account={account} initialTab={section} />
     </div>
   );

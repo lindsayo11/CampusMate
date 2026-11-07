@@ -1,0 +1,24 @@
+services:
+  api:
+    environment:
+      COLLECTION_EXCHANGE_TOKEN: ${COLLECTION_EXCHANGE_TOKEN:-}
+      COLLECTION_PEER_URL: ${COLLECTION_PEER_URL:-}
+      COLLECTION_SYNC_INTERVAL_MINUTES: ${COLLECTION_SYNC_INTERVAL_MINUTES:-5}
+      COLLECTION_SYNC_BATCH_SIZE: ${COLLECTION_SYNC_BATCH_SIZE:-12}
+  notice-watch-init:
+    build: ./backend
+    command: ["python", "-m", "app.notice_watch_install", "--actor", "${NOTICE_WATCH_OPERATOR:?Set NOTICE_WATCH_OPERATOR}"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://campusmate:${POSTGRES_PASSWORD}@db:5432/campusmate
+      COLLECTOR_ALLOWED_HOSTS: ${COLLECTOR_ALLOWED_HOSTS:?Prepare collection hosts first}
+    depends_on:
+      api: {condition: service_healthy}
+    restart: "no"
+  worker:
+    environment:
+      COLLECTION_EXCHANGE_TOKEN: ${COLLECTION_EXCHANGE_TOKEN:-}
+      COLLECTION_PEER_URL: ${COLLECTION_PEER_URL:-}
+      COLLECTION_SYNC_INTERVAL_MINUTES: ${COLLECTION_SYNC_INTERVAL_MINUTES:-5}
+      COLLECTION_SYNC_BATCH_SIZE: ${COLLECTION_SYNC_BATCH_SIZE:-12}
+    depends_on:
+      notice-watch-init: {condition: service_completed_successfully}

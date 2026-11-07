@@ -64,7 +64,13 @@ def public_ip(host, port=None):
 
 
 def fetch_url(url, max_bytes=MAX_BYTES, check_robots=False, conditional_headers=None,
-              return_headers=False, strict_robots=False):
+              return_headers=False, strict_robots=False, method='GET', form_data=None):
+    if method not in {'GET', 'POST'} or (method == 'POST' and
+            (not check_robots or not strict_robots or not isinstance(form_data, dict)
+             or len(form_data) > 16
+             or any(not isinstance(k, str) or not isinstance(v, (str, int))
+                    or len(k) > 80 or len(str(v)) > 200 for k, v in form_data.items()))):
+        raise FetchError('公开只读 POST 需要有界表单及严格 robots 检查')
     deadline = time.monotonic() + 45
     with httpx.Client(timeout=10, follow_redirects=False, trust_env=False) as client:
         for _ in range(4):
@@ -86,9 +92,11 @@ def fetch_url(url, max_bytes=MAX_BYTES, check_robots=False, conditional_headers=
                                    "Accept-Encoding": "identity"}
                 request_headers.update(conditional_headers or {})
                 extensions = {"sni_hostname": parts.hostname} if scheme == "https" else None
-                with client.stream("GET", pinned, headers=request_headers,
-                    extensions=extensions) as response:
+                with client.stream(method, pinned, headers=request_headers,
+                    extensions=extensions, **({'data':form_data} if method == 'POST' else {})) as response:
                     if response.status_code in (301, 302, 303, 307, 308):
+                        if method == 'POST':
+                            raise FetchError('公开只读 POST 不跟随重定向，请重新核对官方接口')
                         url = urljoin(url, response.headers.get("location", ""))
                         if time.monotonic() > deadline:
                             raise FetchError("采集总时限已超出")
@@ -170,3 +178,13 @@ def collect_bytes_conditional(url, etag=None, last_modified=None, strict_robots=
             "final_url": final_url, "status_code": code,
             "etag": response_headers.get("etag"),
             "last_modified": response_headers.get("last-modified")}
+
+
+def collect_public_form(url, form):
+    """For operator-configured anonymous read-only lists/details, never arbitrary actions."""
+    data, content_type, final_url, code, headers = fetch_url(url, check_robots=True,
+        strict_robots=True, return_headers=True, method='POST', form_data=form)
+    if code != 200:
+        raise FetchError('公开只读接口没有返回完整正文', code)
+    return {'not_modified':False, 'data':data, 'content_type':content_type,
+            'final_url':final_url, 'status_code':code, 'etag':None, 'last_modified':None}

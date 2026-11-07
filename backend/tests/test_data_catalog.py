@@ -36,7 +36,7 @@ def sample(monkeypatch):
         url = "https://example.edu/notice/" + suffix
         content = b"<h1>Public notice</h1><p>Minimum degree: Bachelor</p>"
         with SessionLocal.begin() as db:
-            source = Source(id=sid, source_code="UNIT-" + suffix, name="Unit source", publisher="Unit publisher",
+            source = Source(id=sid, source_code="UNIT-" + suffix[:24], name="Unit source", publisher="Unit publisher",
                 authority_level="A", source_class="government", official=True, jurisdiction_level="national",
                 base_url="https://example.edu", verified_at=now, active=True, region_code="CN")
             ep = SourceEndpoint(id=eid, source_id=sid, name="notice", endpoint_type="html", url=url,

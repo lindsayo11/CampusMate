@@ -52,10 +52,14 @@ router = APIRouter(prefix="/v1/admin")
 
 @router.get("/operations")
 def operations(user: str = Depends(require_admin), db: Session = Depends(get_db)):
+    from .intake_models import CollectionAlert
     worker = db.get(WorkerHeartbeat, "reminders")
     now = datetime.now(UTC)
     age = (now - worker.observed_at.replace(tzinfo=UTC)).total_seconds() if worker else None
-    return {"worker": {"state": worker.state if worker else "missing", "age_seconds": age,
+    alerts=db.scalars(select(CollectionAlert).order_by(CollectionAlert.last_seen_at.desc()).limit(100)).all()
+    return {'collection_alerts':[{'key':a.key,'status':a.status,'message':a.message,
+                'first_seen_at':a.first_seen_at,'last_seen_at':a.last_seen_at,'resolved_at':a.resolved_at} for a in alerts],
+            "worker": {"state": worker.state if worker else "missing", "age_seconds": age,
                        "healthy": bool(worker and worker.state == "ok" and age < 120)},
             "pending_reminders": db.scalar(select(func.count()).select_from(Reminder).where(Reminder.sent.is_(False))),
             "published_opportunities": db.scalar(select(func.count()).select_from(Opportunity).where(Opportunity.status == "published", Opportunity.deadline > now))}

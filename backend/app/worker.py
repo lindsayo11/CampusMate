@@ -37,6 +37,8 @@ def run_cycle():
     process_channel_insight()
     from .notice_watch import run_cycle as watch_cycle
     watch_cycle()
+    from .collection_exchange import run_cycle as exchange_cycle
+    exchange_cycle()
     if settings.collector_enabled:
         from .collector import schedule_due, process_one
         from .source_scheduler import process_endpoint_once, schedule_due_endpoints

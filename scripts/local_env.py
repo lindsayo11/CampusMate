@@ -1,10 +1,11 @@
 """Portable, isolated local preview configuration for a local checkout."""
 import json
 import sqlite3
+import sys
 from pathlib import Path
-from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "backend"))
 
 
 def prepare(api_port=8000, web_port=3000, force=False):
@@ -16,8 +17,8 @@ def prepare(api_port=8000, web_port=3000, force=False):
     if not data.exists():
         with sqlite3.connect(snapshot.as_uri()+'?mode=ro',uri=True) as src, sqlite3.connect(data) as dest:
             src.backup(dest)
-    manifest = json.loads((ROOT/'backend/app/postgraduate_sources.json').read_text(encoding='utf-8'))
-    hosts = sorted({urlsplit(url).hostname for source in manifest['sources'] for url in source['index_urls']})
+    from app.public_source_catalog import allowed_hosts
+    hosts = allowed_hosts()
     env = {'DATABASE_URL':'sqlite:///'+data.as_posix(),'DEMO_MODE':'true',
         'ADMIN_USER_IDS':'demo-user','COLLECTOR_ENABLED':'false',
         'PUBLIC_NOTICE_WATCH_ENABLED':'true','COLLECTOR_ALLOWED_HOSTS':','.join(hosts),

@@ -24,20 +24,22 @@ def ready(url, process):
 
 
 def main():
+    api_port = os.environ.get("E2E_API_PORT", "8000")
+    web_port = os.environ.get("E2E_WEB_PORT", "3000")
     with tempfile.TemporaryDirectory(prefix="campusmate-e2e-") as tmp:
         env = {**os.environ, "DATABASE_URL": f"sqlite:///{tmp}/test.db", "DEMO_MODE": "true",
-               "ADMIN_USER_IDS": "demo-user", "API_INTERNAL_URL": "http://127.0.0.1:8000",
-               "PORT": "3000", "APP_ORIGIN": "http://127.0.0.1:3000", "SUPABASE_URL": "", "SUPABASE_ANON_KEY": "", "DIFY_API_BASE": "", "DIFY_APP_KEY": "", "COLLECTOR_ENABLED": "false", "ENABLE_AGENT_UI": "false", "ENABLE_COLLECTOR_UI": "false"}
+               "ADMIN_USER_IDS": "demo-user", "API_INTERNAL_URL": f"http://127.0.0.1:{api_port}", "E2E_API_URL": f"http://127.0.0.1:{api_port}",
+               "PORT": web_port, "APP_ORIGIN": f"http://127.0.0.1:{web_port}", "E2E_BASE_URL": f"http://127.0.0.1:{web_port}", "SUPABASE_URL": "", "SUPABASE_ANON_KEY": "", "DIFY_API_BASE": "", "DIFY_APP_KEY": "", "COLLECTOR_ENABLED": "false", "ENABLE_AGENT_UI": "false", "ENABLE_COLLECTOR_UI": "false"}
         subprocess.run([sys.executable, "-m", "alembic", "-c", "backend/alembic.ini", "upgrade", "head"], cwd=ROOT, env=env, check=True)
         processes = []
         try:
             with open(Path(tmp) / "servers.log", "w+") as log:
-                api = subprocess.Popen([sys.executable, "-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", "8000"], cwd=ROOT / "backend", env=env, stdout=log, stderr=log)
+                api = subprocess.Popen([sys.executable, "-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", api_port], cwd=ROOT / "backend", env=env, stdout=log, stderr=log)
                 processes.append(api)
-                ready("http://127.0.0.1:8000/health/ready", api)
+                ready(f"http://127.0.0.1:{api_port}/health/ready", api)
                 web = subprocess.Popen(["node", "../scripts/start-web.cjs"], cwd=ROOT / "frontend", env=env, stdout=log, stderr=log)
                 processes.append(web)
-                ready("http://127.0.0.1:3000/login", web)
+                ready(f"http://127.0.0.1:{web_port}/login", web)
                 result = subprocess.run(["npm", "run", "test:e2e", "--", *sys.argv[1:]], cwd=ROOT / "frontend", env=env)
                 if result.returncode:
                     log.seek(0)

@@ -12,6 +12,9 @@ class RawArtifact:
     content_type: str = "application/octet-stream"
     etag: str | None = None
     last_modified: str | None = None
+    retrieval_url: str | None = None
+    retrieval_method: str = 'GET'
+    retrieval_form: dict | None = None
 
 
 @dataclass

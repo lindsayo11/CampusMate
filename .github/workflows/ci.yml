@@ -3,14 +3,26 @@ on: [push, pull_request]
 jobs:
   backend:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: campusmate
+          POSTGRES_USER: campusmate
+          POSTGRES_PASSWORD: test-only-password
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U campusmate -d campusmate"
+          --health-interval 5s --health-timeout 5s --health-retries 12
     env:
-      DATABASE_URL: sqlite:///./campusmate.db
+      DATABASE_URL: postgresql+psycopg://campusmate:test-only-password@localhost:5432/campusmate
       DEMO_MODE: "true"
       ADMIN_USER_IDS: demo-user
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: "3.12"}
+      - run: sudo apt-get update && sudo apt-get install -y antiword catdoc poppler-utils tesseract-ocr tesseract-ocr-chi-sim tesseract-ocr-eng
       - run: pip install -c backend/requirements-tested.txt -e './backend[dev]'
       - run: alembic -c backend/alembic.ini upgrade head
       - run: alembic -c backend/alembic.ini check
@@ -25,3 +37,20 @@ jobs:
         working-directory: frontend
       - run: npm test && npm run typecheck && npm run build
         working-directory: frontend
+
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22", cache: npm, cache-dependency-path: frontend/package-lock.json}
+      - run: sudo apt-get update && sudo apt-get install -y antiword catdoc poppler-utils tesseract-ocr tesseract-ocr-chi-sim tesseract-ocr-eng
+      - run: pip install -c backend/requirements-tested.txt -e './backend[dev]'
+      - run: npm ci && npx playwright install --with-deps chromium && npm run build
+        working-directory: frontend
+      - run: python scripts/e2e.py data.spec.ts
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with: {name: browser-traces, path: frontend/test-results}
