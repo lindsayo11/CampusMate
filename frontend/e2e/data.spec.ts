@@ -7,8 +7,8 @@ test("数据中心不使用演示机会填充，保留真实空态",async({page}
   await page.getByRole("button",{name:"筛选信息",exact:true}).click();
   await expect(page.getByText("没有找到匹配的信息",{exact:false}).first()).toBeVisible();
   await page.goto("/data/timeline");
-  await expect(page.getByRole("heading",{name:"事项时间线"})).toBeVisible();
-  await expect(page.getByText("按公开事项提供的日期安排准备，未注明的日期不会被推测。")).toBeVisible();
+  await expect(page.getByRole("heading",{name:"发展日历",level:1})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"全部日程"})).toBeVisible();
 });
 
 test("数据工作台展示阻塞且可打开导入表单",async({page})=>{

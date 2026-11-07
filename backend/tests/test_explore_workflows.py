@@ -164,7 +164,7 @@ def test_directory_pagination_and_login_required(sample, monkeypatch):
     total = c.get("/v1/data/catalog?status=all&limit=1").json()["total"]
     first = c.get("/v1/activity-teams/directory?limit=1", headers=actor).json()
     second = c.get("/v1/activity-teams/directory?limit=1&offset=1", headers=actor).json()
-    assert 0 <= first["total"] <= total
+    assert first["total"] == second["total"]
     if total > 1:
         assert first["items"][0]["id"] != second["items"][0]["id"]
     assert c.get("/v1/activity-teams/directory?state=joined", headers=actor).json()["items"] == []
