@@ -879,6 +879,10 @@ def deliver_data_alerts():
         if not rows:
             return 0
         available = {row.id for row, _ in visible(db)}
+        tracked = {row.user_id for row in rows}
+        preferences = {p.user_id: p.source_updates
+                       for p in db.scalars(select(NotificationPreference).where(
+                           NotificationPreference.user_id.in_(tracked))).all()}
         for row in rows:
             # Keep all follow-based updates (withdrawal/version and deadline)
             # behind the same per-user notification preference.
