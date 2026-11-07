@@ -14,8 +14,8 @@ export function noticeDate(value?:string|null){
   const date=new Date(value);
   return Number.isNaN(date.getTime())?'待核验':date.toLocaleDateString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',timeZone:'Asia/Shanghai'});
 }
-export function noticeSummary(item:Pick<CatalogItem,'description'|'ai_summary'>){
-  return (item.ai_summary||item.description||'打开公告查看已收录的内容与来源。').replace(/\s+/g,' ').slice(0,180);
+export function noticeSummary(item:{description?:string|null}){
+  return (item.description||'打开公告查看已收录的内容与来源。').replace(/\s+/g,' ').slice(0,180);
 }
 
 export type NoticeItem=CatalogItem&{materials?:(string|{title:string;url?:string})[];cycle_id?:string};
