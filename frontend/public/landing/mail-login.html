@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>邮箱登录 | CampusMate</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="viewport.css">
+<link rel="stylesheet" href="public-zh.css"></head>
+<body>
+  <main class="auth-page">
+    <section class="auth-panel">
+      <h1>邮箱登录</h1>
+      <form class="auth-form" data-session-form data-action="login">
+        <label>邮箱地址
+          <input type="email" name="email" autocomplete="email" required>
+        </label>
+        <label>密码
+          <input type="password" name="password" autocomplete="current-password" required>
+        </label>
+        <button class="primary" type="submit">登录</button>
+      </form>
+      <p role="status" aria-live="polite"></p>
+      <small>请使用注册时设置的密码。</small>
+      <p><a href="login.html">返回登录</a></p>
+      <p>第一次使用校伴？ <a href="signup.html">创建账号</a></p>
+    </section>
+    <aside class="auth-art">CampusMate<br>陪你走好下一步</aside>
+  </main>
+  <script src="auth.js?v=20261005-otp8" defer></script>
+</body>
+</html>

@@ -140,6 +140,9 @@ def schedule_due_endpoints(now: datetime | None = None):
                 endpoint.scheduled = False
                 endpoint.paused_reason = "刷新周期为 manual，不能自动调度"
                 continue
+            # Keep enabled development-route sources fresh within 8 hours;
+            # shorter source-specific intervals and manual opt-outs are retained.
+            delta = min(delta, timedelta(hours=8))
             enqueue_endpoint(db, endpoint.id)
             endpoint.next_run_at = now + delta
             scheduled += 1
@@ -347,7 +350,9 @@ def process_endpoint_once():
                         db, source, endpoint, raw, config, parsed_text, completed_at)
                     db.flush()
                     from .data_catalog import auto_publish
-                    auto_publish(db, document)
+                    if auto_publish(db, document):
+                        from .development_insights import enqueue as enqueue_insight
+                        enqueue_insight(db, document)
                     # The governed collector writes document_versions while search
                     # reads source_documents; bridge them or the text stays invisible.
                     publish_collected_document(db, document)

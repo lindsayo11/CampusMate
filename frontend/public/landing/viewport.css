@@ -1,0 +1,54 @@
+:root { --site-nav-height: 72px; }
+
+/* The handover does not contain Bock-Medium.ttf. Keep the existing Arial fallback
+   instead of requesting a missing font on every public-page visit. */
+
+.hero h1, .section h2 { font-family: "Bock Display", Arial, sans-serif; font-weight: 500; letter-spacing: 0; }
+.hero h1 em, .section h2 em { font-family: inherit; }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; }
+.eyebrow::before { content: ""; display: inline-block; width: 18px; height: 18px; background: center / contain no-repeat; opacity: .78; }
+.hero .eyebrow::before { background-image: url("assets/icons/ai-idea.svg"); }
+#sources .eyebrow::before { background-image: url("assets/icons/book-open-01.svg"); }
+#ways .eyebrow::before { background-image: url("assets/icons/briefcase-01.svg"); }
+#security .eyebrow::before { background-image: url("assets/icons/ai-lock.svg"); }
+.primary::after { content: ""; width: 16px; height: 16px; background: url("assets/icons/arrow-right-02.svg") center / contain no-repeat; filter: invert(1); }
+.auth-mail::before { content: ""; width: 18px; height: 18px; margin-right: 8px; background: url("assets/icons/ai-mail-01.svg") center / contain no-repeat; }
+.mark { background: url("assets/logo.svg") center / contain no-repeat; border: 0; padding: 0; }
+.mark i { display: none; }
+.mark img { display: block; width: 100%; height: 100%; object-fit: contain; }
+
+.nav-dropdown { position: relative; height: 72px; display: flex; align-items: center; }
+.nav-trigger { display: inline-flex; align-items: center; gap: 5px; height: 100%; }
+.nav-caret { display: inline-block; font-size: 16px; line-height: 1; transform: rotate(0deg); transition: transform .18s ease; }
+.nav-popover { position: absolute; top: calc(100% - 1px); left: -18px; width: 330px; padding: 8px; background: #171717; border: 1px solid #3e3e3e; box-shadow: 0 18px 40px rgba(0,0,0,.24); opacity: 0; visibility: hidden; transform: translateY(-8px); transition: opacity .18s ease, transform .18s ease, visibility .18s ease; z-index: 20; }
+.nav-popover a { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 13px; color: #e8e8e8; border-bottom: 1px solid #303030; font-size: 12px; }
+.nav-popover a:last-child { border-bottom: 0; }
+.nav-popover a:hover { background: #292929; color: #fff; text-decoration: none; }
+.nav > nav > a:hover, .nav > nav > a:focus-visible, .nav .nav-trigger:hover, .nav .nav-trigger:focus-visible, .nav .nav-dropdown:hover > .nav-trigger { color: #fff; }
+.nav-actions a:hover, .nav-actions a:focus-visible { color: #fff; }
+.nav-popover small { color: #929292; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; }
+.about-popover { width: 300px; }
+.about-popover a { line-height: 1.45; }
+.nav-dropdown:hover .nav-popover, .nav-dropdown:focus-within .nav-popover { opacity: 1; visibility: visible; transform: translateY(0); }
+.nav-dropdown:hover .nav-caret, .nav-dropdown:focus-within .nav-caret { transform: rotate(90deg); }
+
+@media (max-width: 760px) {
+  .nav-dropdown { height: 72px; }
+  .nav-popover { position: fixed; top: 72px; left: 16px; right: 16px; width: auto; }
+}
+html { scroll-padding-top: var(--site-nav-height); }
+.section { min-height: calc(100vh - var(--site-nav-height)); min-height: calc(100svh - var(--site-nav-height)); scroll-margin-top: var(--site-nav-height); }
+#sources.source-section { align-content: center; grid-template-rows: 1fr auto; }
+#ways.ways-section, #about.about-section, #security.security { align-content: center; }
+#ways.ways-section { display: flex; flex-direction: column; justify-content: center; }
+.directory { scroll-margin-top: var(--site-nav-height); }
+@media (max-width: 760px) {
+  .section { min-height: max(calc(100svh - var(--site-nav-height)), 640px); }
+}
+.auth-form { display: grid; gap: 16px; }
+.auth-panel [role="status"]:empty { display: none; }
+.auth-panel [role="status"] { color: #444; font-size: 13px; overflow-wrap: anywhere; }
+
+/* Public pages are monochrome too. */
+html,body{background:#000!important;color:#fff!important}.nav,.nav-popover,.auth-art{background:#000!important;color:#fff!important;border-color:#fff!important}.nav nav,.nav-actions,.eyebrow,.intro,.section p,.directory p,.home-footer,.auth-panel label,.auth-panel p,.auth-panel small{color:#fff!important}.hero,.section,.directory,.login-panel,.auth-section,.auth-page,.source-section,.ways-section,.about-section,.security{background:#000!important;border-color:#fff!important}.hero h1,.section h2,.orbit-card b,.way b{color:#fff!important}.primary,.start,.auth-panel button,.auth-mail{background:#fff!important;color:#000!important;border-color:#fff!important}.secondary,.orbit-card,.way,.auth-panel input{background:#000!important;color:#fff!important;border-color:#fff!important}.rings{border-color:#fff!important;box-shadow:0 0 0 35px #000,0 0 0 70px #000!important}.planet{background:#fff!important;color:#000!important}.source-art,.source-grid,.directory{background:#000!important}.source-grid{background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)!important}.source-stamp{border-color:#fff!important;color:#fff!important}.nav-popover a,.nav-popover small{color:#fff!important;border-color:#fff!important}
+.auth-panel button:disabled, .auth-panel input:disabled { opacity: .55; cursor: not-allowed; }

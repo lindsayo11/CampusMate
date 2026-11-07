@@ -19,9 +19,10 @@ from .models import AgentAction, Path, TimelineNode, UserPlan, Profile, Eligibil
 from .governance import audit
 from .data_catalog import catalog, publication
 from .startup_schemas import Kind
+from .assessment import Assessment
 
 router = APIRouter(prefix='/v1/development-agent')
-Intent = Literal['auto','profile','paths','search','eligibility','plan','tasks','review','startup','startup_document','update_task','reminder','knowledge','materials']
+Intent = Literal['auto','chat','profile','paths','search','eligibility','plan','tasks','review','startup','startup_document','update_task','reminder','knowledge','materials','assessment']
 WRITES = {'plan','update_task','reminder','startup_document'}
 PROMPT = '''你是CampusMate学生发展规划助手。只返回JSON工具决策，不生成事实结论。
 用户身份由服务器提供，禁止生成user_id。只能选择给定intent及schema字段。
@@ -46,6 +47,7 @@ class Request(BaseModel):
     document_kind: Kind | None = None
     status: Literal['todo','doing','done'] = 'doing'
     due_at: datetime | None = None
+    assessment: Assessment | None = None
 
 
 def utc(value):
@@ -61,8 +63,15 @@ def own_conversation(db, cid, user):
 
 def decide(body, user, history):
     if body.intent != 'auto':
-        return body, 'explicit'
-    if settings.development_dify_api_base and settings.development_dify_app_key:
+        return body, 'explicit', {'provider':'rules','model':None,'route':body.intent,'confidence':None}
+    if body.query in {'继续', '继续查找', '接着找'} and history and history[-1].get('tool') in {'search', 'knowledge'}:
+        intent = history[-1]['tool']
+        return body.model_copy(update={'intent':intent}), 'continuation', {
+            'provider':'rules','model':None,'route':intent,'confidence':None}
+    # Dify is optional legacy routing. Keep it away from greetings and open
+    # conversation; those go to the direct DeepSeek answer path below.
+    routed_terms = ('搜索','查找','保研','推免','考研','考公','留学','实习','招聘','资格','计划','规划','任务','创业','材料','依据','原文')
+    if settings.development_dify_api_base and settings.development_dify_app_key and any(term in body.query for term in routed_terms) and not needs_online_research(body.query):
         try:
             response = httpx.post(settings.development_dify_api_base.rstrip('/')+'/workflows/run',
                 headers={'Authorization':'Bearer '+settings.development_dify_app_key}, timeout=25,
@@ -85,7 +94,8 @@ def decide(body, user, history):
             selected={k:getattr(body,k) for k in ['path_code','region','publication_id','item_id','plan_id','opportunity_id','due_at','startup_project_id','document_kind']
                 if getattr(body,k) is not None}
             if body.keyword: selected['keyword']=body.keyword
-            return decision.model_copy(update={**selected,'query':body.query,'conversation_id':body.conversation_id}), 'dify'
+            routed=decision.model_copy(update={**selected,'query':body.query,'conversation_id':body.conversation_id})
+            return routed, 'dify', {'provider':'dify','model':None,'route':routed.intent,'confidence':None}
         except (httpx.HTTPError,ValueError,KeyError,TypeError):
             raise HTTPException(502,'模型服务异常或工具参数无效，未执行任何写入；可选择明确功能重试')
     q = body.query
@@ -95,8 +105,24 @@ def decide(body, user, history):
         ('review',['复盘','总结进度','下一步做什么']),
         ('tasks',['我的任务','我的计划','执行进度']),('eligibility',['资格','能报','符合条件']),
         ('plan',['规划','计划','准备什么']),('knowledge',['依据','原文','政策文件']),
-        ('search',['查找','搜索','有哪些','岗位','招聘']),('profile',['我的画像','我的资料'])]
-    intent=next((name for name,words in checks if any(w in q for w in words)),'paths')
+        ('search',['查找','搜索','有哪些','岗位','招聘','保研','推免','考研','考公','选调','留学','升学','研究生','公务员']),('profile',['我的画像','我的资料'])]
+    # Unclassified input is ordinary conversation. Never expose the whole
+    # path directory merely because a message was short or ambiguous.
+    intent=next((name for name,words in checks if any(w in q for w in words)),'chat')
+    if intent == 'chat':
+        from .jev_router import route_hint
+        hinted, confidence = route_hint(q, history)
+        if hinted:
+            intent = hinted
+            jev_meta = {'provider':'jev','model':settings.jev_model,'route':hinted,'confidence':confidence}
+        else:
+            jev_meta = {'provider':'rules','model':None,'route':intent,'confidence':None}
+    else:
+        jev_meta = {'provider':'rules','model':None,'route':intent,'confidence':None}
+    # A question such as “保研时间和要求” otherwise looks like a generic
+    # path question. Route date/requirement questions to grounded web search.
+    if intent in {'chat', 'paths'} and needs_online_research(q):
+        intent='search'
     if intent=='paths' and history and re.fullmatch(r'(继续|这个|它|刚才的|接着)(吧|呢|。|！|!|？|\?)?',q):
         previous=history[-1].get('tool')
         if previous in {'paths','plan','search','tasks','review','knowledge'}: intent=previous
@@ -107,13 +133,22 @@ def decide(body, user, history):
         elif '进行' in q: changes['status']='doing'
     if intent=='search' and not body.keyword:
         changes['keyword']=search_keyword(q)
-    return body.model_copy(update=changes), 'rules'
+    routed=body.model_copy(update=changes)
+    if jev_meta.get('provider') == 'jev':
+        jev_meta['route'] = routed.intent
+    return routed, 'rules', jev_meta
 
 
 def search_keyword(query):
     # Remove conversational wrappers without inventing search terms.
     query=re.sub(r'^(?:请|帮我|给我|我想|想|查询|查找|搜索|搜一下|找一下|查一下|有哪些|找|搜|查|一下|一些|最新的|最新|近期的|近期|一下子|\s)+','',query)
     return query.strip(' ，。？！?！')[:100]
+
+
+def needs_online_research(query: str) -> bool:
+    fact_markers=('时间','要求','条件','截止','公告','通知','政策','官网','最新','近期','什么时候','几月','报名','招生简章','官方')
+    target_markers=('保研','推免','考研','考公','选调','留学','升学','研究生','公务员','实习','招聘','竞赛','志愿')
+    return any(marker in query for marker in fact_markers) and any(marker in query for marker in target_markers)
 
 
 def path_rows(db, body):
@@ -136,6 +171,12 @@ def matching(body, user, db):
     if not item:
         raise HTTPException(404,'事项不属于此发布版本')
     profile=db.get(Profile,user)
+    if not profile:
+        # Qualification checks can be the first authenticated API call.
+        # Initialize the same demo profile used by the profile endpoint.
+        from .main import get_profile
+        get_profile(user, db, {"email": None})
+        profile=db.get(Profile,user)
     results=[]
     for value in data['rules']:
         if value['target_id'] not in {item['id'],item['cycle_id']}:
@@ -155,18 +196,25 @@ def matching(body, user, db):
 def run_read(body, user, db):
     from .main import get_profile
     intent=body.intent
+    if intent == 'assessment':
+        if not body.assessment:
+            raise HTTPException(422, '请完成需求问卷')
+        from .assessment import evaluate
+        return evaluate(body.assessment, db), '按你的回答，先从这几步开始。'
+    if intent=='chat':
+        return {'conversation': True, 'query': body.query}, ''
     if intent=='startup':
         from .startup import projects,own_project,brief_of
         from .startup_engine import ROADMAP,calculations
         rows=projects(user,db,0)
-        result={'startup_projects':rows,'workspace_url':'/startup',
-            'suggestions':['选择或创建一个创业项目，先记录客户、痛点和已有证据','在创业工作台设计商业模式、测算股权和资金，再生成可编辑文稿'],
+        result={'startup_projects':rows,'workspace_url':'/entrepreneurship',
+            'suggestions':['选择或创建一个创业项目，先记录客户、痛点和已有证据','在创新创业栏目设计商业模式、测算股权和资金，再生成可编辑文稿'],
             'roadmap':[{'id':i,'title':t} for i,t,_,_ in ROADMAP]}
         if body.startup_project_id:
             project=own_project(db,body.startup_project_id,user)
             result.update(startup_project={'id':project.id,'name':project.name,'revision':project.revision},
                 calculations=calculations(brief_of(project)))
-        return result,'创业工作台覆盖从商业验证到资本化的十个环节；请选择项目后生成文稿。'
+        return result,'创新创业栏目覆盖从机会验证到资本化的十三步流程；请选择项目后生成文稿。'
     if intent=='profile':
         return jsonable_encoder(get_profile(user,db)), '已读取你的个人画像；不会自动修改。'
     if intent=='paths':
@@ -175,8 +223,32 @@ def run_read(body, user, db):
         return {'profile':profile,'paths':paths,'source':'平台路径目录',
             'suggestions':['先明确目标地区、毕业年度和投入时间','比较申请条件、准备周期与个人兴趣','再选择事项核对原文并建立计划']}, '以下是可比较的发展路径，不是录取或就业保证。'
     if intent=='search':
-        data=catalog(q=body.keyword or search_keyword(body.query),path=body.path_code,region=body.region,offset=0,limit=10,status='active',db=db)
-        return data, '结果来自当前可展示的数据；为空时不会编造机会。请用关键词和路径缩小范围。'
+        query=body.keyword or search_keyword(body.query)
+        data=catalog(q=query,path=body.path_code,region=body.region,offset=0,limit=10,status='active',db=db)
+        # The catalog is intentionally strict for the UI, but assistant
+        # questions often contain intent words that are not in notice titles.
+        # Retry with the development topic so stored notices can be cited.
+        if not data.get('items'):
+            topic=next((term for term in ('保研','推免','考研','考公','选调','留学','升学','研究生','公务员') if term in body.query), '')
+            if topic and topic != query:
+                data=catalog(q=topic,path=body.path_code,region=body.region,offset=0,limit=10,status='active',db=db)
+        from .agent_retrieval import retrieve
+        local_refs=retrieve(db,body.query,path_code=body.path_code)
+        if local_refs:
+            data={**data,'references':local_refs,'local_references':local_refs}
+            data['local_notice']='已从已入库公告中找到相关依据，以下引用请以原文为准。'
+        # Answer from stored notices first. A local-match label is not an AI
+        # answer. Generate once below using both local and (when needed) web data.
+        wants_web=any(word in body.query for word in ('联网','网上','最新','今天','近期'))
+        if not local_refs or wants_web:
+            from .web_research import research
+            online=research(body.keyword or body.query,body.path_code,body.region,
+                            summarize=False,max_queries=1,timeout_seconds=8)
+            data={**data,'online_research':online,'web_sources':online['sources'],'web_queries':online['queries']}
+            if online.get('notice'):
+                data['model_notice']='联网检索暂不可用；回答将区分已有依据与通用建议。'
+        message='具体日期和申请要求请核对对应原文。'
+        return data, message
     if intent=='eligibility':
         return matching(body,user,db), '符合、不符合与信息不足分别展示；请核对原文完整要求。'
     if intent=='review':
@@ -190,7 +262,7 @@ def run_read(body, user, db):
         terms=tokens(query)
         legacy=search_documents(SearchIn(query=query),db)['items'] if terms and len(query)>=2 else []
         from .agent_retrieval import retrieve
-        refs=retrieve(db,query)
+        refs=retrieve(db,query,path_code=body.path_code)
         return {'references':refs,'legacy_references':legacy,'retrieval':'local_sparse_vectors'}, '按本地文本向量检索公开证据；未命中不代表政策不存在。不是语义嵌入检索。'
     if intent=='materials':
         kind=next((x for x in ['简历','个人陈述','推荐信','创业计划书'] if x in body.query),'申请材料')
@@ -240,6 +312,9 @@ def propose(body, user, db):
         return {**build_draft(brief_of(row),kind),'startup_project_id':row.id,
             'project_revision':row.revision,'expected_document_version':version}
     if body.intent=='plan':
+        if body.assessment:
+            from .assessment import preparation_plans
+            return preparation_plans(body.assessment, db)
         paths=path_rows(db,body)
         path=paths[0] if body.path_code and paths else next((p for p in paths if p.name in body.query),None)
         if body.path_code and not path:
@@ -273,8 +348,16 @@ def propose(body, user, db):
 
 @router.get('/status')
 def status(user: str=Depends(actor_id)):
-    return {'mode':'dify' if settings.development_dify_api_base and settings.development_dify_app_key else 'rules',
-        'retrieval':'local_sparse_vectors','tools':['profile','paths','search','eligibility','plan','tasks','review','startup','startup_document','update_task','reminder','knowledge','materials']}
+    from .web_research import web_research_configured
+    online=web_research_configured()
+    return {'mode':'ai' if settings.deepseek_api_key.strip() else 'unavailable',
+        'answer_configured':bool(settings.deepseek_api_key.strip()),
+        'web_research':online,
+        'jev_router':bool(settings.jev_api_key),
+        'jev_model':settings.jev_model if settings.jev_api_key else None,
+        'search_provider':'tavily' if settings.tavily_api_key else None,
+        'answer_model':settings.deepseek_model if settings.deepseek_api_key else None,
+        'retrieval':'local_sparse_vectors','tools':['profile','paths','search','eligibility','plan','tasks','review','startup','startup_document','update_task','reminder','knowledge','materials','assessment']}
 
 
 @router.post('/chat')
@@ -283,8 +366,9 @@ def chat(body:Request,user:str=Depends(actor_id),db:Session=Depends(get_db)):
     if body.conversation_id:
         own_conversation(db,body.conversation_id,user)
         turns=db.scalars(select(ConversationTurn).where(ConversationTurn.conversation_id==body.conversation_id)
-            .order_by(ConversationTurn.created_at.desc()).limit(4)).all()
-        history=[{'query':t.query[:600], 'tool':json.loads(t.response).get('tool'),
+            .order_by(ConversationTurn.created_at.desc()).limit(8)).all()
+        history=[{'query':t.query[:2000], 'tool':json.loads(t.response).get('tool'),
+            'message':json.loads(t.response).get('message',''),
             'context':json.loads(t.response).get('context',{}),
             'result':json.loads(t.response).get('result',{})} for t in reversed(turns)]
         if turns and any(word in body.query for word in ['这个','它','继续','刚才','接着']):
@@ -293,10 +377,17 @@ def chat(body:Request,user:str=Depends(actor_id),db:Session=Depends(get_db)):
             updates={k:saved[k] for k in keys if getattr(body,k) is None and saved.get(k) is not None}
             if not body.keyword and saved.get('keyword'): updates['keyword']=saved['keyword']
             body=body.model_copy(update=updates)
-    decision,mode=decide(body,user,history)
+    decision,mode,decision_meta=decide(body,user,history)
+    if decision.intent == 'plan' and not decision.assessment and any(
+            word in body.query for word in ('问卷', '刚才的方案', '这份方案')):
+        for prior in reversed(history):
+            answers = prior.get('result', {}).get('assessment')
+            if answers:
+                decision = decision.model_copy(update={'assessment': Assessment.model_validate(answers)})
+                break
     if not decision.path_code:
         aliases={'考公':'national_civil_service','考研':'domestic_postgraduate_exam',
-            '保研':'recommendation_exemption','留学':'overseas_study','就业':'employment','创业':'entrepreneurship'}
+            '保研':'recommendation_exemption','留学':'overseas_masters','就业':'employment','创业':'entrepreneurship'}
         code=next((code for word,code in aliases.items() if word in body.query),None)
         if code and db.scalar(select(Path).where(Path.code==code)):
             decision=decision.model_copy(update={'path_code':code})
@@ -314,19 +405,22 @@ def chat(body:Request,user:str=Depends(actor_id),db:Session=Depends(get_db)):
         result,message=run_read(decision,user,db)
         from .agent_generation import explain
         try:
-            answer=explain(body.query,result,user)
+            answer=explain(body.query,result,user,history=history)
         except HTTPException as error:
-            if error.status_code!=502: raise
+            if error.status_code not in {502,503,504} or decision.intent=='chat':
+                raise
             answer=None
-            result={**result,'model_notice':'模型解释暂时不可用，以下保留已查询到的工具结果。'}
+            result={**result,'model_notice':error.detail+' 下方保留查询结果，尚未生成 AI 解读。'}
         if answer:
-            result={**result,'model_explanation':answer,'model_notice':'模型辅助解释，以工具字段及原文为准。'}
-        reply={'status':'completed','tool':decision.intent,'result':result,'message':message}
+            result={**result,'model_explanation':answer}
+        reply={'status':'completed','tool':decision.intent,'result':result,'message':message,
+               'answer_provider':'deepseek' if answer else None,
+               'answer_model':settings.deepseek_model if answer else None}
     cid=body.conversation_id
     if not cid:
         cid=str(uuid4())
         db.add(Conversation(id=cid,user_id=user,title=body.query[:160],created_at=datetime.now(UTC)))
-    reply.update({'mode':mode,'conversation_id':cid,'trace':[decision.intent],
+    reply.update({'mode':mode,'decision':decision_meta,'conversation_id':cid,'trace':[decision.intent],
         'context':{k:getattr(decision,k) for k in ['path_code','region','keyword','publication_id','item_id','plan_id','opportunity_id','startup_project_id']}})
     db.add(ConversationTurn(id=str(uuid4()),conversation_id=cid,query=body.query,
         response=json.dumps(jsonable_encoder(reply),ensure_ascii=False),created_at=datetime.now(UTC)))
@@ -386,7 +480,7 @@ def action(aid:str,operation:Literal['confirm','cancel'],user:str=Depends(actor_
         from .startup import save_artifact,artifact_out
         artifact=save_artifact(db,user,args['startup_project_id'],args['kind'],args['project_revision'],
             args['markdown'],args['expected_document_version'])
-        result={'startup_document':artifact_out(artifact,full=False),'workspace_url':'/startup?project='+args['startup_project_id']}
+        result={'startup_document':artifact_out(artifact,full=False),'workspace_url':'/entrepreneurship'}
     elif row.tool=='development:plan':
         records=[]
         from .schemas import PlanIn

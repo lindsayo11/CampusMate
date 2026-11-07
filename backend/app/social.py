@@ -9,7 +9,7 @@ from sqlalchemy import JSON, Boolean, String, Text, func, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Mapped, Session, mapped_column
 
-from .auth import actor_id
+from .auth import actor_id, normalize_email
 from .config import settings
 from .database import Base, get_db
 from .models import Profile
@@ -70,6 +70,13 @@ class Report(Base):
 
 class Connect(BaseModel):
     target: str = Field(min_length=1, max_length=80)
+    # The email route sets this after an exact authenticated-directory match.
+    # ID-based calls retain the original same-school visibility rule.
+    via_email: bool = False
+
+
+class EmailConnect(BaseModel):
+    email: str = Field(min_length=5, max_length=320)
 
 
 class Send(BaseModel):
@@ -84,6 +91,43 @@ CANDIDATES = [
     {"user_id": "demo-python", "name": "演示队友·开发", "skills": ["Python", "AI"], "hours": 10},
     {"user_id": "demo-design", "name": "演示队友·设计", "skills": ["设计", "产品"], "hours": 6},
 ]
+
+WELCOME_MEMBER = "campusmate-guide"
+
+
+def find_profile_by_email(db: Session, email: str) -> Profile | None:
+    normalized = normalize_email(email)
+    if not normalized:
+        return None
+    return db.scalar(select(Profile).where(Profile.email == normalized))
+
+
+def ensure_welcome_room(db: Session, user: str) -> Room:
+    """Give each account one usable conversation without fabricating a person."""
+    import json
+
+    room_id = str(uuid5(NAMESPACE_URL, "campusmate:welcome:" + user))
+    room = db.get(Room, room_id)
+    if room:
+        return room
+    room = Room(id=room_id, title="校伴交流空间", members=sorted([user, WELCOME_MEMBER]))
+    try:
+        with db.begin_nested():
+            db.add(room)
+            db.flush()
+            db.add(Message(
+                room_id=room_id,
+                sender=WELCOME_MEMBER,
+                body="欢迎来到校伴交流空间。你可以按邮箱找到同学，在这里讨论目标、分工和下一步；也可以去“我的团队”组队。",
+                created_at=datetime.now(UTC).isoformat(),
+            ))
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        room = db.get(Room, room_id)
+        if not room:
+            raise
+    return room
 
 
 def router_for(actor):
@@ -101,8 +145,37 @@ def router_for(actor):
     def connect(body: Connect, user: str = Depends(actor), db: Session = Depends(get_db)):
         return connect_user(body, user, db)
 
+    @router.post("/tools/message_connect_email")
+    def connect_email(body: EmailConnect, user: str = Depends(actor), db: Session = Depends(get_db)):
+        target = find_profile_by_email(db, body.email)
+        if not target or not target.discoverable or target.user_id == user:
+            raise HTTPException(422, "未找到可联系的同学")
+        return connect_user(Connect(target=target.user_id, via_email=True), user, db)
+
+    @router.get("/users/search")
+    def search_users(email: str = Query(..., min_length=5, max_length=320),
+                     user: str = Depends(actor), db: Session = Depends(get_db)):
+        normalized = normalize_email(email)
+        # Keep the response indistinguishable for malformed and unknown email
+        # addresses, while limiting directory probing per account.
+        consume(db, user, "user-search-day", 30, 86400)
+        if not normalized:
+            db.commit()
+            return {"items": []}
+        target = db.scalar(select(Profile).where(
+            Profile.email == normalized,
+            Profile.discoverable.is_(True),
+            Profile.user_id != user,
+        ))
+        db.commit()
+        if not target:
+            return {"items": []}
+        return {"items": [{"user_id": target.user_id, "display_name": target.display_name,
+                            "school": target.school, "skills": [v for v in target.skills.split(",") if v]}]}
+
     @router.get("/rooms")
     def rooms(user: str = Depends(actor), db: Session = Depends(get_db)):
+        ensure_welcome_room(db, user)
         items = []
         for r in db.scalars(select(Room)).all():
             if user not in r.members:
@@ -256,7 +329,9 @@ def connect_user(body: Connect, user: str, db: Session, commit: bool = True):
     target = db.get(Profile, body.target)
     me = db.get(Profile, user)
     demo_target = settings.demo_mode and body.target in {c['user_id'] for c in CANDIDATES}
-    visible = target and target.discoverable and me and me.school.strip() and target.school == me.school
+    visible = target and target.discoverable and (
+        body.via_email or (me and me.school.strip() and target.school == me.school)
+    )
     if body.target == user or not (demo_target or visible):
         raise HTTPException(422, "目标用户未开放同校联系")
     if db.get(Block, (user, body.target)) or db.get(Block, (body.target, user)):
@@ -284,4 +359,3 @@ def connect_user(body: Connect, user: str, db: Session, commit: bool = True):
         if not room:
             raise
     return room
-

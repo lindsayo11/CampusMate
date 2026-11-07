@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CampusMate</title>
+  <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="viewport.css"><link rel="stylesheet" href="motion.css"><script src="motion.js" defer></script>
+  <style>.nav-actions a:not(.start){color:#aaa!important}</style>
+  <link rel="stylesheet" href="showcase.css"><script src="showcase.js" defer></script>
+  <link rel="stylesheet" href="particle-hero.css"><script src="particle-hero.js" defer></script>
+  <link rel="stylesheet" href="screen-orbit.css"><script src="screen-orbit.js" defer></script>
+<link rel="stylesheet" href="public-zh.css"></head>
+<body>
+<header class="nav">
+  <a class="brand" href="#top"><span class="mark"><img src="assets/logo.svg" alt="" aria-hidden="true"></span><b>CampusMate</b></a>
+  <nav>
+    <div class="nav-dropdown"><a class="nav-trigger" href="page2.html">信息来源 <span class="nav-caret">&gt;</span></a><div class="nav-popover"><a href="page2.html"><span>国内考研</span><small>信息来源</small></a><a href="page2.html"><span>保研推免</span><small>信息来源</small></a><a href="page2.html"><span>境外留学</span><small>信息来源</small></a><a href="page2.html"><span>实习就业</span><small>信息来源</small></a><a href="page2.html"><span>创新创业</span><small>信息来源</small></a><a href="page2.html"><span>考公考编</span><small>信息来源</small></a></div></div>
+    <div class="nav-dropdown"><a class="nav-trigger" href="#ways">发展路径 <span class="nav-caret">&gt;</span></a><div class="nav-popover"><a href="#ways"><span>国内考研</span></a><a href="#ways"><span>保研推免</span></a><a href="#ways"><span>境外留学</span></a><a href="#ways"><span>实习就业</span></a><a href="#ways"><span>创新创业</span></a><a href="#ways"><span>考公考编</span></a></div></div>
+    <div class="nav-dropdown"><a class="nav-trigger" href="#about">关于我们 <span class="nav-caret">&gt;</span></a><div class="nav-popover about-popover"><a href="#about"><span>为什么选择校伴与六大发展路径</span></a><a href="mailto:hello@campusmate.example"><span>联系我们</span></a></div></div>
+    <div class="nav-dropdown"><a class="nav-trigger" href="#security">隐私与安全 <span class="nav-caret">&gt;</span></a></div>
+  </nav>
+  <div class="nav-actions"><a data-auth-redirect href="login.html">登录</a><a class="start" data-auth-redirect href="login.html">开始使用</a></div>
+</header>
+<main id="top">
+  <section class="hero particle-hero" aria-labelledby="particle-hero-title">
+    <canvas class="particle-canvas" aria-hidden="true"></canvas>
+    <div class="particle-copy">
+      <h1 id="particle-hero-title">让下一步，<br><em>更加清晰。</em></h1>
+      <p class="intro">校伴汇集可信信息、六大发展路径与实用准备工具，<br>陪你把每一次选择，变成清晰的下一步。</p>
+      <div class="actions"><a class="primary" data-auth-redirect href="login.html">现在开始</a><a class="secondary" href="/test">还没确定方向？<b>先做个测评</b></a></div>
+    </div>
+  </section>
+  <section class="screen-orbit" id="features" aria-labelledby="screen-orbit-title">
+    <div class="orbit-frame">
+    <div class="orbit-content">
+    <div class="orbit-stage" tabindex="0" role="region" aria-label="功能截图展示，下滚加速，可左右拖动或使用方向键切换">
+      <div class="orbit-center">
+        <span class="orbit-brand"><img src="assets/logo.svg" width="34" height="34" alt="">CampusMate <small>校伴</small></span>
+        <h2 id="screen-orbit-title">看见你的<br>每一种可能。</h2>
+        <p data-orbit-caption>把信息、计划和日程放在一起。</p>
+        <button class="orbit-inspect" type="button" data-orbit-inspect>查看工作台 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></button>
+      </div>
+      <div class="orbit-cards">
+        <a class="orbit-card-shot" href="/console" target="_top" data-orbit-card="0" data-title="工作台" data-caption="把信息、计划和日程放在一起。" aria-label="预览工作台截图" aria-haspopup="dialog">
+          <img src="assets/screens/console.jpg" width="1440" height="900" alt="校伴工作台页面实拍" loading="lazy" draggable="false">
+          <span class="orbit-image-error" hidden>截图暂未载入 · 打开功能页面</span>
+          <span class="orbit-card-label"><b>工作台</b><span aria-hidden="true">↗</span></span>
+        </a>
+        <a class="orbit-card-shot" href="/data" target="_top" data-orbit-card="1" data-title="信息中心" data-caption="按方向查找通知，回到原文核对。" aria-label="预览信息中心截图" aria-haspopup="dialog">
+          <img src="assets/screens/data.jpg" width="1440" height="900" alt="校伴信息中心页面实拍" loading="lazy" draggable="false">
+          <span class="orbit-image-error" hidden>截图暂未载入 · 打开功能页面</span>
+          <span class="orbit-card-label"><b>信息中心</b><span aria-hidden="true">↗</span></span>
+        </a>
+        <a class="orbit-card-shot" href="/knowledge" target="_top" data-orbit-card="2" data-title="原文资料库" data-caption="保留来源依据，查找原文片段。" aria-label="预览原文资料库截图" aria-haspopup="dialog">
+          <img src="assets/screens/knowledge.jpg" width="1440" height="900" alt="校伴原文资料库页面实拍" loading="lazy" draggable="false">
+          <span class="orbit-image-error" hidden>截图暂未载入 · 打开功能页面</span>
+          <span class="orbit-card-label"><b>原文资料库</b><span aria-hidden="true">↗</span></span>
+        </a>
+        <a class="orbit-card-shot" href="/entrepreneurship" target="_top" data-orbit-card="3" data-title="创新创业" data-caption="沿着 13 个步骤，验证你的想法。" aria-label="预览创新创业截图" aria-haspopup="dialog">
+          <img src="assets/screens/entrepreneurship.jpg" width="1440" height="900" alt="校伴创新创业页面实拍" loading="lazy" draggable="false">
+          <span class="orbit-image-error" hidden>截图暂未载入 · 打开功能页面</span>
+          <span class="orbit-card-label"><b>创新创业</b><span aria-hidden="true">↗</span></span>
+        </a>
+        <a class="orbit-card-shot" href="/tracker" target="_top" data-orbit-card="4" data-title="我的计划" data-caption="把下一步写下来，逐项推进。" aria-label="预览我的计划截图" aria-haspopup="dialog">
+          <img src="assets/screens/tracker.jpg" width="1440" height="900" alt="校伴我的计划页面实拍" loading="lazy" draggable="false">
+          <span class="orbit-image-error" hidden>截图暂未载入 · 打开功能页面</span>
+          <span class="orbit-card-label"><b>我的计划</b><span aria-hidden="true">↗</span></span>
+        </a>
+        <a class="orbit-card-shot" href="/agent" target="_top" data-orbit-card="5" data-title="校伴助手" data-caption="梳理问题、了解路径、准备行动。" aria-label="预览校伴助手截图" aria-haspopup="dialog">
+          <img src="assets/screens/agent.jpg" width="1440" height="900" alt="校伴助手页面实拍" loading="lazy" draggable="false">
+          <span class="orbit-image-error" hidden>截图暂未载入 · 打开功能页面</span>
+          <span class="orbit-card-label"><b>校伴助手</b><span aria-hidden="true">↗</span></span>
+        </a>
+      </div>
+    </div>
+    <div class="orbit-toolbar">
+      <div class="orbit-selection" role="group" aria-label="选择功能截图">
+        <button type="button" data-orbit-select="0" aria-pressed="true">工作台</button>
+        <button type="button" data-orbit-select="1" aria-pressed="false">信息中心</button>
+        <button type="button" data-orbit-select="2" aria-pressed="false">原文资料库</button>
+        <button type="button" data-orbit-select="3" aria-pressed="false">创新创业</button>
+        <button type="button" data-orbit-select="4" aria-pressed="false">我的计划</button>
+        <button type="button" data-orbit-select="5" aria-pressed="false">校伴助手</button>
+      </div>
+    </div>
+    <div class="orbit-footnote"><small data-orbit-hint>下滚加速 · 拖动旋转 · 点击截图放大</small><small>本地页面实拍</small></div>
+    </div>
+    <div class="orbit-veil" aria-hidden="true"></div>
+    </div>
+    <p class="showcase-sr-only" role="status" aria-live="polite" data-orbit-status></p>
+    <noscript><p class="orbit-no-script">点击截图，打开对应功能页面。</p></noscript>
+    <dialog class="orbit-dialog" aria-labelledby="orbit-dialog-title">
+      <header><h2 id="orbit-dialog-title">工作台</h2><button type="button" data-orbit-close aria-label="关闭截图预览" autofocus>×</button></header>
+      <div class="orbit-full-image"><img data-orbit-full-image alt=""><p data-orbit-full-error hidden>截图加载失败，可直接打开功能页面。</p></div>
+      <footer><span>本地页面实拍</span><a href="/console" target="_top" data-orbit-open>进入工作台 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a></footer>
+    </dialog>
+  </section>
+  <svg class="journey-symbols" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <g id="journey-source-plate">
+        <path class="journey-plate-side" d="M88 159 320 293 552 159V175L320 309 88 175Z"/><path class="journey-plate-top" d="m88 159 232-134 232 134-232 134Z"/>
+        <g class="journey-plate-content" transform="matrix(.58 .335 -.58 .335 320 25)">
+          <path class="journey-paper-edge" d="M44 54H338V353H44Z"/>
+          <path class="journey-paper" d="M56 40H288L326 78V337H56Z"/>
+          <path class="journey-hairline" d="M288 40V78H326"/>
+          <image class="journey-graphic-icon" href="assets/icons/check-list.svg" x="79" y="70" width="32" height="32"/>
+          <text class="journey-plate-title" x="125" y="90">官方通知</text>
+          <path class="journey-document-line" d="M82 138H296M82 160H270M82 203H296M82 225H262"/>
+          <path class="journey-hairline" d="M82 269H296"/>
+          <text class="journey-plate-small" x="82" y="296">原文链接</text>
+          <text class="journey-plate-meta" x="82" y="317">日期 / 版本</text>
+        </g>
+      </g>
+      <g id="journey-path-plate">
+        <path class="journey-plate-side" d="M88 159 320 293 552 159V175L320 309 88 175Z"/><path class="journey-plate-top" d="m88 159 232-134 232 134-232 134Z"/>
+        <g class="journey-plate-content" transform="matrix(.58 .335 -.58 .335 320 25)">
+          <text class="journey-plate-title" x="44" y="43">六大发展路径</text>
+          <g transform="translate(36 69)"><image class="journey-graphic-icon" href="assets/icons/book-open-01.svg" x="8" y="4" width="26" height="26"/><text class="journey-plate-small" x="8" y="52">境外留学</text><path class="journey-hairline" d="M0 67H156"/></g>
+            <g transform="translate(208 69)"><image class="journey-graphic-icon" href="assets/icons/graduation-scroll.svg" x="8" y="4" width="26" height="26"/><text class="journey-plate-small" x="8" y="52">保研推免</text><path class="journey-hairline" d="M0 67H156"/></g>
+            <g transform="translate(36 150)"><image class="journey-graphic-icon" href="assets/icons/briefcase-01.svg" x="8" y="4" width="26" height="26"/><text class="journey-plate-small" x="8" y="52">实习就业</text><path class="journey-hairline" d="M0 67H156"/></g>
+            <g transform="translate(208 150)"><image class="journey-graphic-icon" href="assets/icons/idea-01.svg" x="8" y="4" width="26" height="26"/><text class="journey-plate-small" x="8" y="52">创新创业</text><path class="journey-hairline" d="M0 67H156"/></g>
+            <g transform="translate(36 231)"><image class="journey-graphic-icon" href="assets/icons/shield-01.svg" x="8" y="4" width="26" height="26"/><text class="journey-plate-small" x="8" y="52">公共服务与招录</text><path class="journey-hairline" d="M0 67H156"/></g>
+            <g transform="translate(208 231)"><image class="journey-graphic-icon" href="assets/icons/analytics-01.svg" x="8" y="4" width="26" height="26"/><text class="journey-plate-small" x="8" y="52">国内考研</text><path class="journey-hairline" d="M0 67H156"/></g>
+          <path class="journey-hairline" d="M40 327H360"/>
+          <circle class="journey-review-dot" cx="49" cy="352" r="4"/>
+          <text class="journey-plate-small" x="62" y="356">申请条件 · 待核对</text>
+        </g>
+      </g>
+      <g id="journey-action-plate">
+        <path class="journey-plate-side" d="M88 159 320 293 552 159V175L320 309 88 175Z"/><path class="journey-plate-top" d="m88 159 232-134 232 134-232 134Z"/>
+        <g class="journey-plate-content" transform="matrix(.58 .335 -.58 .335 320 25)">
+          <image class="journey-graphic-icon" href="assets/icons/calendar-03.svg" x="44" y="43" width="30" height="30"/>
+          <text class="journey-plate-title" x="88" y="65">你的下一步</text>
+          <path class="journey-hairline" d="M44 91H356M195 112V302"/>
+          <text class="journey-plate-small" x="52" y="126">日历日程</text>
+          <rect class="journey-calendar-day" x="52" y="146" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="70" y="146" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="88" y="146" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="106" y="146" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="124" y="146" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="142" y="146" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="160" y="146" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="52" y="170" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="70" y="170" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="88" y="170" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="106" y="170" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="124" y="170" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="142" y="170" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="160" y="170" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="52" y="194" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="70" y="194" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="88" y="194" width="11" height="11" rx="1"/><rect class="journey-calendar-selected" x="106" y="194" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="124" y="194" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="142" y="194" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="160" y="194" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="52" y="218" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="70" y="218" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="88" y="218" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="106" y="218" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="124" y="218" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="142" y="218" width="11" height="11" rx="1"/><rect class="journey-calendar-day" x="160" y="218" width="11" height="11" rx="1"/>
+          <g transform="translate(214 145)"><rect class="journey-check" width="13" height="13" rx="2"/><text class="journey-plate-small" x="23" y="12">核对申请条件</text></g><g transform="translate(214 199)"><rect class="journey-check" width="13" height="13" rx="2"/><text class="journey-plate-small" x="23" y="12">准备申请材料</text></g><g transform="translate(214 253)"><rect class="journey-check" width="13" height="13" rx="2"/><text class="journey-plate-small" x="23" y="12">设置提醒</text></g>
+          <path class="journey-hairline" d="M44 323H356"/>
+          <circle class="journey-review-dot" cx="54" cy="350" r="4"/>
+          <text class="journey-plate-small" x="68" y="354">保存计划，继续前进。</text>
+        </g>
+      </g>
+    </defs>
+  </svg>
+  <section id="journey" class="journey" data-active="0" aria-labelledby="journey-title">
+    <h2 id="journey-title" class="showcase-sr-only">从信息，到行动</h2>
+    <div class="journey-frame">
+      <div class="journey-copy">
+        <p class="journey-kicker">从信息，到行动</p>
+        <nav class="journey-nav" aria-label="校伴使用流程">
+          <span class="journey-rail" aria-hidden="true"><span></span></span>
+          <a href="#discover" data-journey-link="0" aria-controls="discover"><span class="journey-node" aria-hidden="true"></span><span class="journey-number">01</span><span>发现信息</span></a>
+          <a href="#understand" data-journey-link="1" aria-controls="understand"><span class="journey-node" aria-hidden="true"></span><span class="journey-number">02</span><span>理解方向</span></a>
+          <a href="#act" data-journey-link="2" aria-controls="act"><span class="journey-node" aria-hidden="true"></span><span class="journey-number">03</span><span>开始行动</span></a>
+        </nav>
+        <div class="journey-panels">
+          <article class="journey-panel" id="discover" data-step="0" aria-labelledby="journey-heading-0">
+            <div class="journey-panel-copy">
+              <p class="journey-mobile-kicker">01 / 发现信息</p>
+              <h3 id="journey-heading-0">从原文，<br>发现机会。</h3>
+              <p class="journey-description">汇集官方通知、公共政策与校园机会，随时回到原文核对。</p>
+              <a class="showcase-text-link" href="page2.html">浏览信息来源<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>
+            </div>
+            <figure class="journey-static-preview">
+              <svg viewBox="60 0 520 330" role="img" aria-label="保留来源链接与日期的原始通知。"><use href="#journey-source-plate"/></svg>
+              <figcaption>流程图示</figcaption>
+            </figure>
+          </article>
+          <article class="journey-panel" id="understand" data-step="1" aria-labelledby="journey-heading-1">
+            <div class="journey-panel-copy">
+              <p class="journey-mobile-kicker">02 / 理解方向</p>
+              <h3 id="journey-heading-1">找到适合<br>自己的方向。</h3>
+              <p class="journey-description">比较六条发展路径，梳理申请要求，明确还需要核对的条件。</p>
+              <a class="showcase-text-link" href="#ways">探索六大路径<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>
+            </div>
+            <figure class="journey-static-preview">
+              <svg viewBox="60 0 520 330" role="img" aria-label="六大发展路径与标记为待核对的申请要求。"><use href="#journey-path-plate"/></svg>
+              <figcaption>流程图示</figcaption>
+            </figure>
+          </article>
+          <article class="journey-panel" id="act" data-step="2" aria-labelledby="journey-heading-2">
+            <div class="journey-panel-copy">
+              <p class="journey-mobile-kicker">03 / 开始行动</p>
+              <h3 id="journey-heading-2">把想法，<br>变成下一步。</h3>
+              <p class="journey-description">把关注的信息放进准备清单，安排日程，让重要节点有迹可循。</p>
+              <a class="showcase-text-link" href="login.html">开始制定计划<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>
+            </div>
+            <figure class="journey-static-preview">
+              <svg viewBox="60 0 520 330" role="img" aria-label="包含核对条件、准备材料与设置提醒任务的日历图示。"><use href="#journey-action-plate"/></svg>
+              <figcaption>流程图示</figcaption>
+            </figure>
+          </article>
+        </div>
+        <a class="journey-skip" href="#ways">查看六大路径 <span aria-hidden="true">↓</span></a>
+      </div>
+      <figure class="journey-visual" aria-labelledby="journey-visual-caption">
+        <div class="journey-scene-heading"><span>CampusMate / 使用流程</span></div>
+        <svg class="journey-illustration" viewBox="0 0 640 760" aria-hidden="true" focusable="false">
+          <path class="journey-axis" d="M320 30V730" stroke-dasharray="2 8"/>
+          <g class="journey-layer journey-layer-source"><use href="#journey-source-plate"/></g>
+          <g class="journey-layer journey-layer-path"><use href="#journey-path-plate"/></g>
+          <g class="journey-layer journey-layer-action"><use href="#journey-action-plate"/></g>
+          <g class="journey-callout" data-callout="0">
+            <path d="M230 350V260L145 210M419 409V470L493 515"/>
+            <circle cx="145" cy="210" r="3"/><circle cx="493" cy="515" r="3"/>
+            <text x="60" y="188">原文来源</text><text x="452" y="540">日期与版本</text>
+          </g>
+          <g class="journey-callout" data-callout="1">
+            <path d="M231 343V260L145 210M417 424V480L493 515"/>
+            <circle cx="145" cy="210" r="3"/><circle cx="493" cy="515" r="3"/>
+            <text x="65" y="188">六大发展路径</text><text x="440" y="540">申请条件核对</text>
+          </g>
+          <g class="journey-callout" data-callout="2">
+            <path d="M247 360V260L145 210M416 407V470L493 515"/>
+            <circle cx="145" cy="210" r="3"/><circle cx="493" cy="515" r="3"/>
+            <text x="75" y="188">我的日历</text><text x="456" y="540">下一项行动</text>
+          </g>
+        </svg>
+        <figcaption id="journey-visual-caption"><span data-journey-caption>01 / 原文资料库</span><span>流程图示</span></figcaption>
+      </figure>
+    </div>
+  </section>
+  <section id="ways" class="showcase-ways" aria-labelledby="showcase-ways-title">
+    <div class="showcase-ways-heading"><div><p class="journey-kicker">探索你的方向</p><h2 id="showcase-ways-title">六条路径，更多可能。</h2></div><a class="showcase-text-link" href="/test">找到你的方向<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a></div>
+    <div class="way-window cm-marquee" data-marquee role="region" aria-label="发展路径" tabindex="0">
+      <div class="way-track cm-marquee-track">
+        <a href="login.html" class="way"><img class="way-icon" src="assets/icons/book-open-01.svg" width="28" height="28" alt="" aria-hidden="true"><span>01</span><b>境外留学</b><small>探索海外项目</small></a>
+        <a href="login.html" class="way"><img class="way-icon" src="assets/icons/graduation-scroll.svg" width="28" height="28" alt="" aria-hidden="true"><span>02</span><b>保研推免</b><small>准备推免申请</small></a>
+        <a href="login.html" class="way"><img class="way-icon" src="assets/icons/briefcase-01.svg" width="28" height="28" alt="" aria-hidden="true"><span>03</span><b>实习就业</b><small>探索职业机会</small></a>
+        <a href="login.html" class="way"><img class="way-icon" src="assets/icons/idea-01.svg" width="28" height="28" alt="" aria-hidden="true"><span>04</span><b>创新创业</b><small>验证想法与项目</small></a>
+        <a href="login.html" class="way"><img class="way-icon" src="assets/icons/shield-01.svg" width="28" height="28" alt="" aria-hidden="true"><span>05</span><b>考公考编</b><small>公共服务与招录</small></a>
+        <a href="login.html" class="way"><img class="way-icon" src="assets/icons/analytics-01.svg" width="28" height="28" alt="" aria-hidden="true"><span>06</span><b>国内考研</b><small>规划备考与升学</small></a>
+      </div>
+    </div>
+  </section>
+  <section id="about" class="showcase-trust" aria-label="关于校伴与隐私">
+    <article class="showcase-about">
+      <div class="showcase-trust-heading"><span class="mark"><img src="assets/logo.svg" alt="" aria-hidden="true"></span><span>关于校伴</span></div>
+      <h2>围绕你的选择，<br>陪你走好下一步。</h2>
+      <p>从可信来源到六大发展路径，让每个选择都有可执行的下一步。</p>
+      <a class="showcase-text-link" href="page4.html">了解我们的故事<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>
+    </article>
+    <article id="security" class="showcase-security">
+      <div class="showcase-trust-heading"><img class="showcase-line-icon" src="assets/icons/shield-01.svg" width="27" height="27" alt="" aria-hidden="true"><span>隐私与自主选择</span></div>
+      <h2>你的空间，<br>由你做主。</h2>
+      <p>自主选择分享哪些信息、接收哪些通知，在设置中随时调整。</p>
+      <a class="showcase-text-link" href="login.html">进入我的空间<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>
+    </article>
+  </section>
+</main>
+<footer class="site-directory" id="directory" aria-label="CampusMate 网站导航">
+  <div class="site-directory-grid">
+    <div class="site-directory-brand">
+      <a class="brand" href="#top"><span class="mark"><img src="assets/logo.svg" width="52" height="52" alt="" aria-hidden="true"></span><b>CampusMate</b></a>
+      <p class="site-directory-tagline">可信信息，清晰路径。<br>陪你走好下一步。</p>
+      <p>升学、就业与创新创业，<br>在一个空间里持续准备。</p>
+      <a class="site-directory-entry" data-auth-redirect href="login.html">开始使用 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>
+    </div>
+    <nav class="site-directory-column" aria-labelledby="directory-group-0">
+      <h2 id="directory-group-0">产品功能</h2>
+      <ul>
+        <li><a href="/console" target="_top">工作台</a></li>
+        <li><a href="/data" target="_top">信息中心</a></li>
+        <li><a href="/tracker" target="_top">我的计划</a></li>
+        <li><a href="/notifications" target="_top">通知中心</a></li>
+        <li><a href="/agent" target="_top">校伴助手</a></li>
+        <li><a href="/knowledge" target="_top">原文资料库</a></li>
+        <li><a href="/eligibility" target="_top">资格核对</a></li>
+      </ul>
+    </nav>
+    <nav class="site-directory-column" aria-labelledby="directory-group-1">
+      <h2 id="directory-group-1">发展路径</h2>
+      <ul>
+        <li><a href="/data?path=recommendation_exemption" target="_top">保研推免</a></li>
+        <li><a href="/data?path=domestic_postgraduate_exam" target="_top">国内考研</a></li>
+        <li><a href="/data?path=overseas_study" target="_top">境外留学</a></li>
+        <li><a href="/data?path=national_civil_service" target="_top">考公考编</a></li>
+        <li><a href="/data?path=employment" target="_top">实习就业</a></li>
+        <li><a href="/entrepreneurship" target="_top">创新创业</a></li>
+      </ul>
+    </nav>
+    <nav class="site-directory-column" aria-labelledby="directory-group-2">
+      <h2 id="directory-group-2">探索与协作</h2>
+      <ul>
+        <li><a href="/opportunities" target="_top">校园机会</a></li>
+        <li><a href="/teams" target="_top">交流空间</a></li>
+        <li><a href="/team-manager" target="_top">我的团队</a></li>
+        <li><a href="/test" target="_top">方向测评</a></li>
+        <li><a href="#features">功能一览</a></li>
+        <li><a href="#discover">使用流程</a></li>
+      </ul>
+    </nav>
+    <nav class="site-directory-column" aria-labelledby="directory-group-3">
+      <h2 id="directory-group-3">关于校伴</h2>
+      <ul>
+        <li><a href="page4.html">关于我们</a></li>
+        <li><a href="/safety" target="_top">隐私与安全</a></li>
+        <li><a href="/settings" target="_top">个人设置</a></li>
+        <li><a href="login.html">登录账号</a></li>
+        <li><a href="signup.html">创建账号</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="site-directory-bottom"><small>© 2026 CampusMate 校伴</small><a href="#top">返回顶部 <span aria-hidden="true">↑</span></a></div>
+</footer>
+<script src="auth.js?v=20261005-otp8" defer></script>
+</body></html>

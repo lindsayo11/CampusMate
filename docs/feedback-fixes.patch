@@ -1,0 +1,415 @@
+--- a/CampusMate/README.md
++++ b/CampusMate/README.md
+@@ -55,3 +55,11 @@
+ 仅当环境缺少 `/proc/self` 并出现 `uv_resident_set_memory` 时，在命令前设置 `NODE_OPTIONS="--require $PWD/scripts/restricted-node.cjs"`。本轮云机使用该既有兼容脚本完成构建；常规主机无需开启。浏览器失败不能用此脚本豁免。
+ 
+ 发布状态、实际证据和剩余门禁见 DEVELOPMENT_STATUS.md、RELEASE_STAGE23.md、docs/TEST_RESULTS_STAGE23.md 和 docs/PLATFORM_RELEASE.md。历史 RELEASE 的验证结果只代表历史版本。
++
++## 测试反馈修订
++
++开发脚本默认设置 `APP_ORIGIN=http://127.0.0.1:3000`（端口跟随 `PORT`）。若通过 localhost 或远程代理访问，请先 `export APP_ORIGIN=https://实际访问域名`，不要关闭同源校验。只允许一个明确来源；请求 Host/转发头不会被当作可信配置。
++
++开发进程由 `scripts/dev_supervisor.py` 管理：异常退出会明确报错，最多重启三次，仍失败则停止整组服务；Ctrl+C 会清理整个子进程组。该机制不能恢复整台机器被 OOM/断电的情况。演示启动会输出身份冒用警告，演示模式仍仅限隔离环境。
++
++本次修改和实际测试结果见 `docs/TEST_FEEDBACK_FIXES.md`；历史验收记录不代表此次运行结果。
+--- a/CampusMate/scripts/dev.sh
++++ b/CampusMate/scripts/dev.sh
+@@ -4,15 +4,12 @@
+ if [ ! -x backend/.venv/bin/python ]; then
+   python3 -m venv backend/.venv
+ fi
+-backend/.venv/bin/python -m pip install -e './backend[dev]'
++backend/.venv/bin/python -m pip install -c backend/requirements-tested.txt -e './backend[dev]'
+ (cd frontend && npm ci)
+ backend/.venv/bin/python scripts/doctor.py
+ backend/.venv/bin/alembic -c backend/alembic.ini upgrade head
+ export API_INTERNAL_URL=http://127.0.0.1:8000
+-backend/.venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 &
+-api_pid=$!
+-backend/.venv/bin/python -m app.worker &
+-worker_pid=$!
+-trap 'kill "$api_pid" "$worker_pid" 2>/dev/null || true' EXIT
+-cd frontend
+-npm run dev -- --hostname 127.0.0.1
++export PORT="${PORT:-3000}"
++export APP_ORIGIN="${APP_ORIGIN:-http://127.0.0.1:$PORT}"
++echo "CampusMate: $APP_ORIGIN (浏览器地址须与 APP_ORIGIN 一致)"
++exec backend/.venv/bin/python scripts/dev_supervisor.py
+--- /dev/null
++++ b/CampusMate/scripts/dev_supervisor.py
+@@ -0,0 +1,58 @@
++"""Bounded development restarts and process-group cleanup (POSIX)."""
++import os
++from pathlib import Path
++import signal
++import subprocess
++import sys
++import time
++
++ROOT = Path(__file__).resolve().parents[1]
++
++
++def main():
++    commands = {
++        'API': ([sys.executable, '-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', '8000'], ROOT / 'backend'),
++        'Worker': ([sys.executable, '-m', 'app.worker'], ROOT / 'backend'),
++        'Web': (['npm', 'run', 'dev', '--', '--hostname', '127.0.0.1', '--port', os.getenv('PORT', '3000')], ROOT / 'frontend'),
++    }
++    children, restarts = {}, dict.fromkeys(commands, 0)
++    def stop(*_):
++        raise KeyboardInterrupt
++    def kill_group(p, sig):
++        try:
++            os.killpg(p.pid, sig)
++        except ProcessLookupError:
++            pass
++    signal.signal(signal.SIGTERM, stop)
++    signal.signal(signal.SIGINT, stop)
++    try:
++        while True:
++            for name, (cmd, cwd) in commands.items():
++                p = children.get(name)
++                if p is not None and p.poll() is None:
++                    continue
++                if p is not None:
++                    kill_group(p, signal.SIGKILL)
++                    if restarts[name] >= 3:
++                        print(f'{name} exited ({p.returncode}); restart budget exhausted, stopping all services', file=sys.stderr, flush=True)
++                        return 1
++                    restarts[name] += 1
++                    print(f'{name} exited ({p.returncode}); restart {restarts[name]}/3', file=sys.stderr, flush=True)
++                    time.sleep(1)
++                children[name] = subprocess.Popen(cmd, cwd=cwd, start_new_session=True)
++            time.sleep(.25)
++    except KeyboardInterrupt:
++        return 0
++    finally:
++        for p in children.values():
++            kill_group(p, signal.SIGTERM)
++        deadline = time.monotonic() + 5
++        while any(p.poll() is None for p in children.values()) and time.monotonic() < deadline:
++            time.sleep(.1)
++        for p in children.values():
++            kill_group(p, signal.SIGKILL)
++            p.wait()
++
++
++if __name__ == '__main__':
++    sys.exit(main())
+--- /dev/null
++++ b/CampusMate/scripts/test_dev_supervisor.py
+@@ -0,0 +1,35 @@
++"""Fault injection for restart budget and group cleanup; no real servers."""
++import unittest
++from unittest.mock import patch
++import dev_supervisor as supervisor
++
++
++class SupervisorTests(unittest.TestCase):
++    def test_crash_budget_stops_all_groups(self):
++        processes = []
++        class Process:
++            def __init__(self, *args, **kwargs):
++                self.pid = 1000 + len(processes)
++                self.returncode = 1
++                processes.append(self)
++            def poll(self):
++                return self.returncode
++            def wait(self):
++                return self.returncode
++        with patch.object(supervisor.subprocess, 'Popen', Process), patch.object(supervisor.os, 'killpg') as kill, patch.object(supervisor.signal, 'signal'), patch.object(supervisor.time, 'sleep'):
++            self.assertEqual(supervisor.main(), 1)
++        self.assertEqual(len(processes), 12)  # initial + three restarts per service
++        for p in processes[-3:]:
++            self.assertIn(unittest.mock.call(p.pid, supervisor.signal.SIGTERM), kill.call_args_list)
++
++    def test_interrupt_cleans_started_groups(self):
++        p = unittest.mock.Mock(pid=999, returncode=0)
++        p.poll.return_value = 0
++        with patch.object(supervisor.subprocess, 'Popen', side_effect=[p, KeyboardInterrupt]), patch.object(supervisor.os, 'killpg') as kill, patch.object(supervisor.signal, 'signal'):
++            self.assertEqual(supervisor.main(), 0)
++        kill.assert_any_call(999, supervisor.signal.SIGTERM)
++        p.wait.assert_called_once()
++
++
++if __name__ == '__main__':
++    unittest.main()
+--- a/CampusMate/scripts/e2e.py
++++ b/CampusMate/scripts/e2e.py
+@@ -27,7 +27,7 @@
+     with tempfile.TemporaryDirectory(prefix="campusmate-e2e-") as tmp:
+         env = {**os.environ, "DATABASE_URL": f"sqlite:///{tmp}/test.db", "DEMO_MODE": "true",
+                "ADMIN_USER_IDS": "demo-user", "API_INTERNAL_URL": "http://127.0.0.1:8000",
+-               "PORT": "3000", "APP_ORIGIN": "http://127.0.0.1:3000", "DIFY_API_BASE": "", "DIFY_APP_KEY": "", "COLLECTOR_ENABLED": "false", "ENABLE_AGENT_UI": "false", "ENABLE_COLLECTOR_UI": "false"}
++               "PORT": "3000", "APP_ORIGIN": "http://127.0.0.1:3000", "SUPABASE_URL": "", "SUPABASE_ANON_KEY": "", "DIFY_API_BASE": "", "DIFY_APP_KEY": "", "COLLECTOR_ENABLED": "false", "ENABLE_AGENT_UI": "false", "ENABLE_COLLECTOR_UI": "false"}
+         subprocess.run([sys.executable, "-m", "alembic", "-c", "backend/alembic.ini", "upgrade", "head"], cwd=ROOT, env=env, check=True)
+         processes = []
+         try:
+--- a/CampusMate/scripts/runtime_smoke.py
++++ b/CampusMate/scripts/runtime_smoke.py
+@@ -56,6 +56,19 @@
+                 worker=subprocess.Popen([sys.executable,'-m','app.worker'],cwd=ROOT/'backend',env=env,stdout=log,stderr=log);processes.append(worker)
+                 web=subprocess.Popen(['node','../scripts/start-web.cjs'],cwd=ROOT/'frontend',env=env,stdout=log,stderr=log);processes.append(web)
+                 wait(env['APP_ORIGIN']+'/login',web)
++                def write(origin):
++                    request = urllib.request.Request(env['APP_ORIGIN'] + '/api/backend/v1/tools/tracker_write',
++                        data=json.dumps({'opportunity_id': 'job-001', 'stage': 'saved', 'note': 'origin regression'}).encode(),
++                        headers={'Origin': origin, 'Content-Type': 'application/json'}, method='POST')
++                    try:
++                        with opener.open(request, timeout=15) as response:
++                            return response.status, json.load(response)
++                    except urllib.error.HTTPError as exc:
++                        return exc.code, json.load(exc)
++                status, result = write(env['APP_ORIGIN'])
++                assert status == 200 and result['stage'] == 'saved', (status, result)
++                status, result = write('https://evil.test')
++                assert status == 403 and isinstance(result['detail'], str), (status, result)
+                 pages={}
+                 for path in ['/','/opportunities','/opportunity/job-001','/profile','/eligibility','/tracker','/notifications','/teams','/team-manager','/safety','/login','/recover','/admin','/admin/audit','/admin/review','/admin/reports','/admin/sources','/admin/operations']:
+                     status,html=get(env['APP_ORIGIN']+path)
+--- a/CampusMate/scripts/check.sh
++++ b/CampusMate/scripts/check.sh
+@@ -9,6 +9,7 @@
+ export ADMIN_USER_IDS=demo-user
+ backend/.venv/bin/alembic -c backend/alembic.ini upgrade head
+ backend/.venv/bin/python -m pytest backend/tests -q
++backend/.venv/bin/python scripts/test_dev_supervisor.py
+ cd frontend
+ npm test
+ npm run typecheck
+--- a/CampusMate/backend/app/main.py
++++ b/CampusMate/backend/app/main.py
+@@ -42,6 +42,11 @@
+ async def lifespan(_: FastAPI):
+     from .migrate import check_schema
+     check_schema()
++    if settings.demo_mode:
++        import logging
++        logging.getLogger("uvicorn.error").warning(
++            "\n%s\nDEMO_MODE=true: 演示身份可通过 x-user-id 切换，包含管理员。"
++            "仅供隔离环境测试，严禁公网部署！\n%s", "=" * 72, "=" * 72)
+     with SessionLocal() as db:
+         if settings.demo_mode:
+             seed_if_empty(db)
+--- /dev/null
++++ b/CampusMate/pytest-of-root/pytest-7/.lock
+@@ -0,0 +1 @@
++9--- a/CampusMate/frontend/e2e/golden.spec.ts
++++ b/CampusMate/frontend/e2e/golden.spec.ts
+@@ -46,8 +46,7 @@
+ });
+ test('注册入口、举报管理与移动端无水平溢出', async ({ page }) => {
+   await page.goto('/login');
+-  await page.getByRole('button', { name: '没有账号，去注册' }).click();
+-  await expect(page.getByRole('heading', { name: '创建校伴账号' })).toBeVisible();
++  await expect(page.getByRole('heading', { name: '身份服务尚未配置' })).toBeVisible();
+   await page.goto('/admin/reports');
+   await expect(page.getByRole('heading', { name: '举报处理' })).toBeVisible();
+   await page.goto('/safety');
+@@ -108,12 +107,10 @@
+  await expect(card.getByRole('heading',{name:'任务分工 · 1/1 已完成'})).toBeVisible();
+ });
+ 
+-test('密码找回入口和邮箱输入',async({page})=>{
+- await page.goto('/login');
+- await page.getByRole('link',{name:'忘记密码？'}).click();
+- await expect(page.getByRole('heading',{name:'找回密码',exact:true})).toBeVisible();
+- await page.getByLabel('注册邮箱').fill('student@example.edu');
+- await expect(page.getByRole('button',{name:'发送验证码'})).toBeEnabled();
++test('未配置身份服务时找回密码明确提示',async({page})=>{
++ await page.goto('/recover');
++ await expect(page.getByRole('heading',{name:'身份服务尚未配置'})).toBeVisible();
++ await expect(page.getByRole('link',{name:'返回首页'})).toBeVisible();
+ });
+ 
+ test('原文检索：未知词不编造依据',async({page})=>{
+--- a/CampusMate/frontend/app/phase2.css
++++ b/CampusMate/frontend/app/phase2.css
+@@ -1 +1,3 @@
+ .avatar{text-decoration:none;display:grid;place-items:center}.lead{color:var(--muted);margin:20px 0 32px;line-height:1.7}.narrow{max-width:820px}.detail aside button{opacity:1;margin-bottom:10px;cursor:pointer}.detail aside button.secondary{background:white;color:var(--ink);border:1px solid var(--line)}.panel-link{display:block;color:var(--ink);font-weight:700;text-align:center;margin:15px 0}.detail aside small.feedback{display:block;background:#eaf7e9;color:#24563d;padding:10px;border-radius:8px;margin-top:12px}.form-card,.eligibility-card{background:white;border:1px solid var(--line);border-radius:24px;padding:30px}.form-card label{display:flex;flex-direction:column;gap:8px;font-weight:700;margin-bottom:18px}.form-card input,.form-card select{font:inherit;padding:13px;border:1px solid var(--line);border-radius:10px;background:white}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}.form-card button,.eligibility-card>button,.actions button{border:0;background:var(--ink);color:white;padding:14px 22px;border-radius:11px;font-weight:700;cursor:pointer}.success{color:#28704d;font-weight:700}.board{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;overflow-x:auto;padding-bottom:15px}.board-column{background:#edf0e9;border-radius:16px;padding:14px;min-width:210px}.board-column h2{font-size:16px;display:flex;justify-content:space-between}.board-column h2 span{background:white;padding:2px 8px;border-radius:99px}.board-column article{background:white;padding:16px;border-radius:12px;margin-top:10px}.board-column article p,.board-column article small{color:var(--muted);font-size:13px}.eligibility-card>div:first-child{display:flex;align-items:center;gap:15px;flex-wrap:wrap}.eligibility-card h2{margin:0}.eligibility-card>button{margin:24px 0}.verdict{border-radius:16px;padding:20px}.verdict.pass{background:#e7f5e8}.verdict.fail{background:#fff0e8}.rule{background:white;border-radius:10px;padding:14px;margin-top:10px;display:grid;gap:6px}.rule span,.rule a{font-size:13px;color:var(--muted)}.review-table{background:white;border:1px solid var(--line);border-radius:20px;overflow:hidden}.review-row{display:grid;grid-template-columns:2fr .6fr .6fr 1fr;gap:16px;align-items:center;padding:18px 22px;border-bottom:1px solid var(--line)}.review-row.header{background:var(--ink);color:white;font-weight:700}.review-row>span:first-child{display:grid;gap:6px}.review-row a{font-size:13px;color:var(--muted)}.risk{width:max-content;padding:5px 9px;border-radius:99px;font-size:12px;background:#fff2cd}.risk.high{background:#ffe4dc}.actions{display:flex!important;gap:7px!important}.actions button{padding:9px 12px}.actions button.danger{background:white;color:#a23a2a;border:1px solid #e3b8af}@media(max-width:900px){.review-row{grid-template-columns:1.7fr .7fr .7fr}.review-row>span:last-child{grid-column:1/-1}.review-row.header>span:last-child{display:none}}@media(max-width:600px){.form-row{grid-template-columns:1fr}.review-row{grid-template-columns:1fr 1fr}.review-row>span:first-child{grid-column:1/-1}.review-row.header{display:none}}
++
++.tracker-form{display:grid;gap:16px}.tracker-form label{display:grid;gap:8px;font-weight:600}.tracker-form select,.tracker-form textarea{width:100%;box-sizing:border-box;font:inherit;padding:12px;border:1px solid var(--line);border-radius:10px;background:white;color:var(--ink)}.tracker-form textarea{min-height:96px;resize:vertical}.tracker-form button{justify-self:start;border:0;border-radius:10px;background:var(--ink);color:white;padding:12px 22px;font:inherit;cursor:pointer}.tracker-form :focus-visible{outline:3px solid #609474;outline-offset:3px}.tracker-form button:disabled{opacity:.6;cursor:wait}
+--- /dev/null
++++ b/CampusMate/frontend/tests/origin.test.ts
+@@ -0,0 +1,27 @@
++import { afterEach, test } from 'node:test';
++import assert from 'node:assert/strict';
++import { NextRequest } from 'next/server';
++import { sameOrigin } from '../lib/auth-session';
++import { POST } from '../app/api/backend/[...path]/route';
++const savedOrigin = process.env.APP_ORIGIN, savedFetch = globalThis.fetch;
++afterEach(() => { if (savedOrigin === undefined) delete process.env.APP_ORIGIN; else process.env.APP_ORIGIN = savedOrigin; globalThis.fetch = savedFetch; });
++function req(origin?: string) { return new NextRequest('http://localhost:3000/api/backend/v1/tools/tracker_write', {method:'POST', headers: origin ? {origin} : {}}); }
++test('explicit browser origin works despite Next internal hostname mismatch', async () => {
++ process.env.APP_ORIGIN='http://127.0.0.1:3000';
++ globalThis.fetch = async () => Response.json({ok:true});
++ assert.equal(sameOrigin(req('http://127.0.0.1:3000')), true);
++ assert.equal((await POST(req('http://127.0.0.1:3000'), {params:Promise.resolve({path:['v1','tools','tracker_write']})})).status,200);
++});
++test('untrusted, missing, null, wrong-port and prefix origins reject with JSON', async () => {
++ process.env.APP_ORIGIN='http://127.0.0.1:3000';
++ globalThis.fetch = async () => { throw Error('must not forward'); };
++ for (const origin of [undefined,'null','https://evil.test','http://127.0.0.1:3001','http://127.0.0.1:3000.evil.test','http://localhost:3000']) {
++  const r=await POST(req(origin),{params:Promise.resolve({path:['v1','tools','tracker_write']})});
++  assert.equal(r.status,403); assert.equal(typeof (await r.json()).detail,'string');
++ }
++});
++test('without explicit origin only the request URL origin is allowed', () => {
++ delete process.env.APP_ORIGIN;
++ assert.equal(sameOrigin(req('http://localhost:3000')),true);
++ assert.equal(sameOrigin(req('http://127.0.0.1:3000')),false);
++});
+--- a/CampusMate/frontend/components/tracker-board.tsx
++++ b/CampusMate/frontend/components/tracker-board.tsx
+@@ -4,4 +4,4 @@
+ import {apiBase,TrackerItem} from "@/lib/api";
+ const transitions:Record<string,string[]>={saved:["saved","preparing","applied"],preparing:["preparing","applied"],applied:["applied","interview","completed"],interview:["interview","completed"],completed:["completed"]};
+ const stages:Record<string,string>={saved:"已收藏",preparing:"准备中",applied:"已报名",interview:"面试/评审",completed:"已完成"};
+-export function TrackerBoard({initial}:{initial:TrackerItem[]}){const [items,setItems]=useState(initial),[message,setMessage]=useState("");return <><div className="cards">{items.map(i=><article className="card" key={i.id}><h3><Link href={`/opportunity/${i.opportunity.id}`}>{i.opportunity.title}</Link></h3><form onSubmit={async e=>{e.preventDefault();const f=new FormData(e.currentTarget);try{const r=await fetch(apiBase+"/v1/tools/tracker_write",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({opportunity_id:i.opportunity.id,stage:f.get("stage"),note:f.get("note")})});if(!r.ok){const d=await r.json();throw new Error(typeof d.detail==="string"?d.detail:"保存失败")}const updated=await r.json();setItems(xs=>xs.map(x=>x.id===i.id?updated:x));setMessage("进度已保存")}catch(e){setMessage((e as Error).message)}}}><label>状态<select name="stage" defaultValue={i.stage}>{Object.entries(stages).filter(([k])=>transitions[i.stage]?.includes(k)).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select></label><label>下一步<textarea name="note" maxLength={500} defaultValue={i.note}/></label><button>保存</button></form></article>)}</div>{!items.length&&<p>先从机会详情加入一个行动项。</p>}<p role="status">{message}</p></>}
++export function TrackerBoard({initial}:{initial:TrackerItem[]}){const [items,setItems]=useState(initial),[message,setMessage]=useState("");return <><div className="cards">{items.map(i=><article className="card" key={i.id}><h3><Link href={`/opportunity/${i.opportunity.id}`}>{i.opportunity.title}</Link></h3><form className="tracker-form" onSubmit={async e=>{e.preventDefault();const f=new FormData(e.currentTarget);try{const r=await fetch(apiBase+"/v1/tools/tracker_write",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({opportunity_id:i.opportunity.id,stage:f.get("stage"),note:f.get("note")})});if(!r.ok){const d=await r.json();throw new Error(typeof d.detail==="string"?d.detail:"保存失败")}const updated=await r.json();setItems(xs=>xs.map(x=>x.id===i.id?updated:x));setMessage("进度已保存")}catch(e){setMessage((e as Error).message)}}}><label>状态<select name="stage" defaultValue={i.stage}>{Object.entries(stages).filter(([k])=>transitions[i.stage]?.includes(k)).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select></label><label>下一步<textarea name="note" maxLength={500} defaultValue={i.note}/></label><button>保存</button></form></article>)}</div>{!items.length&&<p>先从机会详情加入一个行动项。</p>}<p role="status">{message}</p></>}
+--- /dev/null
++++ b/CampusMate/frontend/components/login-form.tsx
+@@ -0,0 +1,17 @@
++"use client";
++import { useState } from "react";
++export default function Login() {
++  const [message, setMessage] = useState("");
++  const [signup, setSignup] = useState(false);
++  const [busy, setBusy] = useState(false);
++  return <div className="shell narrow"><h1>{signup ? "创建校伴账号" : "登录校伴"}</h1><p>使用邮箱注册并完成邮件确认。学校信息由本人填写，不代表学籍认证。</p><form className="form-card" onSubmit={async e => {
++    e.preventDefault(); if (busy) return; const f = new FormData(e.currentTarget); setBusy(true); setMessage("处理中…");
++    try {
++      const r = await fetch("/api/session", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: f.get("email"), password: f.get("password"), action: signup ? "signup" : "login" }) });
++      const data = await r.json();
++      if (!r.ok) setMessage(data.detail); else if (data.confirmation_required) setMessage(data.message); else location.assign("/profile");
++    } catch { setMessage("网络错误，请重试"); } finally { setBusy(false); }
++  }}><label>邮箱<input required name="email" type="email" maxLength={254} autoComplete="username" /></label><label>密码<input required name="password" type="password" minLength={signup ? 8 : 1} maxLength={1024} autoComplete={signup ? "new-password" : "current-password"} /></label><button disabled={busy}>{busy ? "处理中…" : signup ? "注册" : "登录"}</button></form><button disabled={busy} onClick={() => { setSignup(!signup); setMessage(""); }}>{signup ? "已有账号，去登录" : "没有账号，去注册"}</button><button disabled={busy} onClick={async () => {
++    setBusy(true); try { const r = await fetch("/api/session", { method: "DELETE" }); const data = await r.json(); setMessage(data.message || data.detail); } catch { setMessage("网络错误，请重试"); } finally { setBusy(false); }
++  }}>退出当前会话</button><p><a href="/recover">忘记密码？</a></p><p role="status" aria-live="polite">{message}</p></div>;
++}
+--- /dev/null
++++ b/CampusMate/frontend/components/recover-form.tsx
+@@ -0,0 +1,18 @@
++"use client";
++import {useState} from "react";
++export default function Recover(){
++ const [email,setEmail]=useState(""),[sent,setSent]=useState(false),[busy,setBusy]=useState(false),[done,setDone]=useState(false),[message,setMessage]=useState("");
++ async function submit(method:"POST"|"PATCH",data:unknown){
++  if(busy)return;setBusy(true);setMessage("处理中…");
++  try{const r=await fetch("/api/session/recovery",{method,headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});const value=await r.json();setMessage(value.message||value.detail);if(r.ok){if(method==="POST")setSent(true);else setDone(true)}}
++  catch{setMessage("网络错误。如果刚才正在修改密码，请先尝试新密码登录，避免重复提交。")}finally{setBusy(false)}
++ }
++ return <div className="shell narrow"><h1>找回密码</h1><p>通过注册邮箱中的一次性验证码重设密码。验证码只用于本次找回，请勿提供给他人。</p>
++ {!done&&<><form className="form-card" onSubmit={e=>{e.preventDefault();void submit("POST",{email})}}><label>注册邮箱<input type="email" required maxLength={254} autoComplete="email" value={email} onChange={e=>{setEmail(e.target.value);setSent(false)}}/></label><button disabled={busy}>{sent?"重新发送验证码":"发送验证码"}</button></form>
++ {sent&&<form className="form-card" onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);if(f.get("password")!==f.get("confirmation")){setMessage("两次输入的密码不一致");return}void submit("PATCH",{email,token:f.get("token"),password:f.get("password")})}}>
++ <label>邮件验证码<input name="token" autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6,10}" minLength={6} maxLength={10} required/></label>
++ <label>新密码<input name="password" type="password" autoComplete="new-password" minLength={8} maxLength={1024} required/></label>
++ <label>再次输入新密码<input name="confirmation" type="password" autoComplete="new-password" minLength={8} maxLength={1024} required/></label>
++ <button disabled={busy}>确认重设密码</button></form>}</>}
++ <p role="status" aria-live="polite">{message}</p><a href="/login">返回登录</a></div>;
++}
+--- a/CampusMate/frontend/lib/api.ts
++++ b/CampusMate/frontend/lib/api.ts
+@@ -5,9 +5,9 @@
+ export type Eligibility={eligible:boolean|null;opportunity_id:string;results:{label:string;passed:boolean|null;evidence?:string;actual:string;expected:string;source_url:string}[]};
+ export type ReviewItem={id:number;title:string;source_url:string;risk_level:string;confidence:number;status:string;extracted_payload:string;created_at:string};
+ const base=typeof window === "undefined" ? (process.env.API_INTERNAL_URL||"http://127.0.0.1:8000") : "/api/backend";
+-export async function getOpportunities(type?:string,q?:string,status?:string):Promise<OpportunityList>{const u=new URL(`${base}/v1/opportunities`);if(type)u.searchParams.set("type",type);if(q)u.searchParams.set("q",q);if(status)u.searchParams.set("status",status);try{const r=await fetch(u,{cache:"no-store"});if(!r.ok)throw new Error();return r.json()}catch{throw new Error("机会加载失败，请稍后重试")}}
++export async function getOpportunities(type?:string,q?:string,status?:string):Promise<OpportunityList>{const u=new URL(`${base}/v1/opportunities`, typeof window === "undefined" ? undefined : window.location.origin);if(type)u.searchParams.set("type",type);if(q)u.searchParams.set("q",q);if(status)u.searchParams.set("status",status);try{const r=await fetch(u,{cache:"no-store"});if(!r.ok)throw new Error();return r.json()}catch{throw new Error("机会加载失败，请稍后重试")}}
+ export async function getOpportunity(id:string):Promise<Opportunity>{const r=await fetch(`${base}/v1/opportunities/${id}`,{cache:"no-store"});if(!r.ok)throw new Error("机会加载失败");return r.json()}
+ export async function getProfile():Promise<Profile>{const r=await fetch(`${base}/v1/profile`,{cache:"no-store"});if(!r.ok)throw new Error("画像读取失败");return r.json()}
+-export async function getTracker():Promise<TrackerItem[]>{const r=await fetch(`${base}/v1/tracker/items`,{cache:"no-store"});if(!r.ok)return[];return r.json()}
+-export async function getReviews():Promise<ReviewItem[]>{const r=await fetch(`${base}/v1/admin/reviews`,{cache:"no-store"});if(!r.ok)return[];return r.json()}
++export async function getTracker():Promise<TrackerItem[]>{const r=await fetch(`${base}/v1/tracker/items`,{cache:"no-store"});if(!r.ok)throw new Error("加载失败，请稍后重试");return r.json()}
++export async function getReviews():Promise<ReviewItem[]>{const r=await fetch(`${base}/v1/admin/reviews`,{cache:"no-store"});if(!r.ok)throw new Error("加载失败，请稍后重试");return r.json()}
+ export {base as apiBase};
+--- a/CampusMate/frontend/app/login/page.tsx
++++ b/CampusMate/frontend/app/login/page.tsx
+@@ -1,17 +1,7 @@
+-"use client";
+-import { useState } from "react";
+-export default function Login() {
+-  const [message, setMessage] = useState("");
+-  const [signup, setSignup] = useState(false);
+-  const [busy, setBusy] = useState(false);
+-  return <div className="shell narrow"><h1>{signup ? "创建校伴账号" : "登录校伴"}</h1><p>使用邮箱注册并完成邮件确认。学校信息由本人填写，不代表学籍认证。</p><form className="form-card" onSubmit={async e => {
+-    e.preventDefault(); if (busy) return; const f = new FormData(e.currentTarget); setBusy(true); setMessage("处理中…");
+-    try {
+-      const r = await fetch("/api/session", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: f.get("email"), password: f.get("password"), action: signup ? "signup" : "login" }) });
+-      const data = await r.json();
+-      if (!r.ok) setMessage(data.detail); else if (data.confirmation_required) setMessage(data.message); else location.assign("/profile");
+-    } catch { setMessage("网络错误，请重试"); } finally { setBusy(false); }
+-  }}><label>邮箱<input required name="email" type="email" maxLength={254} autoComplete="username" /></label><label>密码<input required name="password" type="password" minLength={signup ? 8 : 1} maxLength={1024} autoComplete={signup ? "new-password" : "current-password"} /></label><button disabled={busy}>{busy ? "处理中…" : signup ? "注册" : "登录"}</button></form><button disabled={busy} onClick={() => { setSignup(!signup); setMessage(""); }}>{signup ? "已有账号，去登录" : "没有账号，去注册"}</button><button disabled={busy} onClick={async () => {
+-    setBusy(true); try { const r = await fetch("/api/session", { method: "DELETE" }); const data = await r.json(); setMessage(data.message || data.detail); } catch { setMessage("网络错误，请重试"); } finally { setBusy(false); }
+-  }}>退出当前会话</button><p><a href="/recover">忘记密码？</a></p><p role="status" aria-live="polite">{message}</p></div>;
++export const dynamic = "force-dynamic";
++import Form from "@/components/login-form";
++export default function Page() {
++ const configured = process.env.SUPABASE_URL?.startsWith("https://") && !!process.env.SUPABASE_ANON_KEY;
++ if (!configured) return <div className="shell narrow"><h1>身份服务尚未配置</h1><p>登录、注册和找回密码需要配置 Supabase。演示模式使用内置身份，无需登录。</p><a href="/">返回首页</a></div>;
++ return <Form/>;
+ }
+--- a/CampusMate/frontend/app/recover/page.tsx
++++ b/CampusMate/frontend/app/recover/page.tsx
+@@ -1,18 +1,7 @@
+-"use client";
+-import {useState} from "react";
+-export default function Recover(){
+- const [email,setEmail]=useState(""),[sent,setSent]=useState(false),[busy,setBusy]=useState(false),[done,setDone]=useState(false),[message,setMessage]=useState("");
+- async function submit(method:"POST"|"PATCH",data:unknown){
+-  if(busy)return;setBusy(true);setMessage("处理中…");
+-  try{const r=await fetch("/api/session/recovery",{method,headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});const value=await r.json();setMessage(value.message||value.detail);if(r.ok){if(method==="POST")setSent(true);else setDone(true)}}
+-  catch{setMessage("网络错误。如果刚才正在修改密码，请先尝试新密码登录，避免重复提交。")}finally{setBusy(false)}
+- }
+- return <div className="shell narrow"><h1>找回密码</h1><p>通过注册邮箱中的一次性验证码重设密码。验证码只用于本次找回，请勿提供给他人。</p>
+- {!done&&<><form className="form-card" onSubmit={e=>{e.preventDefault();void submit("POST",{email})}}><label>注册邮箱<input type="email" required maxLength={254} autoComplete="email" value={email} onChange={e=>{setEmail(e.target.value);setSent(false)}}/></label><button disabled={busy}>{sent?"重新发送验证码":"发送验证码"}</button></form>
+- {sent&&<form className="form-card" onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);if(f.get("password")!==f.get("confirmation")){setMessage("两次输入的密码不一致");return}void submit("PATCH",{email,token:f.get("token"),password:f.get("password")})}}>
+- <label>邮件验证码<input name="token" autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6,10}" minLength={6} maxLength={10} required/></label>
+- <label>新密码<input name="password" type="password" autoComplete="new-password" minLength={8} maxLength={1024} required/></label>
+- <label>再次输入新密码<input name="confirmation" type="password" autoComplete="new-password" minLength={8} maxLength={1024} required/></label>
+- <button disabled={busy}>确认重设密码</button></form>}</>}
+- <p role="status" aria-live="polite">{message}</p><a href="/login">返回登录</a></div>;
++export const dynamic = "force-dynamic";
++import Form from "@/components/recover-form";
++export default function Page() {
++ const configured = process.env.SUPABASE_URL?.startsWith("https://") && !!process.env.SUPABASE_ANON_KEY;
++ if (!configured) return <div className="shell narrow"><h1>身份服务尚未配置</h1><p>登录、注册和找回密码需要配置 Supabase。演示模式使用内置身份，无需登录。</p><a href="/">返回首页</a></div>;
++ return <Form/>;
+ }
+--- /dev/null
++++ b/CampusMate/frontend/app/notifications/loading.tsx
+@@ -0,0 +1 @@
++export default function Loading() { return <div className="shell" aria-busy="true"><h1>通知中心</h1><p role="status">正在加载通知和提醒…</p></div>; }
+--- a/CampusMate/frontend/app/safety/page.tsx
++++ b/CampusMate/frontend/app/safety/page.tsx
+@@ -4,11 +4,15 @@
+ type Report = { id: number; reason: string; status: string };
+ export default function Safety() {
+   const [blocks, setBlocks] = useState<{ target: string }[]>([]), [reports, setReports] = useState<Report[]>([]), [message, setMessage] = useState("");
++  const [loading, setLoading] = useState(true), [loaded, setLoaded] = useState(false);
+   async function load() {
++    setLoading(true);
++    try {
+     const [b, r] = await Promise.all([fetch(apiBase + "/v1/blocks"), fetch(apiBase + "/v1/reports/mine")]);
+     if (!b.ok || !r.ok) throw Error("加载失败，请确认已登录");
+-    setBlocks(await b.json()); setReports(await r.json());
++    setBlocks(await b.json()); setReports(await r.json()); setLoaded(true);
++    } finally { setLoading(false); }
+   }
+   useEffect(() => { load().catch(e => setMessage(e.message)); }, []);
+-  return <div className="shell page"><h1>隐私与安全</h1><h2>已拉黑用户</h2>{blocks.length === 0 && <p>暂无拉黑记录。</p>}{blocks.map(b => <article key={b.target}><span>{b.target} </span><button onClick={async () => { try { const r = await fetch(`${apiBase}/v1/blocks/${encodeURIComponent(b.target)}`, { method: "DELETE" }); if (!r.ok) throw Error("解除失败"); await load(); setMessage("已解除拉黑"); } catch (e) { setMessage((e as Error).message); } }}>解除拉黑</button></article>)}<h2>我的举报</h2>{reports.length === 0 && <p>暂无举报记录。</p>}{reports.map(r => <article className="card" key={r.id}><p>{r.reason}</p><p>{{ pending: "等待审核", dismissed: "已驳回", removed: "已处理并移除消息" }[r.status] || r.status}</p></article>)}<p role="status">{message}</p></div>;
++  return <div className="shell page"><h1>隐私与安全</h1>{loading && <p role="status">正在加载安全记录…</p>}<h2>已拉黑用户</h2>{loaded && !loading && blocks.length === 0 && <p>暂无拉黑记录。</p>}{blocks.map(b => <article key={b.target}><span>{b.target} </span><button onClick={async () => { try { const r = await fetch(`${apiBase}/v1/blocks/${encodeURIComponent(b.target)}`, { method: "DELETE" }); if (!r.ok) throw Error("解除失败"); await load(); setMessage("已解除拉黑"); } catch (e) { setMessage((e as Error).message); } }}>解除拉黑</button></article>)}<h2>我的举报</h2>{loaded && !loading && reports.length === 0 && <p>暂无举报记录。</p>}{reports.map(r => <article className="card" key={r.id}><p>{r.reason}</p><p>{{ pending: "等待审核", dismissed: "已驳回", removed: "已处理并移除消息" }[r.status] || r.status}</p></article>)}<p role="status">{message}</p>{!loading && !loaded && <button onClick={() => { setMessage(""); void load().catch(e => setMessage(e.message)); }}>重试加载</button>}</div>;
+ }
+--- a/CampusMate/frontend/app/api/backend/[...path]/route.ts
++++ b/CampusMate/frontend/app/api/backend/[...path]/route.ts
+@@ -3,8 +3,8 @@
+ export const dynamic="force-dynamic";
+ async function proxy(req:NextRequest,{params}:{params:Promise<{path:string[]}>}){
+  const {path}=await params;
+- if(req.method!=="GET"&&!sameOrigin(req))return new Response("Invalid origin",{status:403});
+- if(path.some(p=>p===".."||p==="."||p.includes("/")||p.includes("\\")))return new Response("Invalid path",{status:400});
++ if(req.method!=="GET"&&!sameOrigin(req))return Response.json({detail:"请求来源不匹配，请检查 APP_ORIGIN 与浏览器地址"},{status:403});
++ if(path.some(p=>p===".."||p==="."||p.includes("/")||p.includes("\\")))return Response.json({detail:"Invalid path"},{status:400});
+  const target=(process.env.API_INTERNAL_URL||"http://127.0.0.1:8000")+"/"+path.map(encodeURIComponent).join("/")+req.nextUrl.search;
+  const headers=new Headers();headers.set("Content-Type","application/json");
+  const token=req.cookies.get("cm_access")?.value;

@@ -1,7 +1,8 @@
 from alembic import context
 from app.database import Base, engine
-from app import models, social, teams, worker, rate_limits, sources, operations, team_tasks, collector, knowledge, task_alerts, intake_models  # register all domain tables
+from app import models, social, teams, worker, rate_limits, sources, operations, team_tasks, collector, knowledge, task_alerts, intake_models, notification_models  # register all domain tables
 from app import agent_state, data_feedback, startup_models
+from app import activity_teams
 
 
 def run():

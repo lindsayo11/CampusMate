@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>创建账号 | CampusMate</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="viewport.css">
+<link rel="stylesheet" href="public-zh.css"></head>
+<body>
+  <main class="auth-page">
+    <section class="auth-panel">
+      <h1>创建账号</h1>
+      <button type="button" data-google-login>使用 Google 继续</button>
+      <p>或使用邮箱注册</p>
+      <form class="auth-form" data-session-form data-action="signup">
+        <div data-email-stage>
+        <label>邮箱地址
+          <input type="email" name="email" autocomplete="email" required>
+        </label>
+        <button class="primary" type="submit">发送验证码</button>
+        </div>
+        <div data-otp-fields hidden>
+          <label>邮箱验证码
+            <input type="text" name="token" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{8}" maxlength="8" placeholder="8 位数字验证码" required disabled>
+          </label>
+          <button class="primary" type="submit" data-verify-submit disabled>验证邮箱</button>
+          <button type="button" data-resend-code disabled>重新发送</button>
+        </div>
+        <div data-password-fields hidden>
+        <label>密码
+          <input type="password" name="password" autocomplete="new-password" minlength="8" required disabled>
+        </label>
+        <label>确认密码
+          <input type="password" name="password_confirmation" autocomplete="new-password" minlength="8" required disabled>
+        </label>
+        <button class="primary" type="submit">完成注册</button>
+        </div>
+      </form>
+      <p role="status" aria-live="polite"></p>
+      <p>已有账号？ <a href="login.html">登录</a></p>
+      <small>继续即表示你同意服务条款与隐私政策。</small>
+    </section>
+    <aside class="auth-art">CampusMate<br>陪你走好下一步</aside>
+  </main>
+  <script src="auth.js?v=20261005-otp8" defer></script>
+</body>
+</html>

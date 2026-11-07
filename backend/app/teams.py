@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy import String, Integer, select, update
 from sqlalchemy.orm import Mapped, Session, mapped_column
-from .auth import actor_id
+from .auth import actor_id, normalize_email
 from .database import Base, get_db
 from .models import Profile
 from .social import Room, Block
@@ -33,7 +33,8 @@ class CreateTeam(BaseModel):
 
 
 class Invite(BaseModel):
-    target: str = Field(min_length=1, max_length=80)
+    target: str | None = Field(default=None, min_length=1, max_length=80)
+    email: str | None = Field(default=None, min_length=5, max_length=320)
 
 
 class Decision(BaseModel):
@@ -65,20 +66,32 @@ def invite(team_id: str, body: Invite, user: str = Depends(actor_id), db: Sessio
     team, room = lock_team(db, team_id)
     if team.owner != user:
         raise HTTPException(404, "队伍不存在或不是队长")
-    if not db.get(Profile, body.target):
+    target = body.target
+    if body.email:
+        normalized = normalize_email(body.email)
+        target_profile = db.scalar(select(Profile).where(
+            Profile.email == normalized,
+            Profile.discoverable.is_(True),
+        )) if normalized else None
+        if not target_profile:
+            raise HTTPException(422, "未找到可邀请的同学")
+        target = target_profile.user_id
+    if not target:
+        raise HTTPException(422, "请提供用户 ID 或登录邮箱")
+    if not db.get(Profile, target):
         raise HTTPException(422, "目标用户尚未建立画像")
     if len(room.members) >= team.capacity:
         raise HTTPException(409, "队伍已满")
-    if body.target in room.members:
+    if target in room.members:
         raise HTTPException(409, "用户已经在队伍中")
-    if db.get(Block, (user, body.target)) or db.get(Block, (body.target, user)):
+    if db.get(Block, (user, target)) or db.get(Block, (target, user)):
         raise HTTPException(403, "双方存在拉黑关系")
-    row = db.get(Invitation, (team_id, body.target))
+    row = db.get(Invitation, (team_id, target))
     if row and row.status != "pending":
         row.status = "pending"
         db.commit()
     if not row:
-        row = Invitation(team_id=team_id, target=body.target, status="pending")
+        row = Invitation(team_id=team_id, target=target, status="pending")
         db.add(row)
         db.commit()
     return row

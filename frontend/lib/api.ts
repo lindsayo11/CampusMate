@@ -1,6 +1,6 @@
 export type Opportunity={id:string;type:string;title:string;organization:string;summary:string;location:string;deadline:string;source_url:string;source_label:string;trust_score:number;tags:string[];fetched_at:string};
 export type OpportunityList={items:Opportunity[];total:number};
-export type Profile={display_name:string;discoverable:boolean;user_id:string;school:string;college:string;grade:string;major:string;interests:string[];skills:string[];weekly_hours:number;degree:string;target_year:number|null;target_path:string;target_region:string;language_score:string;research_exp:string;internship_exp:string;competition_exp:string;startup_exp:string;updated_at:string};
+export type Profile={display_name:string;discoverable:boolean;user_id:string;email:string|null;school:string;college:string;grade:string;major:string;interests:string[];skills:string[];weekly_hours:number;degree:string;target_year:number|null;target_path:string;target_region:string;language_score:string;research_exp:string;internship_exp:string;competition_exp:string;startup_exp:string;updated_at:string};
 export type DevelopmentPath={id:number;name:string;description:string;target_group:string;duration:string;status:string};
 export type Plan={id:number;user_id:string;title:string;path_id:number|null;due_date:string|null;status:"todo"|"doing"|"done";note:string;created_at:string;updated_at:string};
 export type TrackerItem={id:number;opportunity:Opportunity;stage:string;note:string;created_at:string;updated_at:string};

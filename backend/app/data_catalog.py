@@ -23,6 +23,8 @@ from .intake_models import (
     DevelopmentItem,
     DevelopmentItemPath,
     DocumentArchive,
+    DocumentInsight,
+    DevelopmentChannelSummary,
     DocumentVersion,
     Evidence,
     PolicyRelation,
@@ -32,7 +34,8 @@ from .intake_models import (
     SourceEndpointCalibration,
     SourceEndpoint,
 )
-from .models import EligibilityRule, Path, UserPlan
+from .models import EligibilityRule, Path, Profile, UserPlan
+from .notification_models import NotificationPreference
 from .adapters.notice_text import content_kind
 import re
 
@@ -649,6 +652,38 @@ def path_codes(db, code):
     return {p.code for p in rows if p.id in ids}
 
 
+@router.get("/channel-summary")
+def channel_summary(path: str = Query(..., min_length=1, max_length=80), db: Session = Depends(get_db)):
+    from .channel_insights import CHANNELS, public_summary
+    if path not in CHANNELS:
+        raise HTTPException(404, "发展频道不存在")
+    return public_summary(path, db)
+
+
+@router.get("/channel-updates")
+def channel_updates(user: str = Depends(actor_id), db: Session = Depends(get_db)):
+    """Return the latest summary update for the user's selected path."""
+    from .channel_insights import CHANNELS
+    profile = db.get(Profile, user)
+    path_code = profile.target_path.strip() if profile and profile.target_path else ""
+    if path_code not in CHANNELS:
+        return {"available": False, "notice": None}
+    row = db.get(DevelopmentChannelSummary, path_code)
+    if not row or row.status != "ready" or not row.updated_at:
+        return {"available": False, "notice": None}
+    updated = row.updated_at.replace(tzinfo=UTC) if row.updated_at.tzinfo is None else row.updated_at
+    try:
+        payload = json.loads(row.payload or "{}")
+    except json.JSONDecodeError:
+        payload = {}
+    return {"available": True, "notice": {
+        "path": path_code,
+        "name": CHANNELS[path_code],
+        "updated_at": updated.isoformat(),
+        "source_count": int(payload.get("source_count") or 0),
+    }}
+
+
 @router.get("/publications/{publication_id}")
 def publication(publication_id: str, db: Session = Depends(get_db)):
     for row, data in visible(db):
@@ -658,6 +693,22 @@ def publication(publication_id: str, db: Session = Depends(get_db)):
                     'items':[{**item,'content_kind':content_kind(item['title']),
                               'availability':information_state(item)} for item in data['items']]}
     raise HTTPException(404, "数据尚未发布、已撤回或需重新审核")
+
+
+@router.get("/publications/{publication_id}/source")
+def publication_source(publication_id: str, db: Session = Depends(get_db)):
+    # Reuse the current publication gate before touching the archive. Never
+    # expose draft/private documents or serve active HTML from our own origin.
+    data = publication(publication_id, db)
+    doc = db.get(DocumentVersion, data["document"]["id"])
+    archive = db.get(DocumentArchive, doc.id)
+    if not archive or hashlib.sha256(archive.content).hexdigest() != doc.content_hash:
+        raise HTTPException(409, "原文归档校验失败，请打开官方来源")
+    text = doc.raw_text or ""
+    return {"text": text[:250000], "truncated": len(text) > 250000,
+        "url": doc.canonical_url, "version": doc.version_no,
+        "fetched_at": jsonable_encoder(doc.fetched_at),
+        "content_hash": doc.content_hash, "source": data["source"]["name"]}
 
 
 @router.get("/timeline")
@@ -671,8 +722,48 @@ def timeline(path: str | None = None, db: Session = Depends(get_db)):
             for field, label in (("start_time", "开始"), ("deadline", "截止/失效")):
                 if item[field]:
                     events.append({"item_id": item["id"], "title": item["title"], "label": label,
-                        "at": item[field], "publication_id": row.id, "document": data["document"]})
+                        "at": item[field], "publication_id": row.id, "document": data["document"],
+                        "paths": item["paths"], "source": data["source"], "location": item.get("location"),
+                        "description": item.get("description", "")})
     return sorted(events, key=lambda event: (event["at"], event["item_id"]))
+
+
+@router.post("/refresh")
+def refresh_sources(user: str = Depends(actor_id), db: Session = Depends(get_db)):
+    """Queue eligible official sources for an immediate background refresh."""
+    from .config import settings
+    from .notice_watch import MODE, permitted
+    from .intake_models import NoticeResource
+    from .intake_governance import gate_reason
+
+    if not settings.public_notice_watch_enabled and not settings.collector_enabled:
+        raise HTTPException(503, "官方信息更新服务暂不可用")
+    now = datetime.now(UTC)
+    endpoints = db.scalars(select(SourceEndpoint).join(Source, Source.id == SourceEndpoint.source_id).where(
+        SourceEndpoint.active.is_(True), SourceEndpoint.scheduled.is_(True),
+        SourceEndpoint.manual_takeover.is_(False), Source.active.is_(True),
+    )).all()
+    queued = 0
+    watch_ids = []
+    for endpoint in endpoints:
+        source = db.get(Source, endpoint.source_id)
+        config = json.loads(endpoint.adapter_config or "{}")
+        if config.get("collection_mode") == "public_notice_watch":
+            if settings.public_notice_watch_enabled and permitted(db, endpoint):
+                watch_ids.append(endpoint.id)
+            continue
+        if not settings.collector_enabled or gate_reason(db, endpoint, automated=True):
+            continue
+        endpoint.next_run_at = now
+        queued += 1
+    if watch_ids:
+        db.execute(update(NoticeResource).where(
+            NoticeResource.endpoint_id.in_(watch_ids), NoticeResource.kind == "index",
+            NoticeResource.status != "retired").values(next_check_at=now))
+        queued += len(watch_ids)
+    audit(db, user, "data_manual_refresh", "source_registry", {"sources": queued})
+    db.commit()
+    return {"status": "queued", "sources": queued}
 
 
 class RelationDecision(BaseModel):
@@ -789,6 +880,10 @@ def deliver_data_alerts():
             return 0
         available = {row.id for row, _ in visible(db)}
         for row in rows:
+            # Keep all follow-based updates (withdrawal/version and deadline)
+            # behind the same per-user notification preference.
+            if not preferences.get(row.user_id, True):
+                continue
             due = row.remind_at
             due = due.replace(tzinfo=UTC) if due and due.tzinfo is None else due
             if row.publication_id not in available:

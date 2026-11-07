@@ -12,7 +12,7 @@ class OpportunityOut(BaseModel):
     organization: str
     summary: str
     location: str
-    deadline: datetime
+    deadline: datetime | None
     source_url: str
     source_label: str
     trust_score: float
@@ -65,6 +65,7 @@ class ProfileIn(BaseModel):
 
 class ProfileOut(ProfileIn):
     user_id: str
+    email: str | None = None
     updated_at: datetime
 
 

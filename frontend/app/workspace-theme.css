@@ -1,0 +1,126 @@
+/* Single palette for signed-in surfaces, sourced from development-calendar.
+   Scoped to AppShell: the public landing/login presentation keeps its identity. */
+.app-frame {
+  --cm-paper: #fafaf7;
+  --cm-surface: #ffffff;
+  --cm-surface-subtle: #f1f3ed;
+  --cm-surface-muted: #edf0e9;
+  --cm-ink: #262e29;
+  --cm-muted: #606b62;
+  --cm-faint: #7d847a;
+  --cm-line: #e0e4dd;
+  --cm-line-strong: #92a491;
+  --cm-accent: #3d5849;
+  --cm-accent-hover: #2d4537;
+  --cm-accent-soft: #e9eee6;
+  --cm-accent-text: #344d3a;
+  --cm-selected: #eaf0e5;
+  --cm-focus: #52775f;
+  --cm-success-soft: #dce4d9;
+  --cm-warning: #ae843a;
+  --cm-warning-text: #70521b;
+  --cm-warning-soft: #fcf7eb;
+  --cm-warning-bar: #eee3cc;
+  --cm-warning-line: #e9d9b8;
+  --cm-info: #58738e;
+  --cm-info-text: #36516a;
+  --cm-info-soft: #dce5ee;
+  --cm-danger: #963f36;
+  --cm-danger-soft: #fcf0ec;
+  --cm-danger-line: #dfc3b9;
+  --cm-inverse: #ffffff;
+  --cm-shadow-rgb: 26 43 35;
+  --ink: var(--cm-ink);
+  --muted: var(--cm-muted);
+  --paper: var(--cm-paper);
+  --white: var(--cm-surface);
+  --surface: var(--cm-surface);
+  --line: var(--cm-line);
+  --blue: var(--cm-accent);
+  --blue-soft: var(--cm-accent-soft);
+  --green: var(--cm-accent);
+  --lime: var(--cm-accent-soft);
+  --shadow: 0 3px 12px rgb(var(--cm-shadow-rgb) / .04);
+  color-scheme: light;
+  color: var(--cm-ink);
+  background: var(--cm-paper);
+  min-height: 100vh;
+  accent-color: var(--cm-accent);
+  scrollbar-color: var(--cm-line-strong) var(--cm-paper);
+}
+body:has(.app-frame) {background: #fafaf7 !important; color: #262e29 !important;}
+.app-frame ::selection {background: var(--cm-success-soft); color: var(--cm-ink);}
+.app-frame :focus-visible {outline-color: var(--cm-focus) !important;}
+.app-frame :is(input, textarea)::placeholder {color: var(--cm-muted) !important; opacity: 1;}
+.app-frame .workspace-body {background: var(--cm-paper) !important;}
+.app-frame .workspace-topbar,
+.app-frame .workspace-sidebar {background: var(--cm-paper) !important; border-color: var(--cm-line) !important;}
+.app-frame .workspace-topbar .global-search {background: var(--cm-surface) !important; color: var(--cm-muted) !important; border-color: var(--cm-line) !important;}
+.app-frame .workspace-topbar .global-search input {background: transparent !important; border: 0 !important; color: var(--cm-ink) !important; box-shadow: none;}
+.app-frame .global-search input::placeholder {color: var(--cm-muted) !important;}
+.app-frame .workspace-topbar kbd {background: var(--cm-surface-subtle) !important; border-color: var(--cm-line) !important; color: var(--cm-muted) !important;}
+.app-frame .workspace-topbar .topbar-avatar {background: var(--cm-accent) !important; color: var(--cm-inverse) !important;}
+.app-frame .workspace-sidebar :is(.nav-item, .stream-item) {color: var(--cm-muted) !important;}
+.app-frame .workspace-sidebar :is(.nav-item, .stream-item):hover {background: var(--cm-surface-muted) !important; color: var(--cm-accent-text) !important;}
+.app-frame .workspace-sidebar :is(.nav-item.selected, .stream-item.active) {background: var(--cm-accent-soft) !important; color: var(--cm-accent-text) !important;}
+.app-frame .workspace-sidebar :is(.nav-item, .stream-item) :is(span, svg) {color: inherit !important;}
+.app-frame .workspace-sidebar :is(.nav-section-title, .sidebar-bottom, .sidebar-bottom a) {color: var(--cm-muted) !important;}
+.app-frame .workspace-sidebar .space-name-input {background: transparent !important; color: var(--cm-ink) !important;}
+.app-frame .workspace-topbar .motion-toggle {background: var(--cm-surface) !important; color: var(--cm-muted) !important; border-color: var(--cm-line) !important;}
+.app-frame .workspace-topbar .motion-toggle:hover {background: var(--cm-accent-soft) !important;}
+.app-frame .workspace-sidebar .motion-nav-marker {background: var(--cm-accent);}
+
+/* SVG assets inherit the same ink as their surrounding control. Logo/user images
+   are intentionally not recoloured. Mask is set by HugeIcon, no asset edits. */
+.app-frame span.huge-icon.huge-icon.huge-icon {
+  display: inline-block; flex: none; background-color: currentColor !important;
+  mask-repeat: no-repeat; mask-position: center; mask-size: contain;
+  filter: none !important;
+}
+.app-frame .page-heading-icon {background: var(--cm-accent-soft); color: var(--cm-accent); border-color: var(--cm-line); box-shadow: none;}
+.app-frame.app-frame :is(.plans-hero-icon, .plans-hero-icon svg) {color: var(--cm-inverse) !important;}
+.app-frame .workspace-footer {color: var(--cm-muted) !important; border-color: var(--cm-line) !important;}
+.app-frame .workspace-footer span {color: inherit !important;}
+.app-frame .brand-mark {background: transparent !important;}
+
+/* Primary/destructive/semantic states keep clear contrast even where old
+   global text rules used !important. Do not flatten every state to one colour. */
+.app-frame.app-frame :is(.button.primary, button.primary, form > button:not([type=button]), .search button) {
+  background: var(--cm-accent) !important; color: var(--cm-inverse) !important; border-color: var(--cm-accent) !important;
+}
+.app-frame.app-frame :is(.button.primary, button.primary, form > button:not([type=button]), .search button) :is(span, b, strong, small, svg) {color: inherit !important;}
+.app-frame.app-frame :is(.button.primary, button.primary, form > button:not([type=button]), .search button):hover {background: var(--cm-accent-hover) !important;}
+.app-frame.app-frame .danger {background: var(--cm-danger-soft) !important; color: var(--cm-danger) !important; border-color: var(--cm-danger-line) !important;}
+.app-frame.app-frame :is(.danger, .feedback, [role=alert]) :is(p, span, b, strong, small) {color: inherit !important;}
+.app-frame.app-frame :is(.badge, .type, .tagrow span) {background: var(--cm-surface-muted) !important; color: var(--cm-muted) !important; border-color: var(--cm-line) !important;}
+.app-frame.app-frame .badge.green {background: var(--cm-accent-soft) !important; color: var(--cm-accent-text) !important;}
+.app-frame.app-frame .badge.amber {background: var(--cm-warning-soft) !important; color: var(--cm-warning-text) !important; border-color: var(--cm-warning-line) !important;}
+.app-frame.app-frame :is(.success, .follow-feedback) {color: var(--cm-accent-text) !important;}
+.app-frame.app-frame .settings-toggle[aria-checked=true] {background: var(--cm-accent) !important; border-color: var(--cm-accent) !important;}
+.app-frame.app-frame .settings-toggle span {background: var(--cm-inverse) !important;}
+.app-frame.app-frame :is(.feedback, [role=alert]) {background: var(--cm-warning-soft) !important; color: var(--cm-warning-text) !important; border-color: var(--cm-warning-line) !important;}
+.app-frame.app-frame :is(.feedback.error, .eligibility-error, .startup-feedback.error) {background: var(--cm-danger-soft) !important; color: var(--cm-danger) !important; border-color: var(--cm-danger-line) !important;}
+.app-frame.app-frame :is(.settings-avatar, .settings-user-avatar) {background: var(--cm-accent) !important; color: var(--cm-inverse) !important;}
+.app-frame .startup-shell .startup-layout {background: transparent !important;}
+.app-frame .startup-shell .startup-layout :is(.startup-projects, .startup-metrics > div, .startup-step) {background: var(--cm-surface-subtle) !important;}
+.app-frame .startup-shell :is(.startup-project.active, .startup-tabs button.active) {background: var(--cm-accent-soft) !important; color: var(--cm-accent-text) !important; border-color: var(--cm-line-strong) !important;}
+.app-frame .startup-shell .startup-layout :is(input, textarea, select) {background: var(--cm-surface) !important; color: var(--cm-ink) !important;}
+
+/* Follow states keep their own surface/ink pair, including inside source dialogs. */
+.app-frame.app-frame .follow-panel .actions > button {opacity:1 !important; color:var(--cm-ink) !important; background:var(--cm-surface) !important; border-color:var(--cm-line-strong) !important;}
+.app-frame.app-frame .follow-panel .actions > button.primary:not(:disabled) {background:var(--cm-accent) !important; color:var(--cm-inverse) !important; border-color:var(--cm-accent) !important;}
+.app-frame.app-frame .follow-panel .actions > button.primary:not(:disabled):hover {background:var(--cm-accent-hover) !important;}
+.app-frame.app-frame .follow-panel .actions > button:disabled {background:var(--cm-surface-muted) !important; color:var(--cm-muted) !important; border-color:var(--cm-line) !important; cursor:not-allowed;}
+.app-frame.app-frame .follow-panel .actions > button :is(svg,span) {color:inherit !important; opacity:1;}
+.app-frame.app-frame .follow-panel .follow-feedback {background:var(--cm-accent-soft) !important; color:var(--cm-accent-text) !important; border:1px solid var(--cm-line-strong);}
+.app-frame.app-frame .follow-panel .follow-feedback :is(a,svg) {color:inherit !important;}
+.app-frame.app-frame .follow-panel .follow-feedback.is-error {background:var(--cm-danger-soft) !important; color:var(--cm-danger) !important; border-color:var(--cm-danger-line) !important;}
+
+/* Strong silhouettes instead of pale/white strokes on pastel notification tiles. */
+.app-frame.app-frame .notifications-hero-icon {background:var(--cm-accent) !important; color:var(--cm-inverse) !important;}
+.app-frame.app-frame :is(.notifications-summary-icon,.notification-section-icon) {width:38px; height:38px; background:var(--cm-accent-soft) !important; color:var(--cm-accent-text) !important; border:1px solid var(--cm-line-strong);}
+.app-frame.app-frame :is(.notifications-summary-icon,.notification-section-icon).is-blue {background:var(--cm-info-soft) !important; color:var(--cm-info-text) !important;}
+.app-frame.app-frame :is(.notifications-summary-icon,.notification-section-icon).is-amber {background:var(--cm-warning-bar) !important; color:var(--cm-warning-text) !important; border-color:var(--cm-warning-line);}
+.app-frame.app-frame :is(.notifications-summary-icon,.notification-section-icon).is-green {background:var(--cm-success-soft) !important; color:var(--cm-accent-hover) !important;}
+.app-frame.app-frame :is(.notifications-hero-icon,.notifications-summary-icon,.notification-section-icon) svg {color:inherit !important; stroke-width:2; opacity:1; width:20px; height:20px;}
+.app-frame.app-frame .notifications-hero-icon svg {width:26px; height:26px;}

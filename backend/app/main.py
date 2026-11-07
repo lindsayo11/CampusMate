@@ -5,11 +5,12 @@ from typing import Literal
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy import func, or_, select, text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from .auth import actor_id, require_admin
+from .auth import actor_id, authenticated_user, normalize_email, require_admin
 from .config import settings
 from .database import SessionLocal, get_db
 from .models import (
@@ -42,8 +43,8 @@ from .schemas import (
     TrackerItemOut,
     TrackerWriteIn,
 )
-from .seed import seed_if_empty
-from .notification_models import Notification
+from .seed import seed_if_empty, seed_public_content
+from .notification_models import Notification, NotificationPreference
 
 
 def to_out(row: Opportunity) -> OpportunityOut:
@@ -64,6 +65,11 @@ async def lifespan(_: FastAPI):
     with SessionLocal() as db:
         if settings.demo_mode:
             seed_if_empty(db)
+        elif settings.seed_public_content:
+            # Public reference material is useful in production too.  It is
+            # separate from demo-only fixtures and contains no user records.
+            seed_public_content(db)
+            db.commit()
     yield
 
 
@@ -87,6 +93,8 @@ app.include_router(corrections_admin)
 from .teams import router as teams_router
 
 app.include_router(teams_router)
+from .activity_teams import router as activity_teams_router
+app.include_router(activity_teams_router)
 from .team_tasks import router as team_tasks_router
 
 app.include_router(team_tasks_router)
@@ -106,6 +114,30 @@ def notifications(user: str = Depends(actor_id), db: Session = Depends(get_db),
     return db.scalars(stmt.order_by(Notification.id.desc()).limit(limit)).all()
 
 
+class NotificationPreferenceIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    source_updates: bool
+
+
+@app.get("/v1/notification-preferences")
+def get_notification_preferences(user: str = Depends(actor_id), db: Session = Depends(get_db)):
+    row = db.get(NotificationPreference, user)
+    return {"source_updates": row.source_updates if row else True}
+
+
+@app.put("/v1/notification-preferences")
+def update_notification_preferences(payload: NotificationPreferenceIn,
+                                    user: str = Depends(actor_id), db: Session = Depends(get_db)):
+    row = db.get(NotificationPreference, user)
+    if not row:
+        row = NotificationPreference(user_id=user, updated_at=datetime.now(UTC))
+    row.source_updates = payload.source_updates
+    row.updated_at = datetime.now(UTC)
+    db.add(row)
+    db.commit()
+    return {"source_updates": row.source_updates}
+
+
 @app.get("/v1/opportunities", response_model=OpportunityList)
 def list_opportunities(
     type: str | None = None,
@@ -113,8 +145,12 @@ def list_opportunities(
     db: Session = Depends(get_db),
     status: Literal["active", "expired", "all"] = "active",
 ):
-    stmt = select(Opportunity).where(Opportunity.status == "published")
+    # Policy directories and exam-only milestones belong in the catalog/calendar,
+    # not the list of activities users can apply for.
+    stmt = select(Opportunity).where(Opportunity.status == "published",
+        Opportunity.type.in_(["job", "contest", "civil_service", "volunteer", "club", "graduate"]))
     if status == "active":
+        # An unknown deadline does not establish that registration is open.
         stmt = stmt.where(Opportunity.deadline > datetime.now(UTC))
     elif status == "expired":
         stmt = stmt.where(Opportunity.deadline <= datetime.now(UTC))
@@ -165,13 +201,19 @@ def stats(db: Session = Depends(get_db)):
 
 
 @app.get("/v1/account")
-def account(user: str = Depends(actor_id)):
-    return {"user_id": user, "is_admin": user in {x.strip() for x in settings.admin_user_ids.split(",") if x.strip()}}
+def account(identity: dict[str, str | None] = Depends(authenticated_user)):
+    user = identity["id"]
+    return {"user_id": user, "email": identity["email"], "is_admin": user in {x.strip() for x in settings.admin_user_ids.split(",") if x.strip()}}
 
 
 @app.get("/v1/profile", response_model=ProfileOut)
-def get_profile(user_id: str = Depends(actor_id), db: Session = Depends(get_db)):
+def get_profile(
+    user_id: str = Depends(actor_id),
+    db: Session = Depends(get_db),
+    identity: dict[str, str | None] = Depends(authenticated_user),
+):
     row = db.get(Profile, user_id)
+    created_profile = row is None
     if not row:
         now = datetime.now(UTC)
         row = Profile(
@@ -186,8 +228,39 @@ def get_profile(user_id: str = Depends(actor_id), db: Session = Depends(get_db))
         )
         db.add(row)
         db.commit()
+    # Give every authenticated account a useful qualification-test fixture.
+    # Only blank values are filled, so later user edits are preserved.
+    profile_defaults = {
+        "school": "中山大学", "college": "计算机学院", "grade": "大四",
+        "major": "计算机科学与技术", "interests": "AI,开源",
+        "skills": "Python,产品设计", "weekly_hours": 8, "degree": "本科",
+        "target_year": 2027, "target_path": "recommendation_exemption",
+        "target_region": "北京", "language_score": "CET-6 528",
+        "research_exp": "参与校园信息检索项目，负责数据整理与实验记录。",
+        "internship_exp": "在校内实验室完成一段产品研发实践。",
+        "competition_exp": "参加校级创新创业竞赛并完成项目答辩。",
+        "startup_exp": "暂无正式创业经历，完成过一次商业计划书练习。",
+    }
+    profile_changed = False
+    for field, value in profile_defaults.items():
+        current_value = getattr(row, field, None)
+        is_placeholder_school = field == "school" and current_value in {"示范大学", "绀鸿寖澶у"}
+        if created_profile or current_value in (None, "") or is_placeholder_school:
+            setattr(row, field, value)
+            profile_changed = True
+    if profile_changed:
+        row.updated_at = datetime.now(UTC)
+        db.add(row)
+        db.commit()
+    email = identity.get("email") if isinstance(identity, dict) else None
+    if email and row.email != email:
+        row.email = normalize_email(email)
+        row.updated_at = datetime.now(UTC)
+        db.add(row)
+        db.commit()
     return ProfileOut(
         user_id=row.user_id,
+        email=row.email,
         display_name=row.display_name,
         discoverable=row.discoverable,
         school=row.school,
@@ -238,6 +311,9 @@ def path_timeline(path_id: int, db: Session = Depends(get_db)):
 
 @app.get("/v1/plans", response_model=list[PlanOut])
 def list_plans(user_id: str = Depends(actor_id), db: Session = Depends(get_db)):
+    if settings.seed_starter_plans:
+        from .seed import ensure_starter_plans
+        ensure_starter_plans(db, user_id)
     return db.scalars(select(UserPlan).where(UserPlan.user_id == user_id).order_by(UserPlan.due_date, UserPlan.id)).all()
 
 
@@ -278,13 +354,14 @@ def eligibility_check(
         raise HTTPException(404, "机会不存在或已下线")
     profile = get_profile(user_id, db)
     rules = db.scalars(
-        select(EligibilityRule).where(EligibilityRule.opportunity_id == payload.opportunity_id)
+        select(EligibilityRule).where(EligibilityRule.opportunity_id == payload.opportunity_id,
+                                      EligibilityRule.review_status == "verified")
     ).all()
     results: list[RuleResult] = []
     for rule in rules:
         actual = str(getattr(profile, rule.field, ""))
         from .eligibility_engine import evaluate
-        passed = evaluate(actual, rule.expected, rule.operator)
+        passed = evaluate(actual, rule.expected, rule.operator, verified=rule.logic_group in {"all", ""})
         results.append(
             RuleResult(
                 label=rule.label,
@@ -300,6 +377,35 @@ def eligibility_check(
         opportunity_id=payload.opportunity_id,
         results=results,
     )
+
+
+@app.get("/v1/eligibility/options")
+def eligibility_options(user: str = Depends(actor_id), db: Session = Depends(get_db)):
+    from urllib.parse import urlparse
+    rows = db.scalars(select(Opportunity).where(Opportunity.status == "published",
+        Opportunity.type.in_(["job", "contest", "civil_service", "volunteer", "club", "graduate"]))
+        .order_by(Opportunity.fetched_at.desc(), Opportunity.id)).all()
+    # Demo fixtures must not be presented as genuine sourced application choices.
+    rows = [row for row in rows if urlparse(row.source_url).scheme in {"http", "https"}
+            and (urlparse(row.source_url).hostname or "") not in {"example.edu", "example.com", "example.org"}]
+    grouped = {}
+    if rows:
+        for rule in db.scalars(select(EligibilityRule)
+                .where(EligibilityRule.opportunity_id.in_([row.id for row in rows]))
+                .order_by(EligibilityRule.id)).all():
+            grouped.setdefault(rule.opportunity_id, []).append(rule)
+    items = []
+    for row in rows:
+        rules = grouped.get(row.id, [])
+        verified = [rule for rule in rules if rule.review_status == "verified"]
+        items.append({**to_out(row).model_dump(), "rule_count": len(verified),
+            "pending_count": sum(rule.review_status == "pending" for rule in rules),
+            "rules": [{"label": rule.label, "field": rule.field, "expected": rule.expected,
+                       "evidence": rule.evidence, "source_url": rule.source_url,
+                       "supported": rule.operator in {"in", "equals", "contains_any"}
+                                    and rule.logic_group in {"all", ""}} for rule in verified]})
+    return {"items": items, "total": len(items),
+            "with_rules": sum(item["rule_count"] > 0 for item in items)}
 
 
 def tracker_out(row: TrackerItem, db: Session) -> TrackerItemOut:

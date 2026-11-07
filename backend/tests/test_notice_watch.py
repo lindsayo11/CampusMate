@@ -155,6 +155,17 @@ def test_monitor_admin_auth():
         assert client.get('/v1/admin/notice-watch').status_code==200
 
 
+def test_manual_refresh_queues_watch_index_for_authenticated_user(monkeypatch):
+    with TestClient(app) as client:
+        eid,_=setup(monkeypatch)
+        response=client.post('/v1/data/refresh',headers={'X-User-Id':'student'})
+        assert response.status_code==200 and response.json()['sources']==1
+        with SessionLocal() as db:
+            row=db.scalar(select(NoticeResource).where(NoticeResource.endpoint_id==eid,NoticeResource.kind=='index'))
+            next_check=row.next_check_at.replace(tzinfo=UTC) if row.next_check_at.tzinfo is None else row.next_check_at
+            assert next_check<=datetime.now(UTC)+timedelta(seconds=1)
+
+
 def test_install_updates_columns_without_fabricating_approval_or_resuming_pause(monkeypatch,tmp_path):
     with TestClient(app):
         eid,base=setup(monkeypatch)
@@ -169,6 +180,7 @@ def test_install_updates_columns_without_fabricating_approval_or_resuming_pause(
         with SessionLocal() as db:
             ep=db.get(SourceEndpoint,eid)
             assert not ep.scheduled and ep.license_status=='unknown'
+            assert ep.fetch_interval=='8h'
             old=db.scalar(select(NoticeResource).where(NoticeResource.endpoint_id==eid,NoticeResource.url==base+'list'))
             assert old.status=='retired'
             assert watch.config_for(ep)['index_urls']==[base+'new-column']

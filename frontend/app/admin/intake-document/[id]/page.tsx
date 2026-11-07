@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { privateApi } from "@/lib/session-api";
 
 type DocumentDetail = { id: string; canonical_url: string; version_no: number; fetched_at: string; content_hash: string; raw_text: string; diff: string };

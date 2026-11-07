@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import {useEffect, useRef, useState} from "react";
 import {apiBase} from "@/lib/api";
 import {Icon,EmptyState} from "@/components/ui";
@@ -65,8 +65,9 @@ export function RoomChat({roomId,myId}:{roomId:string;myId?:string}) {
   try {await request(`/v1/rooms/${roomId}/messages`,{body});setBody("");await synchronize.current();}
   catch{setStatus("发送未确认，请检查消息记录后再重试，避免重复发送");}finally{setSending(false);}
  }
+ const senderLabel=(sender:string)=>sender==='campusmate-guide'?'校伴引导成员':sender;
  return <div className="room-chat"><div className="chat-toolbar"><span role="status">{status}</span><button onClick={()=>void synchronize.current()}>刷新消息</button></div>
   {hasOlder&&<button disabled={loadingOlder} onClick={()=>void older()}>{loadingOlder?"加载中…":"加载更早消息"}</button>}
-  <div className="message-history" aria-label="聊天记录">{!messages.length&&<EmptyState icon="users" title="还没有消息" description="打个招呼，说说你正在准备的事情。"/>}{messages.map(m=><article className="chat-message" key={m.id}><span className="user-avatar">{m.sender===myId?'我':m.sender.slice(0,1).toUpperCase()}</span><div><b title={m.sender}>{m.sender===myId?'我':m.sender}</b>{m.created_at&&<time>{new Date(m.created_at).toLocaleString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</time>}<p>{m.body}</p></div>{!m.hidden&&<button onClick={async()=>{try{await request(`/v1/messages/${m.id}/report`,{reason:"用户请求人工复核"});setStatus("举报已提交，等待人工处理");}catch(error){setStatus(String(error));}}}>举报</button>}</article>)}</div>
+  <div className="message-history" aria-label="聊天记录">{!messages.length&&<EmptyState icon="users" title="还没有消息" description="打个招呼，说说你正在准备的事情。"/>}{messages.map(m=><article className="chat-message" key={m.id}><span className="user-avatar">{m.sender===myId?'我':senderLabel(m.sender).slice(0,1)}</span><div><b title={m.sender}>{m.sender===myId?'我':senderLabel(m.sender)}</b>{m.created_at&&<time>{new Date(m.created_at).toLocaleString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</time>}<p>{m.body}</p></div>{!m.hidden&&<button onClick={async()=>{try{await request(`/v1/messages/${m.id}/report`,{reason:"用户请求人工复核"});setStatus("举报已提交，等待人工处理");}catch(error){setStatus(String(error));}}}>举报</button>}</article>)}</div>
   <form className="chat-composer" onSubmit={send}><div className="chat-compose-box"><label htmlFor={'message-'+roomId}>当前房间 · 消息</label><textarea id={'message-'+roomId} aria-label="消息" placeholder="发送一条消息，开始讨论…" maxLength={2000} required value={body} onChange={e=>setBody(e.target.value)}/><div className="composer-tools"><span>仅房间成员可查看 · 最多 2,000 字</span><button className="primary" disabled={sending||!body.trim()}>{sending?"发送中…":"发送"}<Icon name="send" size={13}/></button></div></div></form></div>;
 }

@@ -127,7 +127,8 @@ def review(review_id: int, action: Literal['approve', 'reject'], user: str = Dep
         data = payload.model_dump(exclude={'tags', 'source_url', 'rules'})
         db.add(Opportunity(id=oid, **data, source_url=str(payload.source_url), tags=','.join(payload.tags), status='published', trust_score=0.8))
         for rule in payload.rules:
-            db.add(EligibilityRule(opportunity_id=oid, **rule.model_dump(exclude={'source_url'}), source_url=str(rule.source_url)))
+            db.add(EligibilityRule(opportunity_id=oid, **rule.model_dump(exclude={'source_url'}),
+                source_url=str(rule.source_url), review_status='verified', extractor='editorial'))
         details['opportunity_id'] = oid
         from .knowledge import record_publication
         record_publication(db, review_id, oid)

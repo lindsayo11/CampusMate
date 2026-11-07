@@ -31,6 +31,10 @@ def run_cycle():
     deliver_data_alerts()
     from .development_agent import deliver_plan_reminders
     deliver_plan_reminders()
+    from .development_insights import process_one as process_development_insight
+    process_development_insight()
+    from .channel_insights import process_one as process_channel_insight
+    process_channel_insight()
     from .notice_watch import run_cycle as watch_cycle
     watch_cycle()
     from .collection_exchange import run_cycle as exchange_cycle

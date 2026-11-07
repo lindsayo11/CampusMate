@@ -1,7 +1,7 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import type {CSSProperties, ReactNode} from "react";
 
-export type IconName = "home"|"search"|"bell"|"book"|"check"|"users"|"spark"|"arrow"|"plus"|"close"|"menu"|"calendar"|"settings"|"shield"|"logout"|"chevron"|"hash"|"send"|"file"|"clock"|"filter"|"link";
+export type IconName = "home"|"search"|"bell"|"book"|"check"|"users"|"spark"|"arrow"|"plus"|"close"|"menu"|"calendar"|"settings"|"shield"|"logout"|"chevron"|"hash"|"send"|"file"|"clock"|"filter"|"link"|"refresh";
 const lines: Record<IconName, ReactNode> = {
  home:<><path d="m3 10 9-7 9 7v10H3Z"/><path d="M9 20v-7h6v7"/></>,
  search:<><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></>,
@@ -17,19 +17,23 @@ const lines: Record<IconName, ReactNode> = {
  logout:<path d="M9 3H3v18h6m6-14 5 5-5 5m-7-5h12"/>,chevron:<path d="m9 5 7 7-7 7"/>,
  hash:<path d="m9 3-2 18m10-18-2 18M3 8h18M2 16h18"/>,send:<><path d="m3 3 19 9-19 9 3-9Z"/><path d="M6 12h16"/></>,
  file:<><path d="M5 2h9l5 5v15H5ZM14 2v6h5M8 12h8m-8 4h6"/></>,clock:<><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></>,
- filter:<path d="M3 5h18M6 12h12m-9 7h6"/>,link:<><path d="m10 7 3-3a5 5 0 0 1 7 7l-3 3M14 17l-3 3a5 5 0 0 1-7-7l3-3m1 9 8-8"/></>,
+ filter:<path d="M3 5h18M6 12h12m-9 7h6"/>,link:<><path d="m10 7 3-3a5 5 0 0 1 7 7l-3 3M14 17l-3 3a5 5 0 0 1-7-7l3-3m1 9 8-8"/></>,refresh:<><path d="M20 11a8 8 0 1 0 1 5"/><path d="M20 4v7h-7"/></>,
 };
 export function Icon({name,size=18}:{name:IconName;size?:number}) {return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{lines[name]}</svg>}
+export type HugeIconName = "dashboard"|"search"|"notification"|"settings"|"book"|"checklist"|"users"|"sparkles"|"calendar"|"briefcase"|"idea"|"shield"|"analytics"|"file"|"compass"|"rocket"|"mail"|"lock"|"arrow";
+const hugeIconFiles:Record<HugeIconName,string>={dashboard:"dashboard-square-01.svg",search:"search-01.svg",notification:"notification-03.svg",settings:"settings-01.svg",book:"book-02.svg",checklist:"check-list.svg",users:"user-group.svg",sparkles:"sparkles.svg",calendar:"calendar-03.svg",briefcase:"briefcase-01.svg",idea:"idea-01.svg",shield:"shield-01.svg",analytics:"analytics-01.svg",file:"file-01.svg",compass:"compass-01.svg",rocket:"rocket-01.svg",mail:"ai-mail-01.svg",lock:"ai-lock.svg",arrow:"arrow-right-02.svg"};
+export function HugeIcon({name,size=20,className=""}:{name:HugeIconName;size?:number;className?:string}){return <span className={`huge-icon ${className}`} style={{width:size,height:size,maskImage:`url(/landing/assets/icons/${hugeIconFiles[name]})`}} aria-hidden="true"/>}
 export const streams = [
- {code:"recommendation_exemption",name:"保研推免",color:"#568f6c",note:"成绩、科研与申请准备"},
- {code:"domestic_postgraduate_exam",name:"国内考研",color:"#4b8eb6",note:"院校信息与备考节点"},
- {code:"overseas_study",name:"境外留学",color:"#8b78b0",note:"项目选择与申请材料"},
- {code:"national_civil_service",name:"考公考编",color:"#c18b46",note:"岗位、资格与考试安排"},
- {code:"employment",name:"实习就业",color:"#5a9eab",note:"实习、招聘与求职准备"},
- {code:"entrepreneurship",name:"创新创业",color:"#bb7789",note:"项目验证与支持政策"},
+ {code:"recommendation_exemption",name:"保研推免",color:"var(--cm-accent)",note:"成绩、科研与申请准备"},
+ {code:"domestic_postgraduate_exam",name:"国内考研",color:"var(--cm-accent)",note:"院校信息与备考节点"},
+ {code:"overseas_study",name:"境外留学",color:"var(--cm-accent)",note:"项目选择与申请材料"},
+ {code:"national_civil_service",name:"考公考编",color:"var(--cm-accent)",note:"岗位、资格与考试安排"},
+ {code:"employment",name:"实习就业",color:"var(--cm-accent)",note:"实习、招聘与求职准备"},
+ {code:"entrepreneurship",name:"创新创业",color:"var(--cm-accent)",note:"项目验证与支持政策"},
 ];
-export function PageHeading({eyebrow,title,description,children}:{eyebrow?:string;title:string;description?:string;children?:ReactNode}){return <header className="page-heading"><div>{eyebrow&&<p className="eyebrow">{eyebrow}</p>}<h1>{title}</h1>{description&&<p className="lead">{description}</p>}</div>{children&&<div className="heading-actions">{children}</div>}</header>}
-export function TopicBar({title,color="#4b8eb6",children}:{title:string;color?:string;children?:ReactNode}){return <div className="topic-bar" style={{"--topic-color":color} as CSSProperties}><span className="topic-label"><Icon name="hash" size={15}/>{title}</span>{children&&<span className="topic-extra">{children}</span>}</div>}
+function headingIcon(title:string,eyebrow?:string):HugeIconName{const value=`${title} ${eyebrow||""}`;if(/通知|inbox/i.test(value))return "notification";if(/设置|setting/i.test(value))return "settings";if(/计划|action|时间线|calendar/i.test(value))return "calendar";if(/团队|team|交流|conversation/i.test(value))return "users";if(/机会|opportun|就业|career/i.test(value))return "briefcase";if(/创业|venture|entrepreneur/i.test(value))return "idea";if(/原文|source|依据|knowledge/i.test(value))return "book";if(/资格|eligibility|隐私|privacy|安全|security/i.test(value))return "shield";if(/运营|admin|监测|数据|data|coverage/i.test(value))return "analytics";return "sparkles"}
+export function PageHeading({eyebrow,title,description,children,icon}:{eyebrow?:string;title:string;description?:string;children?:ReactNode;icon?:HugeIconName}){return <header className="page-heading"><div><div className="page-heading-title"><span className="page-heading-icon"><HugeIcon name={icon||headingIcon(title,eyebrow)} size={22}/></span><h1>{title}</h1></div></div>{children&&<div className="heading-actions">{children}</div>}</header>}
+export function TopicBar({title,children}: {title:string;color?:string;children?:ReactNode}){return <div className="topic-bar" style={{"--topic-color":"var(--cm-accent)"} as CSSProperties}><span className="topic-label"><Icon name="hash" size={15}/>{title}</span>{children&&<span className="topic-extra">{children}</span>}</div>}
 export function EmptyState({title,description,href,label,icon="search"}:{title:string;description?:string;href?:string;label?:string;icon?:IconName}){return <div className="empty-state"><span className="empty-icon"><Icon name={icon} size={25}/></span><h3>{title}</h3>{description&&<p>{description}</p>}{href&&<Link className="button secondary" href={href}>{label||"去看看"}<Icon name="arrow" size={15}/></Link>}</div>}
 export function ContextRail({children}:{children:ReactNode}){return <aside className="context-rail" aria-label="相关信息">{children}</aside>}
 export function dateLabel(value:string|null|undefined){if(!value)return "未注明日期";const d=new Date(value);return Number.isNaN(d.getTime())?"日期待核对":d.toLocaleDateString("zh-CN",{month:"short",day:"numeric",timeZone:"Asia/Shanghai"})}

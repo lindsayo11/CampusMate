@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import {cookies} from "next/headers";
 export async function AccountLinks(){
  let admin=false;try{const token=(await cookies()).get("cm_access")?.value;const r=await fetch((process.env.API_INTERNAL_URL||"http://127.0.0.1:8000")+"/v1/account",{cache:"no-store",signal:AbortSignal.timeout(3000),headers:token?{Authorization:`Bearer ${token}`}:{}});if(r.ok)admin=(await r.json()).is_admin===true}catch{}

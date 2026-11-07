@@ -145,6 +145,9 @@ def extract_isolated(data: bytes, format: str) -> Parsed:
         backend_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         env = os.environ.copy()
         env["PYTHONPATH"] = backend_root + os.pathsep + env.get("PYTHONPATH", "")
+        # The child returns JSON containing extracted source text. Pin its text
+        # streams to UTF-8 so Windows locale code pages cannot corrupt Chinese.
+        env["PYTHONIOENCODING"] = "utf-8"
         result = subprocess.run([sys.executable, "-m", "app.parsers", format], input=data,
                                 capture_output=True, timeout=120 if format=='pdf' else 45, check=False, cwd=backend_root, env=env)
     except subprocess.TimeoutExpired as exc:

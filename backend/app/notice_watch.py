@@ -319,6 +319,8 @@ def process_once(now=None, endpoint_ids=None):
                         if not doc.deleted_at:
                             if auto_publish(db,doc):
                                 publish_collected_document(db,doc)
+                                from .development_insights import enqueue as enqueue_insight
+                                enqueue_insight(db,doc)
                         row.document_id = doc.id
                         if row.kind=='attachment' and row.parent_url:
                             parent=db.scalar(select(NoticeResource).where(NoticeResource.endpoint_id==ep.id,
@@ -492,3 +494,22 @@ def rescan(endpoint_id:str,user=Depends(require_admin),db=Depends(get_db)):
     audit(db,user,'notice_watch_rescan',endpoint_id)
     db.commit()
     return {'status':'queued'}
+
+
+@router.post('/rescan-all')
+def rescan_all(user=Depends(require_admin),db=Depends(get_db)):
+    """Queue the six-route watch frontier for an immediate bounded refresh."""
+    if not settings.public_notice_watch_enabled:
+        raise HTTPException(422,'持续采集服务未启用')
+    now = datetime.now(UTC)
+    endpoints = [ep for ep in db.scalars(select(SourceEndpoint)).all()
+                 if config_for(ep).get('collection_mode') == MODE and permitted(db, ep)]
+    endpoint_ids = [ep.id for ep in endpoints]
+    if endpoint_ids:
+        db.execute(update(NoticeResource).where(
+            NoticeResource.endpoint_id.in_(endpoint_ids),
+            NoticeResource.kind == 'index', NoticeResource.status != 'retired'
+        ).values(next_check_at=now))
+    audit(db,user,'notice_watch_rescan_all','source_registry',{'sources':len(endpoint_ids)})
+    db.commit()
+    return {'status':'queued','sources':len(endpoint_ids),'interval_hours':8}

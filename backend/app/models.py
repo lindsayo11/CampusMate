@@ -14,7 +14,9 @@ class Opportunity(Base):
     organization: Mapped[str] = mapped_column(String(120))
     summary: Mapped[str] = mapped_column(Text)
     location: Mapped[str] = mapped_column(String(80))
-    deadline: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+    # Official portals and campus activities may not publish a single
+    # deadline. None means "check the source", never an invented date.
+    deadline: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
     source_url: Mapped[str] = mapped_column(String(500))
     source_label: Mapped[str] = mapped_column(String(100))
     trust_score: Mapped[float] = mapped_column(Float, default=0.8)
@@ -26,6 +28,9 @@ class Opportunity(Base):
 class Profile(Base):
     __tablename__ = "profiles"
     user_id: Mapped[str] = mapped_column(String(80), primary_key=True)
+    # Sourced from the authenticated Supabase identity. It is only used for
+    # exact-match teammate lookup and is never returned in public listings.
+    email: Mapped[str | None] = mapped_column(String(320), nullable=True, index=True)
     display_name: Mapped[str] = mapped_column(String(40), default="同学", server_default="同学")
     discoverable: Mapped[bool] = mapped_column(Boolean, default=False, server_default="0")
     school: Mapped[str] = mapped_column(String(120), default="示范大学")

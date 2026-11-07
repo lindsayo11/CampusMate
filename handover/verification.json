@@ -1,0 +1,47 @@
+{
+  "verified_at": "2026-10-01T01:51:01.972087+00:00",
+  "version": "0.34.0-notice-watch.1",
+  "implementation_checks": {
+    "backend_tests_passed": 167,
+    "frontend_tests_passed": 19,
+    "production_build": "passed",
+    "sqlite_nonempty_backup_restore": "64 tables matched",
+    "browser": "desktop, 390px viewport, pause/resume/rescan checked"
+  },
+  "handover_checks": {
+    "fresh_python_install": "passed",
+    "fresh_npm_ci": "passed",
+    "fresh_next_build": "passed",
+    "directory_with_spaces": "passed",
+    "public_snapshot_private_tables": "empty",
+    "database_integrity": "ok",
+    "foreign_key_check": "no violations",
+    "web_pages_http_200": [
+      "/",
+      "/data",
+      "/data/coverage",
+      "/tracker",
+      "/admin/data",
+      "/admin/notice-watch",
+      "/data/ad631803-6c68-4cf6-9bee-ffc6cfa786fb"
+    ],
+    "admin_permission": "student rejected with 403",
+    "api_web_worker_start": "passed",
+    "occupied_port": "rejected before starting services",
+    "original_public_snapshot_unchanged": "passed",
+    "graceful_shutdown": "passed; both ports closed",
+    "zip_integrity": "passed (CRC and per-file SHA-256; enforced by package_source.py)",
+    "secret_runtime_file_exclusion": "passed; no local env, local-data, dependency/build directories or high-confidence private-key patterns"
+  },
+  "not_verified": [
+    "Real Windows",
+    "Real Supabase login/email",
+    "Production PostgreSQL",
+    "Public Docker/TLS deployment"
+  ],
+  "runtime": {
+    "python": "Python 3.14.3",
+    "node": "v25.8.1",
+    "platform": "darwin"
+  }
+}

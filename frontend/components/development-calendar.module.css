@@ -1,0 +1,156 @@
+.page {
+  --paper: var(--cm-paper, #fafaf7);
+  --ink: var(--cm-ink, #262e29);
+  --muted: var(--cm-muted, #606b62);
+  --line: var(--cm-line, #e0e4dd);
+  --forest: var(--cm-accent, #3d5849);
+  color: var(--ink) !important;
+  background: var(--paper) !important;
+  padding: 28px clamp(24px, 2.6vw, 48px) 34px;
+  min-width: 0;
+  min-height: calc(100vh - 112px);
+  font-size: 14px;
+}
+.page :where(h1, h2, p, span, b, strong, label, small, svg, a) {color: inherit !important;}
+.page *, .page *::before, .page *::after {box-sizing: border-box;}
+.page h1, .page h2, .page p {margin: 0; color: inherit !important;}
+.page button, .page input, .page select {font: inherit; color: inherit !important;}
+.page button {cursor: pointer; border: 0 !important; background: none !important; box-shadow: none; min-height: 0;}
+.page button:disabled {cursor: default; opacity: .45;}
+.page a {color: inherit !important; text-decoration: none;}
+.page button:focus-visible, .page a:focus-visible, .page input:focus-visible, .page select:focus-visible {outline: 2px solid var(--cm-focus, #52775f); outline-offset: 3px;}
+.page svg {flex-shrink: 0;}
+.pageHeader, .titleGroup, .headerActions, .toolbar, .monthToolbar, .monthNav, .sectionHeading, .listFilters, .listItemHead, .dialogTop, .detailActions {display: flex; align-items: center;}
+.pageHeader {justify-content: space-between; gap: 24px; margin-bottom: 25px;}
+.titleGroup {gap: 13px;}
+.pageIcon {display: grid; place-items: center; width: 44px; height: 44px; background: var(--cm-accent-soft, #ebf0e9) !important; border: 1px solid var(--cm-line, #e2e8df) !important; border-radius: 12px !important; color: var(--forest) !important;}
+.page h1 {font-size: 25px; line-height: 1.35; letter-spacing: -.6px; font-weight: 650;}
+.titleGroup p {font-size: 12px; margin-top: 4px; color: var(--muted) !important;}
+.headerActions {gap: 12px;}
+.page .iconButton {width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: 1px solid var(--line) !important; border-radius: 8px !important; background: var(--paper) !important;}
+.page .iconButton:hover, .page .todayButton:hover {background: var(--cm-surface-muted, #edf0e9) !important;}
+.iconButton > span {display: inline-flex;}
+.page .addButton {display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--forest) !important; color: var(--cm-inverse, #fff) !important; border: 1px solid var(--forest) !important; border-radius: 8px !important; padding: 10px 15px; font-size: 13px; font-weight: 550; white-space: nowrap;}
+.page .addButton:hover {background: var(--cm-accent-hover, #2d4537) !important;}
+.toolbar {justify-content: flex-end; gap: 10px; padding-bottom: 26px; border-bottom: 1px solid var(--line); margin-bottom: 26px;}
+.search {display: flex; align-items: center; gap: 10px; min-width: 210px; flex: 1; max-width: 470px; padding: 0 14px; height: 43px; border: 1px solid var(--line) !important; border-radius: 9px !important; color: var(--muted) !important; background: var(--cm-surface, #fff) !important;}
+.page .search input {border: 0 !important; padding: 0; border-radius: 0 !important; background: transparent !important; box-shadow: none; height: 100%; width: 100%; min-width: 0; font-size: 13px; color: var(--ink) !important;}
+.page input::placeholder {color: var(--muted) !important; opacity: 1;}
+.page select {height: 43px; width: auto; min-width: 116px; padding: 0 31px 0 13px; border: 1px solid var(--line) !important; border-radius: 8px !important; background-color: var(--paper) !important; box-shadow: none; font-size: 13px;}
+.page .favoriteFilter {height: 43px; display: inline-flex; align-items: center; gap: 9px; padding: 0 16px; border: 1px solid var(--line) !important; border-radius: 8px !important; white-space: nowrap;}
+.page .filterActive {border-color: var(--cm-line-strong, #92a491) !important; background: var(--cm-accent-soft, #e9eee6) !important; color: var(--forest) !important;}
+.notice {display: flex; gap: 8px; align-items: center; padding: 11px 14px; margin: -10px 0 22px; border: 1px solid var(--cm-warning-line, #e9d9b8) !important; border-radius: 7px !important; background: var(--cm-warning-soft, #fcf7eb) !important; color: var(--cm-warning-text, #715a2e) !important; font-size: 12px; line-height: 1.6;}
+.notice a, .notice button {display: inline-flex; align-items: center; gap: 5px; margin-left: auto; padding: 2px; text-decoration: underline; white-space: nowrap;}
+.layout {display: grid; grid-template-columns: minmax(0, 1fr) minmax(275px, 30%); gap: clamp(22px, 2.3vw, 38px); align-items: start;}
+.monthPanel {min-width: 0;}
+.monthToolbar {justify-content: space-between; gap: 8px; min-height: 42px;}
+.monthNav {gap: 12px;}
+.page .monthNav h2 {font-size: clamp(23px, 1.85vw, 32px); letter-spacing: -.8px; font-weight: 650; white-space: nowrap; min-width: 150px; text-align: center; font-variant-numeric: tabular-nums;}
+.previous svg {transform: rotate(180deg);}
+.page .todayButton {padding: 7px 13px; height: 36px; margin-left: 5px; border: 1px solid var(--line) !important; border-radius: 8px !important; font-size: 13px;}
+.monthCount {color: var(--muted) !important; font-size: 12px; white-space: nowrap;}
+.legend {display: flex; justify-content: flex-end; gap: 16px; margin: 24px 0 15px; font-size: 12px; color: var(--muted) !important; flex-wrap: wrap;}
+.legend span, .detailKind {display: inline-flex; align-items: center; gap: 6px;}
+.greenDot, .goldDot, .blueDot {display: inline-block; width: 7px; height: 7px; border-radius: 50% !important; flex: 0 0 auto;}
+.greenDot {background: var(--cm-accent, #49624f) !important;}
+.goldDot {background: var(--cm-warning, #ae843a) !important;}
+.blueDot {background: var(--cm-info, #58738e) !important;}
+.calendarScroll {overflow: auto; max-height: max(420px, calc(100vh - 390px)); scrollbar-width: thin; scrollbar-color: var(--cm-line-strong, #cbd2c9) transparent;}
+.calendar {border: 1px solid var(--line) !important; border-radius: 3px !important; overflow: hidden; min-width: 540px;}
+.weekdays {display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); height: 40px; align-items: center; background: var(--cm-surface-subtle, #f1f3ed) !important; border-bottom: 1px solid var(--line); color: var(--muted) !important; font-size: 12px; text-align: center;}
+.weekdays span {padding: 12px 0; border-right: 1px solid var(--line);}
+.weekdays span:last-child {border: 0 !important;}
+.week {height: clamp(136px, 14vh, 156px); position: relative; border-bottom: 1px solid var(--line);}
+.week:last-child {border-bottom: 0;}
+.days {height: 100%; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));}
+.dayCell {border-right: 1px solid var(--line); padding: 6px 7px;}
+.dayCell:last-child {border-right: 0;}
+.weekend {background: var(--cm-paper, #f4f5f0) !important;}
+.selectedCell {background: var(--cm-selected, #eaf0e5) !important; box-shadow: inset 0 0 0 1px rgb(var(--cm-shadow-rgb) / 1);}
+.page .dayNumber {width: 28px; height: 28px; padding: 0; font-size: 13px; line-height: 28px; border-radius: 50% !important; font-variant-numeric: tabular-nums;}
+.page .dayNumber:hover {background: var(--cm-accent-soft, #e2e9dd) !important;}
+.page .outside {color: var(--muted) !important;}
+.page .isToday {background: var(--forest) !important; color: var(--cm-inverse, white) !important;}
+.page .isToday:hover {background: var(--cm-accent-hover, #2d4537) !important;}
+.eventLanes {position: absolute; top: 40px; left: 0; right: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-auto-rows: 22px; row-gap: 4px; pointer-events: none;}
+.page .eventBar {min-width: 0; margin: 0 4px; padding: 2px 7px; border-radius: 4px !important; display: flex; align-items: center; gap: 10px; font-size: 12px; line-height: 18px; text-align: left; pointer-events: auto; border: 1px solid transparent !important; overflow: hidden;}
+.eventBar span {overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;}
+.eventBar small {white-space: nowrap; margin-left: auto; font-size: 12px; opacity: .9;}
+.page .eventBar:hover {filter: brightness(.95); border-color: currentColor !important;}
+.page .period, .page .start {background: var(--cm-success-soft, #dce4d9) !important; color: var(--cm-accent-text, #344d3a) !important;}
+.page .deadline {background: var(--cm-warning-bar, #eee3cc) !important; color: var(--cm-warning-text, #70521b) !important;}
+.page .plan {background: var(--cm-info-soft, #dce5ee) !important; color: var(--cm-info-text, #36516a) !important;}
+.page .continuedLeft {margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;}
+.page .continuedRight {margin-right: 0; border-top-right-radius: 0; border-bottom-right-radius: 0;}
+.moreRow {position: absolute; bottom: 1px; left: 0; right: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));}
+.page .moreRow button {font-size: 12px; line-height: 15px; padding: 1px 8px; color: var(--cm-accent, #445c48) !important; background: var(--paper) !important; border-radius: 3px !important; margin-left: 3px;}
+.calendarFooter {display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-top: 16px; color: var(--muted) !important; font-size: 12px;}
+.calendarFooter a, .monthEmpty button, .monthEmpty a {display: inline-flex; align-items: center; gap: 7px;}
+.monthEmpty {display: flex; align-items: center; gap: 8px; padding: 13px 0; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted) !important;}
+.monthEmpty button, .monthEmpty a {margin-left: auto; color: var(--forest) !important; font-size: 12px; padding: 2px; font-weight: 600;}
+.agenda {border-left: 1px solid var(--line); padding-left: clamp(22px, 2.1vw, 36px); min-width: 0;}
+.sectionHeading {justify-content: space-between; gap: 10px; min-height: 42px;}
+.page .sectionHeading h2 {font-size: 20px; letter-spacing: -.5px; font-weight: 650;}
+.muted {font-size: 12px; color: var(--muted) !important; white-space: nowrap;}
+.upcomingList {margin-top: 18px; max-height: 330px; overflow: auto; scrollbar-width: thin;}
+.upcomingItem {display: flex; align-items: flex-start; gap: 12px; border-top: 1px solid var(--line); padding: 18px 0;}
+.eventDate {flex: 0 0 59px; border-right: 1px solid var(--line); display: grid; gap: 6px; padding: 0 10px 0 0;}
+.eventDate b {font-size: 21px; font-weight: 550; font-variant-numeric: tabular-nums; letter-spacing: -.6px;}
+.eventDate small {font-size: 12px; color: var(--muted) !important;}
+.page .upcomingTitle {display: block; text-align: left; flex: 1; min-width: 0; padding: 0; line-height: 1.5;}
+.upcomingTitle strong {font-size: 13px; font-weight: 550; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;}
+.upcomingTitle > span {font-size: 12px; display: flex; align-items: center; gap: 5px; margin-top: 7px; color: var(--muted) !important;}
+.page .starButton {display: grid; place-items: center; width: 30px; height: 30px; flex: 0 0 30px; color: var(--cm-faint, #7d847a) !important; padding: 0; border-radius: 5px !important; margin-top: -3px;}
+.page .starButton:hover {background: var(--cm-accent-soft, #eaf0e6) !important; color: var(--forest) !important;}
+.page .starred {color: var(--cm-warning-text, #9b742b) !important;}
+.agendaEmpty {display: flex; flex-direction: column; align-items: flex-start; padding: 21px 0 27px; min-height: 208px; border-top: 1px solid var(--line);}
+.emptyIcon {color: var(--cm-muted, #8c9d86) !important; margin-bottom: 12px;}
+.agendaEmpty strong {font-size: 14px; font-weight: 500;}
+.agendaEmpty p {font-size: 12px; color: var(--muted) !important; margin: 6px 0 15px;}
+.agendaEmpty a, .agendaEmpty button {font-size: 12px; color: var(--forest) !important; display: inline-flex; align-items: center; gap: 6px; padding: 0;}
+.allSection {border-top: 1px solid var(--line); padding-top: 20px;}
+.listFilters {gap: 7px; margin: 15px 0 12px; flex-wrap: wrap;}
+.page .listFilters select {font-size: 12px; min-width: 0; flex: 1; height: 34px; padding: 0 23px 0 9px;}
+.page .listFilters > button {font-size: 12px; padding: 6px 0 6px 3px; white-space: nowrap; color: var(--muted) !important;}
+.allList {max-height: 385px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--cm-line-strong, #ccd3c9) transparent; padding-right: 4px;}
+.listItem {padding: 16px 0; border-bottom: 1px solid var(--line);}
+.listItemHead {align-items: flex-start; gap: 8px; justify-content: space-between;}
+.page .eventTitle {font-size: 13px; font-weight: 600; line-height: 1.65; text-align: left; padding: 0; min-width: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;}
+.page .eventTitle:hover, .page .upcomingTitle:hover strong {color: var(--forest) !important; text-decoration: underline; text-underline-offset: 3px;}
+.page .dateLink {display: flex; align-items: center; gap: 7px; padding: 0; color: var(--muted) !important; font-size: 12px; margin: 8px 0; text-align: left; line-height: 1.5; font-variant-numeric: tabular-nums;}
+.dateLink svg {opacity: 0;}
+.dateLink:hover svg, .dateLink:focus-visible svg {opacity: 1;}
+.eventMeta {display: flex; align-items: baseline; gap: 7px; font-size: 12px; line-height: 1.6; color: var(--muted) !important;}
+.eventMeta > span:last-child {overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+.status {background: var(--cm-surface-muted, #edf0e9) !important; padding: 1px 5px; border-radius: 3px !important; white-space: nowrap;}
+.listEmpty {padding: 30px 0; color: var(--muted) !important; font-size: 13px; display: grid; gap: 12px; justify-items: start;}
+.page .listEmpty button {padding: 0; color: var(--forest) !important; text-decoration: underline;}
+.toast:empty {display: none;}
+.toast {position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); z-index: 70; background: var(--cm-accent-hover, #2f4335) !important; color: var(--cm-inverse, white) !important; padding: 11px 20px; border-radius: 8px !important; box-shadow: 0 4px 20px rgb(var(--cm-shadow-rgb) / 0.133); font-size: 13px;}
+.page .dialog {padding: 0; border: 1px solid var(--cm-line, #d9e0d4) !important; border-radius: 15px !important; width: min(570px, calc(100vw - 48px)); max-height: 85vh; background: var(--paper) !important; color: var(--ink) !important; box-shadow: 0 24px 100px rgb(var(--cm-shadow-rgb) / 0.251); margin: auto;}
+.dialog::backdrop {background: rgb(var(--cm-shadow-rgb) / 0.361) !important; backdrop-filter: blur(3px);}
+.dialogBody {padding: 27px 30px 24px;}
+.dialogTop {justify-content: space-between; margin-bottom: 17px;}
+.detailKind {font-size: 12px; color: var(--muted) !important;}
+.page .dialog h2 {font-size: 21px; line-height: 1.55; font-weight: 600; overflow-wrap: anywhere;}
+.page .detailDate {display: flex; align-items: center; gap: 9px; margin: 18px 0 24px; font-size: 14px; color: var(--forest) !important;}
+.detailInfo {margin: 0; padding: 17px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); display: grid; gap: 13px; font-size: 13px;}
+.detailInfo div {display: grid; grid-template-columns: 50px 1fr; gap: 12px;}
+.detailInfo dt {color: var(--muted) !important;}
+.detailInfo dd {margin: 0; overflow-wrap: anywhere;}
+.page .detailNote {font-size: 13px; line-height: 1.8; white-space: pre-wrap; margin-top: 18px;}
+.detailActions {gap: 14px; margin: 24px 0 16px; flex-wrap: wrap; font-size: 12px;}
+.detailActions > a {display: inline-flex; align-items: center; gap: 5px;}
+.detailActions > a:last-child {margin-left: auto;}
+.page .detailSave {display: inline-flex; align-items: center; gap: 7px; padding: 8px 0; color: var(--forest) !important;}
+.detailHint {font-size: 12px; color: var(--muted) !important; line-height: 1.7;}
+.spinning {animation: spin 1s linear infinite;}
+@keyframes spin {to {transform: rotate(360deg);}}
+.skeletonTitle, .skeletonLine {background: var(--cm-surface-muted, #e8ece4) !important; border-radius: 5px !important;}
+.skeletonTitle {width: 160px; height: 30px;}
+.skeletonLine {height: 16px; margin: 18px 0;}
+.skeletonGrid {height: 620px; border: 1px solid var(--line) !important; background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: calc(100% / 7) 124px;}
+@media (min-width: 1650px) {.page {padding-top: 34px;}.pageHeader {margin-bottom: 30px;}.toolbar {padding-bottom: 30px; margin-bottom: 30px;}.eventLanes {grid-auto-rows: 26px; row-gap: 5px; top: 45px;}.page .eventBar {font-size: 13px; padding: 3px 9px;}.allList {max-height: 470px;}.page .eventTitle, .upcomingTitle strong {font-size: 14px;}.page .dayNumber {font-size: 14px;}}
+@media (max-width: 1250px) {.layout {grid-template-columns: minmax(0, 1fr) 255px; gap: 20px;}.agenda {padding-left: 20px;}.monthNav {gap: 6px;}.page .monthNav h2 {font-size: 22px; min-width: 135px;}.monthCount {display: none;}.toolbar {flex-wrap: wrap;}.legend {gap: 10px; font-size: 12px;}.page .listFilters select {flex-basis: 40%;}.eventDate {flex-basis: 53px;}.upcomingItem {gap: 8px;}}
+@media (max-width: 1000px) {.layout {grid-template-columns: 1fr;}.agenda {border-left: 0; border-top: 1px solid var(--line); padding: 20px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 24px;}.allSection {border-top: 0; padding-top: 0;}.page {padding: 24px;}.search {max-width: none;}.allList {max-height: 330px;}}
+@media (prefers-reduced-motion: reduce) {.spinning {animation: none;}.page *, .page *::before, .page *::after {scroll-behavior: auto; transition: none; animation: none;}}

@@ -120,7 +120,7 @@ def test_agent_documents_confirmation_and_project_change():
     h={'x-user-id':str(uuid4())};other={'x-user-id':str(uuid4())}
     with TestClient(app) as c:
         no_selection=c.post('/v1/development-agent/chat',headers=h,json={'query':'请写一份BP'}).json()
-        assert no_selection['tool']=='startup' and no_selection['result']['workspace_url']=='/startup'
+        assert no_selection['tool']=='startup' and no_selection['result']['workspace_url']=='/entrepreneurship'
         p=new_project(c,h)
         req={'query':'请帮这个项目设计股权模式','startup_project_id':p['id']}
         r=c.post('/v1/development-agent/chat',headers=h,json=req).json()

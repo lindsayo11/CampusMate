@@ -1,4 +1,4 @@
-/** Safe, small Markdown reader: all content stays React text, never raw HTML. */
+﻿/** Safe, small Markdown reader: all content stays React text, never raw HTML. */
 export function MarkdownDraft({text}:{text:string}){
  const blocks=text.split(/\n\s*\n/);
  return <article className="startup-draft" aria-label="创业文稿预览">{blocks.map((block,index)=>{

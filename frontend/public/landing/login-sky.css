@@ -1,0 +1,31 @@
+/* Decorative PC sky, isolated from authentication and other public pages. */
+.login-sky { display: none; }
+@media (min-width: 1000px) {
+  .auth-page.has-night-sky { position: relative; isolation: isolate; overflow: clip; }
+  .has-night-sky > :is(.auth-panel, .auth-art) { position: relative; z-index: 1; }
+  .has-night-sky > .auth-art { background: transparent !important; }
+  .login-sky { display: block; position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: radial-gradient(ellipse at 72% 24%, #10182b45, transparent 65%); }
+  .login-sky::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 340px 240px at 25% 50%, #000e 5%, #0008 50%, transparent 100%), radial-gradient(ellipse 260px 160px at 75% 50%, #000b, transparent 100%); }
+  .night-star { position: absolute; width: var(--star-size); height: var(--star-size); border-radius: 50%; background: #e2e8f0; opacity: var(--star-opacity); }
+  .night-star.is-bright { box-shadow: 0 0 6px #e2e8f070; }
+  .login-sky[data-sky-motion="on"] .night-star.is-bright { animation: login-starlight 6s ease-in-out var(--star-delay) infinite alternate; }
+  .night-meteor { position: absolute; width: var(--trail); height: 1px; opacity: 0; border-radius: 50%; transform-origin: right center; background: linear-gradient(90deg, transparent, #e3e9f880 65%, #fff); filter: drop-shadow(0 0 4px #e6edff70); }
+  .night-meteor::after { content: ""; position: absolute; right: 0; top: -1px; width: 3px; height: 3px; border-radius: 50%; background: #fff; box-shadow: 0 0 5px #fff9; }
+  .login-sky[data-sky-motion="on"] .night-meteor { animation: login-meteor var(--cycle) linear var(--delay) infinite; }
+  .login-sky[data-sky-paused="true"] :is(.night-star, .night-meteor) { animation-play-state: paused !important; }
+  .has-night-sky .auth-panel :is(button, a):focus-visible { outline: 2px solid #c2d9ed; outline-offset: 5px; }
+}
+@keyframes login-starlight {
+  from { opacity: calc(var(--star-opacity) * .45); }
+  to { opacity: var(--star-opacity); }
+}
+@keyframes login-meteor {
+  0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(32deg); }
+  2% { opacity: .85; }
+  12% { opacity: .65; }
+  18%, 100% { opacity: 0; transform: translate3d(var(--travel-x), var(--travel-y), 0) rotate(32deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .login-sky .night-meteor { display: none; }
+  .login-sky .night-star { animation: none !important; }
+}

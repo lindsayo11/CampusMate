@@ -1,0 +1,159 @@
+{
+  "healthy_sources": 6,
+  "configured_columns": 13,
+  "discovered": 59,
+  "parsed": 42,
+  "public_items": 94,
+  "sources": [
+    {
+      "endpoint_id": "9e6cf620-00ed-5ba9-9938-34ad058f5c8b",
+      "name": "复旦大学研究生招生网",
+      "source_code": "CM-GR-004-FDU",
+      "enabled": true,
+      "columns": [
+        "https://gsao.fudan.edu.cn/"
+      ],
+      "last_checked": "2026-10-01T01:11:59.583825+00:00",
+      "next_check": "2026-10-01T13:11:59.583825+00:00",
+      "discovered": 12,
+      "collected": 4,
+      "pending": 0,
+      "issues": 3,
+      "last_error": "",
+      "index_healthy": true,
+      "interval_hours": 12
+    },
+    {
+      "endpoint_id": "c5f7896f-4333-5172-9cb4-08b06cf9eb9a",
+      "name": "北京大学研究生招生网",
+      "source_code": "CM-GR-004-PKU",
+      "enabled": true,
+      "columns": [
+        "https://admission.pku.edu.cn/zsxx/sszs/tjms/index.htm",
+        "https://admission.pku.edu.cn/zsxx/sszs/index.htm"
+      ],
+      "last_checked": "2026-10-01T01:14:19.241756+00:00",
+      "next_check": "2026-10-01T13:14:18.536325+00:00",
+      "discovered": 8,
+      "collected": 8,
+      "pending": 0,
+      "issues": 0,
+      "last_error": "",
+      "index_healthy": true,
+      "interval_hours": 12
+    },
+    {
+      "endpoint_id": "199db7d1-62cb-5390-a818-23f6dde5fb42",
+      "name": "上海交通大学研究生招生网",
+      "source_code": "CM-GR-004-SJTU",
+      "enabled": true,
+      "columns": [
+        "https://yzb.sjtu.edu.cn/zkxx/sszs?page=1",
+        "https://yzb.sjtu.edu.cn/zsjz/sszs"
+      ],
+      "last_checked": "2026-10-01T01:12:00.048750+00:00",
+      "next_check": "2026-10-01T13:11:54.516130+00:00",
+      "discovered": 4,
+      "collected": 4,
+      "pending": 0,
+      "issues": 0,
+      "last_error": "",
+      "index_healthy": true,
+      "interval_hours": 12
+    },
+    {
+      "endpoint_id": "9766a386-11c0-5c28-bff4-dff9ef537b84",
+      "name": "清华大学研究生招生网",
+      "source_code": "CM-GR-004-THU",
+      "enabled": true,
+      "columns": [
+        "https://yz.tsinghua.edu.cn/zsxx/sszs/tjms.htm",
+        "https://yz.tsinghua.edu.cn/zsxx/sszs/jzml.htm"
+      ],
+      "last_checked": "2026-10-01T01:11:56.352614+00:00",
+      "next_check": "2026-10-01T13:11:55.331829+00:00",
+      "discovered": 9,
+      "collected": 5,
+      "pending": 0,
+      "issues": 1,
+      "last_error": "",
+      "index_healthy": true,
+      "interval_hours": 12
+    },
+    {
+      "endpoint_id": "f5475227-03be-5efd-b586-a03f138d2237",
+      "name": "电子科技大学招生通知",
+      "source_code": "CM-GR-004-UESTC",
+      "enabled": true,
+      "columns": [
+        "https://yz.uestc.edu.cn/sszs/zsjz.htm",
+        "https://yz.uestc.edu.cn/sszs/tzgg.htm"
+      ],
+      "last_checked": "2026-10-01T01:11:59.263124+00:00",
+      "next_check": "2026-10-01T13:11:56.089276+00:00",
+      "discovered": 16,
+      "collected": 12,
+      "pending": 0,
+      "issues": 4,
+      "last_error": "",
+      "index_healthy": true,
+      "interval_hours": 12
+    },
+    {
+      "endpoint_id": "ae1cef90-1383-56d3-a1de-05eb1285a9ac",
+      "name": "中国科学技术大学招生通知",
+      "source_code": "CM-GR-004-USTC",
+      "enabled": true,
+      "columns": [
+        "https://yz.ustc.edu.cn/column/176?num=1"
+      ],
+      "last_checked": "2026-10-01T01:12:00.714461+00:00",
+      "next_check": "2026-10-01T09:12:00.714461+00:00",
+      "discovered": 0,
+      "collected": 0,
+      "pending": 0,
+      "issues": 1,
+      "last_error": "无法确认官方 robots 规则（网络或重定向异常），等待重试",
+      "index_healthy": false,
+      "interval_hours": 12
+    },
+    {
+      "endpoint_id": "1fd01b3d-bdfc-54a8-8578-62491a972c70",
+      "name": "西安交通大学招生通知",
+      "source_code": "CM-GR-004-XJTU",
+      "enabled": true,
+      "columns": [
+        "https://yz.xjtu.edu.cn/index/tms.htm",
+        "https://yz.xjtu.edu.cn/index/sszs.htm"
+      ],
+      "last_checked": "2026-10-01T01:12:01.026012+00:00",
+      "next_check": "2026-10-01T13:11:57.116073+00:00",
+      "discovered": 10,
+      "collected": 9,
+      "pending": 0,
+      "issues": 0,
+      "last_error": "",
+      "index_healthy": true,
+      "interval_hours": 12
+    },
+    {
+      "endpoint_id": "1853d328-74be-57f9-8978-825032a8e256",
+      "name": "浙江大学材料科学与工程学院招生通知",
+      "source_code": "CM-GR-004-ZJU",
+      "enabled": true,
+      "columns": [
+        "https://mse.zju.edu.cn/yjszs/list.psp"
+      ],
+      "last_checked": "2026-10-01T01:11:58.880024+00:00",
+      "next_check": "2026-10-02T01:11:58.880024+00:00",
+      "discovered": 0,
+      "collected": 0,
+      "pending": 0,
+      "issues": 1,
+      "last_error": "栏目未发现可解析的考研／推免通知，请检查栏目结构",
+      "index_healthy": false,
+      "interval_hours": 12
+    }
+  ],
+  "note": "2026-10-01 本地验收时的公开采集状态；不是实时在线证明。当前数据快照计数见 data-package-report.json。"
+}
