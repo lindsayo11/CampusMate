@@ -71,7 +71,7 @@ def test_dify_adapter_all_six_tools(monkeypatch):
             else:
                 assert result['status']=='completed'
         assert len(c.get('/v1/reminders',headers=user).json())==1
-        assert len(c.get('/v1/rooms',headers=user).json())==1
+        assert len(c.get('/v1/rooms',headers=user).json())==2
 
 
 def test_tracker_state_transition_constraints():

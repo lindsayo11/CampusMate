@@ -376,6 +376,7 @@ def seed_if_empty(db: Session) -> None:
                         expected="大四,应届生",
                         label="须为应届毕业年级",
                         source_url=f"https://example.edu/opportunities/{civil}",
+                        review_status="verified",
                     ),
                     EligibilityRule(
                         opportunity_id=civil,
@@ -384,6 +385,7 @@ def seed_if_empty(db: Session) -> None:
                         expected="计算机,软件,电子信息",
                         label="专业须在计算机相关目录",
                         source_url=f"https://example.edu/opportunities/{civil}",
+                        review_status="verified",
                     ),
                 ]
             )

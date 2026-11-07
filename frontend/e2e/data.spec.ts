@@ -5,7 +5,7 @@ test("数据中心不使用演示机会填充，保留真实空态",async({page}
   await expect(page.getByRole("heading",{name:"发展信息中心"})).toBeVisible();
   await page.getByLabel("搜索信息",{exact:true}).fill("没有已发布数据的测试查询");
   await page.getByRole("button",{name:"筛选信息",exact:true}).click();
-  await expect(page.getByText("没有找到匹配的信息",{exact:false})).toBeVisible();
+  await expect(page.getByText("没有找到匹配的信息",{exact:false}).first()).toBeVisible();
   await page.goto("/data/timeline");
   await expect(page.getByRole("heading",{name:"事项时间线"})).toBeVisible();
   await expect(page.getByText("按公开事项提供的日期安排准备，未注明的日期不会被推测。")).toBeVisible();

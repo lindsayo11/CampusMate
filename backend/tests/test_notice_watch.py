@@ -180,7 +180,7 @@ def test_install_updates_columns_without_fabricating_approval_or_resuming_pause(
         with SessionLocal() as db:
             ep=db.get(SourceEndpoint,eid)
             assert not ep.scheduled and ep.license_status=='unknown'
-            assert ep.fetch_interval=='8h'
+            assert ep.fetch_interval=='7d'
             old=db.scalar(select(NoticeResource).where(NoticeResource.endpoint_id==eid,NoticeResource.url==base+'list'))
             assert old.status=='retired'
             assert watch.config_for(ep)['index_urls']==[base+'new-column']

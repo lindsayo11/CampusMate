@@ -44,7 +44,7 @@ def test_account_role_and_invitation_titles_are_scoped():
     a,b,other=[{'X-User-Id':str(uuid4())} for _ in range(3)]
     with TestClient(app) as c:
         assert c.get('/v1/account').json()['is_admin'] is True
-        assert c.get('/v1/account',headers=a).json()=={'user_id':a['X-User-Id'],'is_admin':False}
+        assert c.get('/v1/account',headers=a).json()=={'user_id':a['X-User-Id'],'is_admin':False,'email':None}
         c.get('/v1/profile',headers=b)
         team=c.post('/v1/teams',headers=a,json={'title':'真实邀请名称'}).json()
         c.post(f"/v1/teams/{team['id']}/invitations",headers=a,json={'target':b['X-User-Id']})

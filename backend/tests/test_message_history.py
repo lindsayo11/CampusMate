@@ -34,10 +34,10 @@ def test_history_pagination_recovery_and_read_cursor():
         assert catchup["has_more"]
         rest = c.get(url + f'/history?after={catchup["newest_id"]}', headers=h).json()
         assert len(rest["items"]) == 25 and not rest["has_more"]
-        assert c.get("/v1/rooms", headers=h).json()[0]["unread_count"] == 124
+        assert next(r for r in c.get("/v1/rooms", headers=h).json() if r["id"] == room)["unread_count"] == 124
         assert c.post(url+"/read", headers=h, json={"message_id": ids[-1]}).status_code == 200
         assert c.post(url+"/read", headers=h, json={"message_id": ids[0]}).json()["last_read_message_id"] == ids[-1]
-        assert c.get("/v1/rooms", headers=h).json()[0]["unread_count"] == 0
+        assert next(r for r in c.get("/v1/rooms", headers=h).json() if r["id"] == room)["unread_count"] == 0
         assert c.get(url+"/history?before=2&after=1", headers=h).status_code == 422
         assert c.get(url+"/history?limit=101", headers=h).status_code == 422
 
